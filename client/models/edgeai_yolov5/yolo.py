@@ -85,6 +85,7 @@ if __name__ == "__main__":
 
     # Visualising
     manager.draw(pred, img)
+    # Random
     """
     names = manager.model.module.names if hasattr(manager.model, 'module') else manager.model.names  # get class names
 
