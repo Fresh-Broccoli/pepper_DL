@@ -106,8 +106,8 @@ def plot_skeleton_kpts(im, kpts, steps, orig_shape=None):
     for kid in range(num_kpts):
         r, g, b = pose_kpt_color[kid]
         x_coord, y_coord = kpts[steps * kid], kpts[steps * kid + 1]
-        print("x_coord: ", x_coord)
-        print("y_coord: ", y_coord)
+        #print("x_coord: ", x_coord)
+        #print("y_coord: ", y_coord)
         if not (x_coord % 640 == 0 or y_coord % 640 == 0):
             if steps == 3:
                 conf = kpts[steps * kid + 2]

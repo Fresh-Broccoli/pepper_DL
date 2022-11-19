@@ -60,11 +60,15 @@ def detect(opt):
     else:
         dataset = LoadImages(source, img_size=imgsz, stride=stride)
 
+    #preprocessed_img = None # !!! Delete
+
     # Run inference
     if device.type != 'cpu':
         model(torch.zeros(1, 3, imgsz, imgsz).to(device).type_as(next(model.parameters())))  # run once
     t0 = time.time()
+
     for path, img, im0s, vid_cap in dataset:
+
         img = torch.from_numpy(img).to(device)
         img = img.half() if half else img.float()  # uint8 to fp16/32
         img /= 255.0  # 0 - 255 to 0.0 - 1.0
@@ -78,7 +82,7 @@ def detect(opt):
         # Apply NMS
         pred = non_max_suppression(pred, opt.conf_thres, opt.iou_thres, classes=opt.classes, agnostic=opt.agnostic_nms, kpt_label=kpt_label)
         t2 = time_synchronized()
-
+        return pred
         # Apply Classifier
         if classify:
             pred = apply_classifier(pred, modelc, img, im0s)
@@ -95,7 +99,7 @@ def detect(opt):
             txt_path = str(save_dir / 'labels' / p.stem) + ('' if dataset.mode == 'image' else f'_{frame}')  # img.txt
             s += '%gx%g ' % img.shape[2:]  # print string
             gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
-            print(det)
+            #print(det)
             # print(img.shape)
             # print(im0.shape)
             # exit()
@@ -169,8 +173,8 @@ def detect(opt):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--weights', nargs='+', type=str, default='yolov5s.pt', help='model.pt path(s)')
-    parser.add_argument('--source', type=str, default='data/images', help='source')  # file/folder, 0 for webcam
+    parser.add_argument('--weights', nargs='+', type=str, default='weights\yoloposes_640_lite.pt', help='model.pt path(s)')
+    parser.add_argument('--source', type=str, default='data\custom', help='source')  # file/folder, 0 for webcam
     parser.add_argument('--img-size', nargs= '+', type=int, default=640, help='inference size (pixels)')
     parser.add_argument('--conf-thres', type=float, default=0.25, help='object confidence threshold')
     parser.add_argument('--iou-thres', type=float, default=0.45, help='IOU threshold for NMS')
@@ -200,7 +204,25 @@ if __name__ == '__main__':
     with torch.no_grad():
         if opt.update:  # update all models (to fix SourceChangeWarning)
             for opt.weights in ['yolov5s.pt', 'yolov5m.pt', 'yolov5l.pt', 'yolov5x.pt']:
-                detect(opt=opt)
+                yolo_pred = detect(opt=opt)
+                #detect(opt=opt)
                 strip_optimizer(opt.weights)
         else:
-            detect(opt=opt)
+            yolo_pred = detect(opt=opt)
+            #detect(opt=opt)
+
+    """
+    import numpy as np
+    import cv2
+    from PIL import Image
+    from yolo import YoloManager
+
+    manager = YoloManager()
+    #img = Image.open(os.path.join("data", "custom", "paris.jpg"))
+    #img = np.asarray(img)
+    img = cv2.imread(os.path.join("data", "custom", "paris.jpg"))
+    my_img = manager.preprocess_frame(img)
+    my_pred = manager.predict(my_img, preprocess=False, augment=opt.augment, conf_thres=opt.conf_thres, classes=opt.classes, iou_thres=opt.iou_thres, agnostic_nms=opt.agnostic_nms)
+    print("Prediction Match: ", torch.all(my_pred==yolo_pred))
+    #print("Preprocess Match: ", torch.all(my_img==yolo_img))
+    """

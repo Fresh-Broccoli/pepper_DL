@@ -395,6 +395,7 @@ def scale_coords(img1_shape, coords, img0_shape, ratio_pad=None, kpt_label=False
         coords[:, 1::step] /= gain
         clip_coords(coords, img0_shape, step=step)
         #coords = coords.round()
+    #print(coords)
     return coords
 
 
