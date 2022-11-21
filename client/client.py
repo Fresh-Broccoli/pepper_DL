@@ -13,7 +13,7 @@ from PIL import Image
 #sys.path.append(os.path.join(os.getcwd(), "models", "edgeai_yolov5"))
 
 from yolo import YoloManager
-
+from sort import SortManager
 # Copied from: https://www.digitalocean.com/community/tutorials/python-socket-programming-server-client
 
 class Client:
@@ -21,10 +21,12 @@ class Client:
         self.host = socket.gethostname() #if host is not None else host
         self.port = port
         self.client_socket = socket.socket()
-
+        print(f"Loading {model}...")
         if model == "yolo":
             self.dl_model = YoloManager(**kwargs)
-
+        elif model == "sort":
+            self.dl_model = SortManager(**kwargs)
+        print(model, " loaded successfully!")
         self.client_socket.connect((self.host, self.port))
 
     # Each model might require a unique function for configuration because they accept different parameters

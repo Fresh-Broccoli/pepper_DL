@@ -73,22 +73,23 @@ class YoloManager():
         scale_coords(self.image_size, prediction[:, :4], original_shape, kpt_label=False)
         scale_coords(self.image_size, prediction[:, 6:], original_shape, kpt_label=self.kpt_label, step=3)
 
-    def draw(self, prediction):
+    def draw(self, prediction, img, show=True):
         for det_index, (*xyxy, conf, cls) in enumerate(reversed(prediction[:,:6])):
             plot_one_box(xyxy, img, label=(f'{self.names[int(cls)]} {conf:.2f}'), color=colors(int(cls),True), line_thickness=2, kpt_label=self.kpt_label, kpts=prediction[det_index, 6:], steps=3, orig_shape=img.shape[:2])
-        cv2.imshow("Image", img)
-        cv2.waitKey(0)
+        if show:
+            cv2.imshow("Image", img)
+            cv2.waitKey(0)
 
 if __name__ == "__main__":
     from PIL import Image
 
     manager = YoloManager(image_size=[640,640])
 
-    img = cv2.imread(os.path.join("data", "custom", "forest.jpg"))
+    img = cv2.imread(os.path.join("data", "custom", "paris.jpg"))
 
     preprocessed_img = manager.preprocess_frame(img)
     pred = manager.predict(img, conf_thres=0.50, scale_to_original=True)
     #box, point = manager.extract_bounding_box_and_keypoint(pred)
 
     # Visualising
-    manager.draw(pred)
+    manager.draw(pred, img)

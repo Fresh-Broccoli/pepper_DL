@@ -30,6 +30,7 @@ import time
 import argparse
 from filterpy.kalman import KalmanFilter
 from edgeai_yolov5.yolo import YoloManager
+from utils.plots import colors, plot_one_box
 
 np.random.seed(0)
 
@@ -280,6 +281,12 @@ class SortManager(Sort):
     bounding_boxes = self.detector.extract_bounding_box_data(pred)
     return super().update(np.asarray(bounding_boxes))
 
+  def draw(self, prediction, img, show=True):
+    for det_index, (*xyxy, id) in enumerate(reversed(prediction[:,:6])):
+      plot_one_box(xyxy, img, label=(f'id: {id}'), color=colors(0,True), line_thickness=2, kpt_label=False, steps=3, orig_shape=img.shape[:2])
+    if show:
+      cv2.imshow("Image", img)
+      cv2.waitKey(0)
 
 if __name__ == '__main__':
   """
@@ -351,3 +358,6 @@ if __name__ == '__main__':
 
   frame1 = cv2.imread(os.path.join(data_dir, "frame1.jpg"))
   frame2 = cv2.imread(os.path.join(data_dir, "frame2.jpg"))
+
+  f1 = s.update(frame1)
+  print(f1)
