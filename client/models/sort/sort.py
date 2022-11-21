@@ -29,6 +29,7 @@ import glob
 import time
 import argparse
 from filterpy.kalman import KalmanFilter
+from edgeai_yolov5.yolo import YoloManager
 
 np.random.seed(0)
 
@@ -268,7 +269,20 @@ def parse_args():
     args = parser.parse_args()
     return args
 
+class SortManager(Sort):
+  def __init__(self, max_age=1, min_hits=3, iou_threshold=0.3, **kwargs):
+    # weights='yoloposes_640_lite.pt', device="cpu", save_txt_tidl=True, image_size=[640,640], kpt_label=True
+    Sort.__init__(self, max_age=max_age, min_hits=min_hits, iou_threshold=iou_threshold)
+    self.detector = YoloManager(**kwargs)
+
+  def update(self, frame, augment=False, conf_thres=0.25, classes=None, iou_thres=0.45, agnostic_nms=False):
+    pred = self.detector.predict(frame, augment=augment, conf_thres=conf_thres, classes=classes, iou_thres=iou_thres, agnostic_nms=agnostic_nms)
+    bounding_boxes = self.detector.extract_bounding_box_data(pred)
+    return super().update(np.asarray(bounding_boxes))
+
+
 if __name__ == '__main__':
+  """
   # all train
   args = parse_args()
   display = args.display
@@ -328,3 +342,12 @@ if __name__ == '__main__':
 
   if(display):
     print("Note: to get real runtime results run without the option: --display")
+  """
+  import cv2
+
+  s = SortManager()
+
+  data_dir = os.path.join("edgeai_yolov5", "data", "photos")
+
+  frame1 = cv2.imread(os.path.join(data_dir, "frame1.jpg"))
+  frame2 = cv2.imread(os.path.join(data_dir, "frame2.jpg"))
