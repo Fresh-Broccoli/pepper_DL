@@ -5,27 +5,30 @@ import numpy as np
 import os
 import cv2
 import time
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
+#import matplotlib
+#matplotlib.use('TKAgg')
+#import matplotlib.pyplot as plt
+#import matplotlib.animation as animation
 from PIL import Image
 
 
 #sys.path.append(os.path.join(os.getcwd(), "models", "edgeai_yolov5"))
 
-from yolo import YoloManager
+#from yolo import YoloManager
 from sort import SortManager
 # Copied from: https://www.digitalocean.com/community/tutorials/python-socket-programming-server-client
 
 class Client:
-    def __init__(self, port=5000, host=None, model="yolo", **kwargs):
+    def __init__(self, port=5000, host=None, model="sort", **kwargs):
         self.host = socket.gethostname() #if host is not None else host
         self.port = port
         self.client_socket = socket.socket()
         print(f"Loading {model}...")
-        if model == "yolo":
-            self.dl_model = YoloManager(**kwargs)
-        elif model == "sort":
-            self.dl_model = SortManager(**kwargs)
+        #if model == "yolo":
+        #    self.dl_model = YoloManager(**kwargs)
+        #elif model == "sort":
+        #    self.dl_model = SortManager(**kwargs)
+        self.dl_model = SortManager(**kwargs)
         print(model, " loaded successfully!")
         self.client_socket.connect((self.host, self.port))
 
@@ -59,17 +62,17 @@ class Client:
                 #print('Received from server: ' , data)  # show in terminal
                 data = pickle.loads(data, encoding='latin1')
                 real_img = Image.frombuffer('RGB', (data[0], data[1]), bytes(data[6]))
-                img = np.asarray(real_img)
+                img = np.asarray(real_img)[:,:,::-1]
                 #break
                 #print("data: ", img)
                 #print("data type is ", type(img))
                 #print("shape: ", img.shape)
 
-                pred = self.dl_model.predict(img)
+                pred = self.dl_model.update(img)
                 #print("pred type: ", type(pred))
                 #print(pred)
                 #break
-                self.dl_model.draw(pred, img)
+                self.dl_model.draw(pred, np.ascontiguousarray(img), 0)
                 #pred_dump = pickle.dumps(pred)
                 #print("Sent prediction size = ", sys.getsizeof(pred_dump), " bytes.")
                 self.client_socket.send("a".encode())
@@ -100,9 +103,6 @@ class Client:
                     frames = 0
 
                     # Visualisation ini
-                    #fig = plt.figure()
-                    #creating a subplot
-                    #ax1 = fig.add_subplot(1,1,1)
 
                     while time.time() < t_end:
                         data = self.client_socket.recv(300000)  # receive response
@@ -110,7 +110,8 @@ class Client:
                         #print('Received from server: ' , data)  # show in terminal
                         data = pickle.loads(data, encoding='latin1')
                         real_img = Image.frombuffer('RGB', (data[0], data[1]), bytes(data[6]))
-                        img = np.asarray(real_img)
+                        img = np.asarray(real_img)[:,:,::-1]
+                        print(img.shape)
                         #pred = self.dl_model.predict(img)
 
                         # Stream live data
@@ -119,7 +120,7 @@ class Client:
                         self.client_socket.send("a".encode())
                         count += wait
                         frames += 1
-
+                    cv2.destroyAllWindows()
                     end_time = time.time()-start
                     print("FPS test for input=80x60 resolution wireless:")
                     print("It took ", end_time, " seconds to stream ", frames, " frames.")
@@ -130,14 +131,21 @@ class Client:
 
                 else:
                     while True:
-                        data = self.client_socket.recv(300000)  # receive response
-                        print("Received data is ", sys.getsizeof(data), " bytes.")
-                        #print('Received from server: ' , data)  # show in terminal
-                        data = pickle.loads(data, encoding='latin1')
-                        real_img = Image.frombuffer('RGB', (data[0], data[1]), bytes(data[6]))
-                        img = np.asarray(real_img)
-                        pred = self.dl_model.predict(img)
-                        self.client_socket.send("a".encode())
+                        try:
+                            data = self.client_socket.recv(300000)  # receive response
+                            print("Received data is ", sys.getsizeof(data), " bytes.")
+                            #print('Received from server: ' , data)  # show in terminal
+                            data = pickle.loads(data, encoding='latin1')
+                            real_img = Image.frombuffer('RGB', (data[0], data[1]), bytes(data[6]))
+                            img = np.asarray(real_img)[:,:,::-1]
+                            #pred = self.dl_model.predict(img)
+                            pred = self.dl_model.update(img)
+                            self.dl_model.draw(pred, np.ascontiguousarray(img), show=1)
+                            self.client_socket.send("a".encode())
+                        except KeyboardInterrupt:
+                            self.client_socket.send("b".encode())
+                            cv2.destroyAllWindows()
+
 
 
 

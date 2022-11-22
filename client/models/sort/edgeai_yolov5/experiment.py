@@ -1,13 +1,18 @@
-import torch
-import os
-import numpy as np
+#import torch
+#import os
+#import numpy as np
 from models.experimental import attempt_load
-from utils.torch_utils import select_device, load_classifier, time_synchronized
-from utils.general import check_img_size, check_requirements, check_imshow, non_max_suppression, apply_classifier, \
-    scale_coords, xyxy2xywh, strip_optimizer, set_logging, increment_path, save_one_box
-from utils.datasets import LoadImages
-from pathlib import Path
+#from utils.torch_utils import select_device, load_classifier, time_synchronized
+#from utils.general import check_img_size, check_requirements, check_imshow, non_max_suppression, apply_classifier, \
+#    scale_coords, xyxy2xywh, strip_optimizer, set_logging, increment_path, save_one_box
+#from utils.datasets import LoadImages
+#from pathlib import Path
+#from yolo import YoloManager
 
+#manager = YoloManager()
+
+
+"""
 # params
 device = "cpu"
 device = select_device(device)
@@ -69,6 +74,7 @@ for path, img, im0s, vid_cap in dataset:
     # Apply NMS
     pred = non_max_suppression(pred, conf_thres, iou_thres, classes=classes, agnostic=agnostic_nms, kpt_label=kpt_label)
     t2 = time_synchronized()
+"""
 """
     # Process detections
     for i, det in enumerate(pred):  # detections per image

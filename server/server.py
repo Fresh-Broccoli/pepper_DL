@@ -59,7 +59,7 @@ class Server:
 
             elif action == "livestream":
                 fps = None
-                duration = 5
+                duration = None
                 pfps = cPickle.dumps(fps)
                 pduration = cPickle.dumps(duration)
                 print "Pickled fps = ", sys.getsizeof(pfps), " bytes."
@@ -95,7 +95,9 @@ class Server:
             while True:
                 time.sleep(wait)
                 self.send_image()
-                self.conn.recv(8)
+                m = self.conn.recv(8).decode()
+                if m == "b":
+                    break
 
 
 if __name__ == '__main__':

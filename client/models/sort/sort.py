@@ -19,12 +19,9 @@ from __future__ import print_function
 
 import os
 import numpy as np
-import matplotlib
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
 from skimage import io
 
+import cv2
 import glob
 import time
 import argparse
@@ -276,20 +273,28 @@ class SortManager(Sort):
     Sort.__init__(self, max_age=max_age, min_hits=min_hits, iou_threshold=iou_threshold)
     self.detector = YoloManager(**kwargs)
 
-  def update(self, frame, augment=False, conf_thres=0.25, classes=None, iou_thres=0.45, agnostic_nms=False):
-    pred = self.detector.predict(frame, augment=augment, conf_thres=conf_thres, classes=classes, iou_thres=iou_thres, agnostic_nms=agnostic_nms)
+  def detector_predict(self, frame, augment=False, conf_thres=0.25, classes=None, iou_thres=0.45, agnostic_nms=False):
+    return self.detector.predict(frame, augment=augment, conf_thres=conf_thres, classes=classes, iou_thres=iou_thres, agnostic_nms=agnostic_nms)
+
+  def update(self, frame, pred = None, augment=False, conf_thres=0.25, classes=None, iou_thres=0.45, agnostic_nms=False):
+    if pred is None:
+      pred = self.detector_predict(frame, augment=augment, conf_thres=conf_thres, classes=classes, iou_thres=iou_thres, agnostic_nms=agnostic_nms)
     bounding_boxes = self.detector.extract_bounding_box_data(pred)
     return super().update(np.asarray(bounding_boxes))
 
-  def draw(self, prediction, img, show=True):
+  def draw(self, prediction, img, show=None):
     for det_index, (*xyxy, id) in enumerate(reversed(prediction[:,:6])):
-      plot_one_box(xyxy, img, label=(f'id: {id}'), color=colors(0,True), line_thickness=2, kpt_label=False, steps=3, orig_shape=img.shape[:2])
-    if show:
+      plot_one_box(xyxy, img, label=(f'id: {str(int(id))}'), color=colors(0,True), line_thickness=2, kpt_label=False, steps=3, orig_shape=img.shape[:2])
+    if show is not None:
       cv2.imshow("Image", img)
-      cv2.waitKey(0)
+      cv2.waitKey(show)
 
 if __name__ == '__main__':
   """
+  import matplotlib
+  matplotlib.use('TkAgg')
+  import matplotlib.pyplot as plt
+  import matplotlib.patches as patches
   # all train
   args = parse_args()
   display = args.display
@@ -350,14 +355,16 @@ if __name__ == '__main__':
   if(display):
     print("Note: to get real runtime results run without the option: --display")
   """
-  import cv2
+
 
   s = SortManager()
 
   data_dir = os.path.join("edgeai_yolov5", "data", "photos")
+  #data_dir = os.path.join("edgeai_yolov5", "data", "custom")
 
   frame1 = cv2.imread(os.path.join(data_dir, "frame1.jpg"))
   frame2 = cv2.imread(os.path.join(data_dir, "frame2.jpg"))
+  #frame1 = cv2.imread(os.path.join(data_dir, "paris.jpg"))
 
   f1 = s.update(frame1)
-  print(f1)
+  s.draw(f1, frame1, True)
