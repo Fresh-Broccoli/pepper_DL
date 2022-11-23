@@ -3,12 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="2b52b2d9-e7d6-4e44-9497-6f6aba11da82" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/experiment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/experimental.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/experimental.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/yolo.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/yolo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/models/sort/sort.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/models/sort/sort.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/server.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +56,7 @@
       <recent name="C:\Users\wangj\Documents\Python\crypto_bot\server\server" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.experiment (2)">
+  <component name="RunManager" selected="Python.yolo (2)">
     <configuration name="Unnamed" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="server" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -108,6 +103,9 @@
       <module name="server" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\ml\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client" />
       <option name="IS_MODULE_SDK" value="false" />
@@ -167,6 +165,9 @@
     <configuration name="experiment (2)" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\ml\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client/models/sort/edgeai_yolov5" />
       <option name="IS_MODULE_SDK" value="false" />
@@ -228,6 +229,9 @@
       <module name="server" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\pepper\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/server" />
       <option name="IS_MODULE_SDK" value="false" />
@@ -246,6 +250,9 @@
       <module name="server" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\ml\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client/models/sort" />
       <option name="IS_MODULE_SDK" value="false" />
@@ -328,18 +335,18 @@
       <item itemvalue="Python.yolo" />
       <item itemvalue="Python.detect" />
       <item itemvalue="Python.experiment (1)" />
+      <item itemvalue="Python.experiment (2)" />
       <item itemvalue="Python.sort" />
       <item itemvalue="Python.client" />
       <item itemvalue="Python.server" />
       <item itemvalue="Python.yolo (1)" />
       <item itemvalue="Python.yolo (2)" />
-      <item itemvalue="Python.experiment (2)" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.yolo (2)" />
         <item itemvalue="Python.client" />
         <item itemvalue="Python.server" />
-        <item itemvalue="Python.yolo (2)" />
         <item itemvalue="Python.sort" />
         <item itemvalue="Python.yolo (1)" />
       </list>
@@ -427,7 +434,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668998288271</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Footage can be livestreamed from server to client.&#10;The client will apply SORT and visualise the results.">
+      <created>1669085363858</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1669085363858</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -451,7 +465,8 @@
     <MESSAGE value="Previously assumed that there was an issue with box/keypoints visualisation, but turned out that the model was predicting the wrong keypoints. This was fixed." />
     <MESSAGE value="Custom Sort algorithm now works with Yolov5." />
     <MESSAGE value="Added YOLO" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added YOLO" />
+    <MESSAGE value="Footage can be livestreamed from server to client.&#10;The client will apply SORT and visualise the results." />
+    <option name="LAST_COMMIT_MESSAGE" value="Footage can be livestreamed from server to client.&#10;The client will apply SORT and visualise the results." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
