@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2b52b2d9-e7d6-4e44-9497-6f6aba11da82" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/client/detection_to_motion.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/locomotion.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/text_to_motion.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/yolo.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/yolo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/server.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +59,7 @@
       <recent name="C:\Users\wangj\Documents\Python\crypto_bot\server\server" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.yolo (2)">
+  <component name="RunManager" selected="Python.locomotion">
     <configuration name="Unnamed" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="server" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -225,6 +228,66 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="joints" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\pepper\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/server/naoqi_test" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/server/naoqi_test/joints.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="locomotion" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\pepper\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/server" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/server/locomotion.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="movement" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\pepper\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/server/naoqi_test" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/server/naoqi_test/movement.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="server" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="server" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -267,6 +330,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="tracker" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\pepper\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/server/naoqi_test" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/server/naoqi_test/tracker.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="yolo (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="server" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -291,6 +375,9 @@
     <configuration name="yolo (2)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\ml\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client/models/sort/edgeai_yolov5" />
       <option name="IS_MODULE_SDK" value="false" />
@@ -336,6 +423,10 @@
       <item itemvalue="Python.detect" />
       <item itemvalue="Python.experiment (1)" />
       <item itemvalue="Python.experiment (2)" />
+      <item itemvalue="Python.movement" />
+      <item itemvalue="Python.joints" />
+      <item itemvalue="Python.tracker" />
+      <item itemvalue="Python.locomotion" />
       <item itemvalue="Python.sort" />
       <item itemvalue="Python.client" />
       <item itemvalue="Python.server" />
@@ -344,9 +435,9 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.yolo (2)" />
         <item itemvalue="Python.client" />
         <item itemvalue="Python.server" />
+        <item itemvalue="Python.yolo (2)" />
         <item itemvalue="Python.sort" />
         <item itemvalue="Python.yolo (1)" />
       </list>
@@ -441,7 +532,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669085363858</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Bounding box and its associated keypoints are drawn at different iterations.&#10;This is fixed.">
+      <created>1669164805304</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1669164805305</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -466,7 +564,8 @@
     <MESSAGE value="Custom Sort algorithm now works with Yolov5." />
     <MESSAGE value="Added YOLO" />
     <MESSAGE value="Footage can be livestreamed from server to client.&#10;The client will apply SORT and visualise the results." />
-    <option name="LAST_COMMIT_MESSAGE" value="Footage can be livestreamed from server to client.&#10;The client will apply SORT and visualise the results." />
+    <MESSAGE value="Bounding box and its associated keypoints are drawn at different iterations.&#10;This is fixed." />
+    <option name="LAST_COMMIT_MESSAGE" value="Bounding box and its associated keypoints are drawn at different iterations.&#10;This is fixed." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

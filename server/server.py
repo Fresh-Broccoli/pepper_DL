@@ -8,15 +8,17 @@ import qi
 import cPickle
 import time
 from camera import CameraManager
+from locomotion import MovementManager
 from threading import Timer
 
 # Copied from: https://www.digitalocean.com/community/tutorials/python-socket-programming-server-client
 
 class Server:
-    def __init__(self, camera_manager, port=5000):
+    def __init__(self, camera_manager, motion_manager, port=5000):
         self.host = socket.gethostname()
         self.port = port
         self.camera_manager = camera_manager
+        self.motion_manager = motion_manager
         self.server_socket = socket.socket()
         self.server_socket.bind((self.host, self.port))
         print "Listening..."
@@ -104,7 +106,7 @@ if __name__ == '__main__':
 
     session = qi.Session()
 
-    ip = "192.168.137.44"
+    ip = "192.168.137.248"
     port = 9559
 
     try:
@@ -128,11 +130,13 @@ if __name__ == '__main__':
 
 
     camera_manager = CameraManager(session, resolution=1, colorspace=11, fps=12)
+    motion_manager = MovementManager(session)
 
     s = Server(camera_manager)
     s.communicate()
     #server_program()
 
     del camera_manager
+    del motion_manager
     #motion_service.rest()
     #posture_service.goToPosture("Sit", fractionMaxSpeed)
