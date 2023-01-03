@@ -2,11 +2,80 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2b52b2d9-e7d6-4e44-9497-6f6aba11da82" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/client/detection_to_motion.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/locomotion.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/text_to_motion.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/.dockerignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/README_ultralytics.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/detect.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/experiment.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/hubconf.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/common.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/experimental.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/export.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/anchors.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/yolov3-spp.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/yolov3-tiny.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/yolov3.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/yolov5-fpn.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/yolov5-p2.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/yolov5-p6.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/yolov5-p7.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/yolov5-panet.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/yolov5l6.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/yolov5l6_kpts.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/yolov5l6_kpts_ti_lite.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/yolov5m6.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/yolov5m6_kpts.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/yolov5m6_kpts_ti_lite.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/yolov5s-transformer.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/yolov5s6.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/yolov5s6_kpts.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/yolov5s6_kpts_ti_lite.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/hub/yolov5x6.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/yolo.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/yolov5l.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/yolov5m.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/yolov5s.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/models/yolov5x.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/onnx_inference/sample_ips.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/onnx_inference/yolo_pose_onnx_inference.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/requirements.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/train.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/tutorial.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/activations.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/autoanchor.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/aws/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/aws/mime.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/aws/resume.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/aws/userdata.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/datasets.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/figures/AdobeStock.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/flask_rest_api/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/flask_rest_api/example_request.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/flask_rest_api/restapi.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/general.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/google_app_engine/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/google_app_engine/additional_requirements.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/google_app_engine/app.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/google_utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/loss.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/metrics.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/plots.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/torch_utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/wandb_logging/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/wandb_logging/log_dataset.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/utils/wandb_logging/wandb_utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/weights/download_weights.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/edgeai_yolov5/yolo.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/models/sort/sort.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/models/sort/sort.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,7 +128,7 @@
       <recent name="C:\Users\wangj\Documents\Python\crypto_bot\server\server" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.locomotion">
+  <component name="RunManager" selected="Python.sort">
     <configuration name="Unnamed" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="server" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -94,27 +163,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/server/camera.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="true" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="client" type="PythonConfigurationType" factoryName="Python" singleton="false" temporary="true" nameIsGenerated="true">
-      <module name="server" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\ml\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/client/client.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="true" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -252,7 +300,10 @@
     <configuration name="locomotion" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\pepper\python.exe" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\ml\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/server" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -288,21 +339,39 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="server" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="server" />
+    <configuration name="ocsort" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\ml\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client/models/oc_sort/trackers/ocsort_tracker" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/client/models/oc_sort/trackers/ocsort_tracker/ocsort.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="setup" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\pepper\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/server" />
+      <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\ml\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client/models/oc_sort" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/server/server.py" />
+      <module name="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/client/models/oc_sort/setup.py" />
       <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
       <option name="REDIRECT_INPUT" value="false" />
@@ -313,9 +382,6 @@
       <module name="server" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
       <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\ml\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client/models/sort" />
       <option name="IS_MODULE_SDK" value="false" />
@@ -352,20 +418,20 @@
       <method v="2" />
     </configuration>
     <configuration name="yolo (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="server" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\ml\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client/models/edgeai_yolov5" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client/models/sort/detection_models/edgeai_yolov5" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/client/models/edgeai_yolov5/yolo.py" />
+      <module name="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/client/models/sort/detection_models/edgeai_yolov5/yolo.py" />
       <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
       <option name="REDIRECT_INPUT" value="false" />
@@ -428,18 +494,18 @@
       <item itemvalue="Python.tracker" />
       <item itemvalue="Python.locomotion" />
       <item itemvalue="Python.sort" />
-      <item itemvalue="Python.client" />
-      <item itemvalue="Python.server" />
-      <item itemvalue="Python.yolo (1)" />
       <item itemvalue="Python.yolo (2)" />
+      <item itemvalue="Python.setup" />
+      <item itemvalue="Python.yolo (1)" />
+      <item itemvalue="Python.ocsort" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.client" />
-        <item itemvalue="Python.server" />
-        <item itemvalue="Python.yolo (2)" />
         <item itemvalue="Python.sort" />
+        <item itemvalue="Python.ocsort" />
         <item itemvalue="Python.yolo (1)" />
+        <item itemvalue="Python.setup" />
+        <item itemvalue="Python.yolo (2)" />
       </list>
     </recent_temporary>
   </component>
@@ -539,7 +605,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669164805305</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Added MovementManager that's responsible for Pepper's basic locomotion.">
+      <created>1669344186958</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1669344186958</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -551,6 +624,18 @@
         <option value="Default.Subject" />
       </list>
     </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="First commit" />
@@ -565,7 +650,8 @@
     <MESSAGE value="Added YOLO" />
     <MESSAGE value="Footage can be livestreamed from server to client.&#10;The client will apply SORT and visualise the results." />
     <MESSAGE value="Bounding box and its associated keypoints are drawn at different iterations.&#10;This is fixed." />
-    <option name="LAST_COMMIT_MESSAGE" value="Bounding box and its associated keypoints are drawn at different iterations.&#10;This is fixed." />
+    <MESSAGE value="Added MovementManager that's responsible for Pepper's basic locomotion." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added MovementManager that's responsible for Pepper's basic locomotion." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -574,6 +660,26 @@
           <url>file://$PROJECT_DIR$/client/client.py</url>
           <line>99</line>
           <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/client/models/sort/sort.py</url>
+          <line>216</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/client/models/oc_sort/trackers/ocsort_tracker/ocsort.py</url>
+          <line>311</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/client/models/oc_sort/trackers/ocsort_tracker/ocsort.py</url>
+          <line>312</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/client/models/oc_sort/trackers/ocsort_tracker/ocsort.py</url>
+          <line>313</line>
+          <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
