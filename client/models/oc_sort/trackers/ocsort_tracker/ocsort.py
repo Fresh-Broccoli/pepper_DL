@@ -195,7 +195,7 @@ class OCSort(object):
         self.use_byte = use_byte
         KalmanBoxTracker.count = 0
 
-    def update(self, output_results, img_info, img_size):
+    def update(self, output_results):
         """
         Params:
           dets - a numpy array of detections in the format [[x1,y1,x2,y2,score],[x1,y1,x2,y2,score],...]
@@ -215,9 +215,6 @@ class OCSort(object):
             output_results = output_results.cpu().numpy()
             scores = output_results[:, 4] * output_results[:, 5]
             bboxes = output_results[:, :4]  # x1y1x2y2
-        img_h, img_w = img_info[0], img_info[1]
-        scale = min(img_size[0] / float(img_h), img_size[1] / float(img_w))
-        bboxes /= scale
         dets = np.concatenate((bboxes, np.expand_dims(scores, axis=-1)), axis=1)
         inds_low = scores > 0.1
         inds_high = scores < self.det_thresh
@@ -441,7 +438,7 @@ class OCSort(object):
 
 
 class OCSortManager(OCSort):
-    def __init__(self, max_age=30, min_hits=3, iou_threshold=0.3, conf_thresh=0.4, delta_t=3, asso_func="iou",
+    def __init__(self, max_age=5, min_hits=3, iou_threshold=0.3, conf_thresh=0.4, delta_t=3, asso_func="iou",
                  inertia=0.2, use_byte=False, **kwargs):
 
         OCSort.__init__(self, max_age=max_age, min_hits=min_hits, iou_threshold=iou_threshold, det_thresh=conf_thresh,
@@ -452,11 +449,10 @@ class OCSortManager(OCSort):
         return self.detector.predict(frame, augment=augment, conf_thres=self.det_thresh, classes=classes, iou_thres=self.iou_threshold, agnostic_nms=agnostic_nms)
 
     def update(self, frame, pred = None, augment=False, classes=None, agnostic_nms=False):
-
         if pred is None:
             pred = self.detector_predict(frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
         bounding_boxes = self.detector.extract_bounding_box_data(pred)
-        return super().update(np.asarray(bounding_boxes),self.detector.image_size,frame.shape[:2])
+        return super().update(np.asarray(bounding_boxes))
 
     def draw(self, prediction, img, show=None):
         for det_index, (*xyxy, id) in enumerate(reversed(prediction[:,:6])):
@@ -479,7 +475,7 @@ if __name__ == '__main__':
         else:
             return parent
 
-    oc = OCSortManager()
+    oc = OCSortManager(use_byte=True)
     data_dir = os.path.join(parent_dir(3), "detection_models", "edgeai_yolov5", "data", "photos")
     #data_dir = os.path.join("edgeai_yolov5", "data", "custom")
     frame1 = cv2.imread(os.path.join(data_dir, "frame1.jpg"))
