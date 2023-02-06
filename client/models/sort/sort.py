@@ -20,6 +20,7 @@ from __future__ import print_function
 import os
 import sys
 import numpy as np
+import pandas as pd
 from skimage import io
 
 import cv2
@@ -286,10 +287,15 @@ class SortManager(Sort):
   def detector_predict(self, frame, augment=False, classes=None, agnostic_nms=False):
     return self.detector.predict(frame, augment=augment, conf_thres=self.conf_threshold, classes=classes, iou_thres=self.iou_threshold, agnostic_nms=agnostic_nms)
 
-  def update(self, frame, pred = None, augment=False, classes=None, agnostic_nms=False):
+  def update(self, frame, pred = None, augment=False, classes=None, agnostic_nms=False, get_bb=True):
     if pred is None:
       pred = self.detector_predict(frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
-    bounding_boxes = self.detector.extract_bounding_box_data(pred)
+    if get_bb:
+      # Get bounding boxes, if True, assume that pred is the output of detection model
+        # otherwise, assume that pred is bounding box data
+      bounding_boxes = self.detector.extract_bounding_box_data(pred)
+    else:
+      bounding_boxes = pred
     return super().update(np.asarray(bounding_boxes))
 
   def draw(self, prediction, img, show=None):
@@ -299,76 +305,75 @@ class SortManager(Sort):
       cv2.imshow("Image", img)
       cv2.waitKey(show)
 
+  def draw_and_save(self, in_dir, out_dir=None, rescale=None, detection=None):
+    """ Runs sort on every single frame in in_dir and saves it to out_dir
+    Params:
+      in_dir - directory of images we wish to run tracking on
+      out_dir - directory to save images with tracked bounding boxes. If None, makes a new file in the parent dir with
+        the same name as in_dir but with added '_sort' in the end
+      rescale - a tuple of length 2 where the first element details the height in pixels and the second element details
+        the width in pixels
+      detection - the full directory of a csv file that contains information about bounding box detections
+    Requires: every frame is in alpha-numerical order
+    """
+
+    # Load frame names
+    frames = os.listdir(in_dir)
+
+    if out_dir is None:
+      out_dir = in_dir.strip("/").strip("\\") + "_sort"
+
+    # Check and make output directory
+    if not os.path.exists(out_dir):
+      os.makedirs(out_dir)
+
+    if detection is not None:
+      # If we do have bounding box, we load up detections as a DataFrame
+      detections = pd.read_csv(detection)
+
+
+      # If detection is None, we have no bounding box data, so we have to predict it from here
+    for f in frames:
+      frame = cv2.imread(os.path.join(in_dir, f))
+      if rescale is not None:
+        frame = cv2.resize(frame, rescale)
+
+      if detection is not None:
+        # 2 cases here: either no detection or detection
+        cdet = detections["image"]==f
+        if cdet.any(): # If this is true, then there's at least one detection
+          # Grab detections with the same image name as current frame excluding the name column
+          dets = detections[cdet].drop("image", axis=1)
+        else: # otherwise, there is no detection, and we have to put in a placeholder
+          dets = np.empty((0, 5))
+        get_bb = False
+
+      else:
+        dets = None
+        get_bb = True
+
+      sort_box = self.update(frame, pred = dets, get_bb = get_bb)
+      self.draw(sort_box, frame)
+      cv2.imwrite(os.path.join(out_dir, f), frame)
+
+
+
+
+
+def parent_dir(back, d=None,):
+  # Goes back to the parent directory 'back' times
+  if d is None:
+    d = os.getcwd()
+
+  parent = os.path.abspath(os.path.join(d, os.pardir))
+  if back > 1:
+    return parent_dir(back-1, parent)
+  else:
+    return parent
+
 if __name__ == '__main__':
+  s = SortManager(conf_threshold=0.15)
   """
-  import matplotlib
-  matplotlib.use('TkAgg')
-  import matplotlib.pyplot as plt
-  import matplotlib.patches as patches
-  # all train
-  args = parse_args()
-  display = args.display
-  phase = args.phase
-  total_time = 0.0
-  total_frames = 0
-  colours = np.random.rand(32, 3) #used only for display
-  if(display):
-    if not os.path.exists('mot_benchmark'):
-      print('\n\tERROR: mot_benchmark link not found!\n\n    Create a symbolic link to the MOT benchmark\n    (https://motchallenge.net/data/2D_MOT_2015/#download). E.g.:\n\n    $ ln -s /path/to/MOT2015_challenge/2DMOT2015 mot_benchmark\n\n')
-      exit()
-    plt.ion()
-    fig = plt.figure()
-    ax1 = fig.add_subplot(111, aspect='equal')
-
-  if not os.path.exists('output'):
-    os.makedirs('output')
-  pattern = os.path.join(args.seq_path, phase, '*', 'det', 'det.txt')
-  for seq_dets_fn in glob.glob(pattern):
-    mot_tracker = Sort(max_age=args.max_age, 
-                       min_hits=args.min_hits,
-                       iou_threshold=args.iou_threshold) #create instance of the SORT tracker
-    seq_dets = np.loadtxt(seq_dets_fn, delimiter=',')
-    seq = seq_dets_fn[pattern.find('*'):].split(os.path.sep)[0]
-    
-    with open(os.path.join('output', '%s.txt'%(seq)),'w') as out_file:
-      print("Processing %s."%(seq))
-      for frame in range(int(seq_dets[:,0].max())):
-        frame += 1 #detection and frame numbers begin at 1
-        dets = seq_dets[seq_dets[:, 0]==frame, 2:7]
-        dets[:, 2:4] += dets[:, 0:2] #convert to [x1,y1,w,h] to [x1,y1,x2,y2]
-        total_frames += 1
-
-        if(display):
-          fn = os.path.join('mot_benchmark', phase, seq, 'img1', '%06d.jpg'%(frame))
-          im =io.imread(fn)
-          ax1.imshow(im)
-          plt.title(seq + ' Tracked Targets')
-
-        start_time = time.time()
-        trackers = mot_tracker.update(dets)
-        cycle_time = time.time() - start_time
-        total_time += cycle_time
-
-        for d in trackers:
-          print('%d,%d,%.2f,%.2f,%.2f,%.2f,1,-1,-1,-1'%(frame,d[4],d[0],d[1],d[2]-d[0],d[3]-d[1]),file=out_file)
-          if(display):
-            d = d.astype(np.int32)
-            ax1.add_patch(patches.Rectangle((d[0],d[1]),d[2]-d[0],d[3]-d[1],fill=False,lw=3,ec=colours[d[4]%32,:]))
-
-        if(display):
-          fig.canvas.flush_events()
-          plt.draw()
-          ax1.cla()
-
-  print("Total Tracking took: %.3f seconds for %d frames or %.1f FPS" % (total_time, total_frames, total_frames / total_time))
-
-  if(display):
-    print("Note: to get real runtime results run without the option: --display")
-  """
-
-
-  s = SortManager()
-
   data_dir = os.path.join(os.path.abspath(os.path.join(os.getcwd(), os.pardir)), "detection_models", "edgeai_yolov5", "data", "photos")
   #data_dir = os.path.join("edgeai_yolov5", "data", "custom")
 
@@ -378,3 +383,11 @@ if __name__ == '__main__':
 
   f1 = s.update(frame1)
   s.draw(f1, frame1, 0)
+  """
+
+
+
+  in_dir = os.path.join(parent_dir(2), "occlusion_test", "frames", "street") #os.path.join(parent_dir(2), "occlusion_test", "frames", "long_walk")
+  out_dir = None #os.path.join(parent_dir(2), "occlusion_test", "frames", "long_walk_640p")
+  detection_dir = os.path.join(parent_dir(2), "occlusion_test", "frames", "street_640p", "bounding_boxes.csv")
+  s.draw_and_save(in_dir, out_dir, rescale=(640, 640), detection=detection_dir)
