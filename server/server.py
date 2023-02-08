@@ -106,7 +106,7 @@ if __name__ == '__main__':
 
     session = qi.Session()
 
-    ip = "192.168.137.248"
+    ip = "192.168.137.210"
     port = 9559
 
     try:
@@ -132,7 +132,7 @@ if __name__ == '__main__':
     camera_manager = CameraManager(session, resolution=1, colorspace=11, fps=12)
     motion_manager = MovementManager(session)
 
-    s = Server(camera_manager)
+    s = Server(camera_manager, motion_manager, )
     s.communicate()
     #server_program()
 

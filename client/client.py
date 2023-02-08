@@ -11,11 +11,15 @@ import time
 #import matplotlib.animation as animation
 from PIL import Image
 
+# Uncomment the following lines to use SORT or OCSORT
 
-#sys.path.append(os.path.join(os.getcwd(), "models", "edgeai_yolov5"))
+# SORT:
+#sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "models", "sort"))
+#from trackers.sort.sort import SortManager
 
-#from yolo import YoloManager
-from sort import SortManager
+# OCSORT:
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "models", "ocsort"))
+from trackers.ocsort.ocsort import OCSortManager
 # Copied from: https://www.digitalocean.com/community/tutorials/python-socket-programming-server-client
 
 class Client:
@@ -28,7 +32,7 @@ class Client:
         #    self.dl_model = YoloManager(**kwargs)
         #elif model == "sort":
         #    self.dl_model = SortManager(**kwargs)
-        self.dl_model = SortManager(**kwargs)
+        self.dl_model = OCSortManager(use_byte=True, **kwargs)
         print(model, " loaded successfully!")
         self.client_socket.connect((self.host, self.port))
 
