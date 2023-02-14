@@ -10,7 +10,7 @@ import time
 from camera import CameraManager
 from locomotion import MovementManager
 from threading import Timer
-
+from ast import literal_eval
 # Copied from: https://www.digitalocean.com/community/tutorials/python-socket-programming-server-client
 
 class Server:
@@ -21,10 +21,30 @@ class Server:
         self.motion_manager = motion_manager
         self.server_socket = socket.socket()
         self.server_socket.bind((self.host, self.port))
+
+        self.child_functions = {
+            "walkToward": self.motion_manager.walkToward,
+            "walkTo": self.motion_manager.walkTo,
+            "stop": self.motion_manager.stop,
+
+        }
+
         print "Listening..."
         self.server_socket.listen(2)
         self.conn, self.address = self.server_socket.accept()
         print "Connection from: " + str(self.address)
+
+    def neo_communicate(self):
+        while True:
+            fps = None
+            duration = None
+            pfps = cPickle.dumps(fps)
+            pduration = cPickle.dumps(duration)
+            print "Pickled fps = ", sys.getsizeof(pfps), " bytes."
+            print "Pickled fps = ", sys.getsizeof(pduration), " bytes."
+            self.conn.send(pfps)
+            self.conn.send(pduration)
+            self.livestream(fps, duration)
 
     def communicate(self):
         while True:
@@ -97,10 +117,20 @@ class Server:
             while True:
                 time.sleep(wait)
                 self.send_image()
-                m = self.conn.recv(8).decode()
-                if m == "b":
+                #m = self.conn.recv(8).decode()
+                command = self.conn.recv(128).decode()
+                #code, func, params = command.split("|")
+                message = command.split("|")
+                print("command = ", command)
+                print("message = ", message)
+                if message[0] == "b":
                     break
-
+                elif message[0] == "c":
+                    # center target
+                    #command = self.conn.recv(64).decode()
+                    # Parsing arguments came from: https://stackoverflow.com/questions/9305387/string-of-kwargs-to-kwargs
+                    #func, params = command.split("|")
+                    self.child_functions[message[1]](**dict((k, literal_eval(v)) for k, v in (pair.split('=') for pair in message[2].split())))
 
 if __name__ == '__main__':
 
@@ -133,7 +163,8 @@ if __name__ == '__main__':
     motion_manager = MovementManager(session)
 
     s = Server(camera_manager, motion_manager, )
-    s.communicate()
+    s.neo_communicate()
+    #s.communicate()
     #server_program()
 
     del camera_manager

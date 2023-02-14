@@ -23,6 +23,26 @@ class MovementManager:
         # Make the robot stand up straight.
         self.posture_service.goToPosture("StandInit", speed)
 
+    def walkTo(self, x=0, y=0, theta=0, verbose=False):
+        """ Makes the robot walk at speeds relative to its maximum speed until its collision avoidance or the user
+            causes it to stop. This function will not interrupt the main flow of the program, however calling this
+            function multiple times will terminate older executions.
+
+        Params:
+
+        x: float
+            Controls the speed in which the robot moves foward. Ranges from -1 to 1.
+        y: float
+            Controls the speed in which the robot strafes left. Ranges from -1 to 1.
+        theta: float
+            Controls the speed in which the robot rotates anti-clockwise. Ranges from -3.1415 to 3.1415.
+        verbose: bool
+            Determines whether we want to print out parameters and results.
+        """
+        if verbose:
+            print "Walking with forward=", x, "m, left=", y, "m, rotation=", theta, "degrees anti-clockwise..."
+        self.motion_service.moveTo(x,y,theta)
+
     def walkToward(self, x=0, y=0, theta=0, verbose=False):
         """ Makes the robot walk at speeds relative to its maximum speed until its collision avoidance or the user
             causes it to stop. This function will not interrupt the main flow of the program, however calling this
@@ -40,7 +60,7 @@ class MovementManager:
             Determines whether we want to print out parameters and results.
         """
         if verbose:
-            print "Walking with forward=", x, "m, left=", y, "m, rotation=", theta, "degrees anti-clockwise..."
+            print "Walking with forward=", x, "m/s, left=", y, "m/s, rotation=", theta, "degrees anti-clockwise..."
         self.motion_service.moveToward(x,y,theta)
 
     def stop(self):
@@ -57,6 +77,7 @@ class MovementManager:
 
         forward: float
             Controls the extent of moving Pepper's head forward. Ranges from -1 to 1.
+            This an absolute position, meaning each float corresponds to a particular location
         left: float
             Controls the extent of moving
         speed: float
@@ -73,8 +94,6 @@ class MovementManager:
         # Shuts down services upon deletion
         self.posture_service.goToPosture("Sit", 0.2)
         self.motion_service.rest()
-
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
