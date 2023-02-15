@@ -160,11 +160,11 @@ if __name__ == "__main__":
     manager = YoloManager(image_size=[640,640])
 
 
-    img = cv2.imread(os.path.join("data", "custom", "paris.jpg"))
+    img = cv2.imread(os.path.join("data", "custom", "raising_hand.jpg"))
 
     preprocessed_img = manager.preprocess_frame(img)
     pred = manager.predict(img, conf_thres=0.30, scale_to_original=True)
-    #box, point = manager.extract_bounding_box_and_keypoint(pred)
+    box, point = manager.extract_bounding_box_and_keypoint(pred)
 
     # Visualising
     manager.draw(pred, img)

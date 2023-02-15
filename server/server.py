@@ -118,7 +118,7 @@ class Server:
                 time.sleep(wait)
                 self.send_image()
                 #m = self.conn.recv(8).decode()
-                command = self.conn.recv(128).decode()
+                command = self.receive_message()
                 #code, func, params = command.split("|")
                 message = command.split("|")
                 print("command = ", command)
@@ -127,10 +127,18 @@ class Server:
                     break
                 elif message[0] == "c":
                     # center target
-                    #command = self.conn.recv(64).decode()
                     # Parsing arguments came from: https://stackoverflow.com/questions/9305387/string-of-kwargs-to-kwargs
-                    #func, params = command.split("|")
                     self.child_functions[message[1]](**dict((k, literal_eval(v)) for k, v in (pair.split('=') for pair in message[2].split())))
+
+    def receive_message(self, bts=1024):
+        """ Receives encoded message from client and outputs the decoded text
+        Params:
+            bts: int
+                represents how many bytes of data the client is ready to receive from the server
+        Returns:
+            string representing the message
+        """
+        return self.conn.recv(bts).decode()
 
 if __name__ == '__main__':
 

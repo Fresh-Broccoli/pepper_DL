@@ -11,6 +11,7 @@ import numpy as np
 
 # Get rid of the dot at the fron to use this as a standalone file.
 from .association import *
+#from association import *
 
 def parent_dir(back, d=None,):
     # Goes back to the parent directory 'back' times
@@ -91,7 +92,9 @@ class KalmanBoxTracker(object):
         """
         # define constant velocity model
         if not orig:
+          # Remove dot at front to run as standalone
           from .kalmanfilter import KalmanFilterNew as KalmanFilter
+          #from kalmanfilter import KalmanFilterNew as KalmanFilter
           self.kf = KalmanFilter(dim_x=7, dim_z=4)
         else:
           from filterpy.kalman import KalmanFilter
@@ -463,15 +466,58 @@ class OCSortManager(OCSort):
         OCSort.__init__(self, max_age=max_age, min_hits=min_hits, iou_threshold=iou_threshold, det_thresh=conf_thresh,
                         delta_t=delta_t, asso_func=asso_func, inertia=inertia, use_byte=use_byte)
         self.detector = YoloManager(**kwargs)
+        self.target_id = None
 
     def detector_predict(self, frame, augment=False, classes=None, agnostic_nms=False):
         return self.detector.predict(frame, augment=augment, conf_thres=self.det_thresh, classes=classes, iou_thres=self.iou_threshold, agnostic_nms=agnostic_nms)
 
-    def update(self, frame, pred = None, augment=False, classes=None, agnostic_nms=False):
+    def update(self, frame, pred = None, augment=False, classes=None, agnostic_nms=False, target_only = False):
         if pred is None:
             pred = self.detector_predict(frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
         bounding_boxes = self.detector.extract_bounding_box_data(pred)
-        return super().update(np.asarray(bounding_boxes))
+        track = super().update(np.asarray(bounding_boxes))
+        return track[track[:,-1]==self.target_id] if target_only else track
+
+    def filtered_update(self, frame, augment=False, classes=None, agnostic_nms=False):
+        """ Before running self.update, checks to see if anyone's raising their hand
+        Params:
+            frame: array
+                an array representing an input image that we want to run detection through
+        Returns:
+            an array of tracking targets. Should only contain information about 1 target.
+            However, in rare circumstances, multiple targets may be tracked. In this case,
+            we will track the target with the highest overall confidence
+            Otherwise, None
+        """
+        pred = self.detector_predict(frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
+        points = self.detector.extract_keypoint_data(pred)
+        pred = pred[(points[:,5,1]>points[:,9,1]) | (points[:,6,1]>points[:,10,1])]
+        if len(pred) == 0:
+            return super().update(np.empty((0, 5))) # Should I run tracking even though no target has been detected?
+
+        elif len(pred) == 1:
+            # SORT requires at least 2 frames of the target to initiate track
+            track = self.update(frame, pred = pred)
+        else: # Should be very rare
+            # If multiple people have raised their hand, target the individual with the highest confidence score:
+            track = self.update(frame, pred = pred[pred[:,4].argmax()])
+        print("len(pred) = ", len(pred))
+        print("track = ", track)
+        self.target_id = int(track[0,-1]) if len(track) > 0 else None
+
+        print("Target detected with ID = ", self.target_id)
+        return track
+
+    def smart_update(self, frame, pred = None, augment=False, classes=None, agnostic_nms=False):
+        #Made to be called by the client, automatically determines whether to call filtered_update or update
+        if self.target_id is None:
+            out = self.filtered_update(frame=frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
+        else:
+            out = self.update(frame=frame, pred=pred, augment=augment, classes=classes, agnostic_nms=agnostic_nms, target_only=True)
+        #print("out shape = ", out.shape)
+        print("out = ", out)
+        print("target Id = ", self.target_id)
+        return out
 
     def draw(self, prediction, img, show=None):
         for det_index, (*xyxy, id) in enumerate(reversed(prediction[:,:6])):

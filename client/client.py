@@ -69,7 +69,7 @@ class Client:
                     # Stream live data
                     cv2.imshow("stream", img)
                     cv2.waitKey(1)
-                    self.client_socket.send("a".encode())
+                    self.send_text("a")
                     count += wait
                     frames += 1
                 cv2.destroyAllWindows()
@@ -84,22 +84,58 @@ class Client:
             else:
                 while True:
                     try:
-                        data = self.client_socket.recv(300000)  # receive response
-                        print("Received data is ", sys.getsizeof(data), " bytes.")
-                        #print('Received from server: ' , data)  # show in terminal
-                        data = pickle.loads(data, encoding='latin1')
-                        real_img = Image.frombuffer('RGB', (data[0], data[1]), bytes(data[6]))
-                        img = np.asarray(real_img)[:,:,::-1]
-                        # Shape of the image: (height, width, colour channels)
-                        pred = self.dl_model.update(img)
+                        img = self.receive_image(verbose=0)
+                        #pred = self.dl_model.update(img)
+                        pred = self.dl_model.smart_update(img)
                         # Shape of pred: number of tracked targets x 5
                         # where 5 represents: (x1, y1, x2, y2, id)
                         self.dl_model.draw(pred, np.ascontiguousarray(img), show=1)
                         m = self.center_target(pred, img.shape)
-                        self.client_socket.send(m.encode())
+                        self.send_text(m)
                     except KeyboardInterrupt:
-                        self.client_socket.send("b".encode())
+                        self.send_text("b")
                         cv2.destroyAllWindows()
+
+    def send_text(self, m):
+        """ Sends text message to server (encoded)
+        Params:
+            m: string
+                the message that will be sent to server
+        """
+        self.client_socket.send(m.encode())
+
+    def receive(self, bts=300000):
+        """ Used to receive message from server
+        Params:
+            bts: int
+                represents how many bytes of data the client is ready to receive from the server
+        Returns:
+            pickled data or bytes
+        """
+        return self.client_socket.recv(bts)
+
+    def receive_image(self, bts=300000, verbose=0):
+        """ Receives pickled image from server and converts it to a numpy array
+        Params:
+            bts: int
+                represents how many bytes of data the client is ready to receive from the server
+            verbose: int or bool
+                if True or 1, show details about the image, namely size and shape
+        Returns:
+            a numpy array representing the image
+        """
+        raw_data = self.receive(bts)  # receive response
+        data = pickle.loads(raw_data, encoding='latin1')
+        real_img = Image.frombuffer('RGB', (data[0], data[1]), bytes(data[6]))
+        img = np.asarray(real_img)[:,:,::-1]
+        if verbose:
+            print("Received data is ", sys.getsizeof(raw_data), " bytes.")
+            print("Image shape is ", img.shape)
+            # Shape of the image: (height, width, colour channels)
+        return  img
+
+
+
 
     def communicate(self):
         while True:
@@ -232,6 +268,13 @@ class Client:
                 if the difference between box center and frame center over frame resolution is less than this threshold,
                 tell the robot to stop rotating, otherwise, the robot will be told to rotate at a rate proportional to
                 this ratio.
+
+        Returns:
+            a string in the format a|b|c, where:
+                a = message code, tells the server what mode it should be running (or what kind of data to expect)
+                b = function the server will call
+                c = parameter in the format of param_name=param param_name2=param2 param_name3=param3 ...
+                        this part is also optional, because functions that b is referring to might not require params
         """
         if len(box)!=1:
             #raise Exception(f"The length of box is {len(box)}, but it should be 1!")
@@ -252,7 +295,8 @@ class Client:
         if abs(horizontal_ratio) > stop_threshold:
             # difference ratio greater than threshold, rotate at that ratio
             # locomotion_manager.walkToward(theta=horizontal_ratio)
-            return f"c|walkToward|theta={str(horizontal_ratio)}"
+            #return f"c|walkToward|theta={str(horizontal_ratio*0.9)}"
+            return f"c|walkTo|theta={str(horizontal_ratio*0.9)}"
         else:
             #return "c|stop|"
             return self.approach_target(box, img_shape)
@@ -262,7 +306,8 @@ class Client:
         box_area = (box[2]-box[0])*(box[3]-box[1])
         frame_area = img_shape[0]*img_shape[1]
         ratio = box_area/frame_area
-        return f"c|walkToward|x={str(1-ratio)}"
+        #return f"c|walkToward|x={str(1-ratio)}"
+        return f"c|walkTo|x={str(1-ratio)}"
 
 if __name__ == '__main__':
     c = Client(image_size=[640,640])
