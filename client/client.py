@@ -90,7 +90,7 @@ class Client:
                         # Shape of pred: number of tracked targets x 5
                         # where 5 represents: (x1, y1, x2, y2, id)
                         self.dl_model.draw(pred, np.ascontiguousarray(img), show=1)
-                        m = self.center_target(pred, img.shape)
+                        m = self.center_target(pred, img.shape, vertical_offset=0.2)
                         self.send_text(m)
                     except KeyboardInterrupt:
                         self.send_text("b")
@@ -251,7 +251,7 @@ class Client:
         self.client_socket.close()  # close the connection
         #return real_img, pred
 
-    def center_target(self, box, img_shape, stop_threshold = 0.1):
+    def center_target(self, box, img_shape, stop_threshold = 0.1, vertical_offset=0.5):
         """ Takes in target bounding box data and attempts to center it
         Preconditons:
             1. box must contain data about exactly 1 bounding box
@@ -260,14 +260,15 @@ class Client:
             box: 2D array
                 Data about one bounding box in the shape of: 1 x 5
                 Columns must be in the format of (x1, y1, x2, y2, id)
-
             img_shape: 1D array
                 Shape of the original frame in the format: (height, width, colour channels),
                 so passing in original_image.shape will do.
             stop_threshold: float between 0 and 1
-                if the difference between box center and frame center over frame resolution is less than this threshold,
+                If the difference between box center and frame center over frame resolution is less than this threshold,
                 tell the robot to stop rotating, otherwise, the robot will be told to rotate at a rate proportional to
                 this ratio.
+            vertical_offset: float between 0 and 1
+
 
         Returns:
             a string in the format a|b|c, where:
@@ -278,36 +279,38 @@ class Client:
         """
         if len(box)!=1:
             #raise Exception(f"The length of box is {len(box)}, but it should be 1!")
-            return "c|stop|"
+            return "c$stop|"
         if len(img_shape)!=3:
             raise Exception(f"The shape of the image does not equal to 3!")
 
+        # Since there's an extra dimension, we'll take the first element, which is just the single detection
         box = box[0]
 
         # Following shapes will be (x, y) format
-        box_center = np.array([box[2]/2+box[0]/2, box[1]/2+box[3]/2])
+        box_center = np.array([box[2]/2+box[0]/2, box[1]*(1-vertical_offset)+box[3]*vertical_offset])#box[1]/2+box[3]/2])
         frame_center = np.array((img_shape[1]/2, img_shape[0]/2))
         #diff = box_center - frame_center
         diff = frame_center - box_center
-        #diff = (box_center[0]-frame_center[0], box_center[1]-frame_center[1])
         horizontal_ratio = diff[0]/img_shape[1]
-        #vertical_ratio = diff[1]/img_shape[0]
+        vertical_ratio = diff[1]/img_shape[0]
+
         if abs(horizontal_ratio) > stop_threshold:
             # difference ratio greater than threshold, rotate at that ratio
             # locomotion_manager.walkToward(theta=horizontal_ratio)
             #return f"c|walkToward|theta={str(horizontal_ratio*0.9)}"
-            return f"c|walkTo|theta={str(horizontal_ratio*0.9)}"
+            return f"c$walkTo|theta={str(horizontal_ratio*0.9)}"
         else:
-            #return "c|stop|"
-            return self.approach_target(box, img_shape)
+            #return "c$stop|"
+            return self.approach_target(box, img_shape, command=f"rotate_head|forward={str(-vertical_ratio*0.9)}")
 
-    def approach_target(self, box, img_shape):
+    def approach_target(self, box, img_shape, command=""):
         # (x1, y1, x2, y2, id)
         box_area = (box[2]-box[0])*(box[3]-box[1])
         frame_area = img_shape[0]*img_shape[1]
         ratio = box_area/frame_area
         #return f"c|walkToward|x={str(1-ratio)}"
-        return f"c|walkTo|x={str(1-ratio)}"
+        return "$".join(["c", command, f"walkTo|x={str(1-ratio)}"])
+        #return "$".join(["c", command, f"walkToward|x={str(1-ratio)}"])
 
 if __name__ == '__main__':
     c = Client(image_size=[640,640])

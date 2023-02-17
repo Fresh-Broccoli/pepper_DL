@@ -53,7 +53,7 @@ class CameraManager():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ip", type=str, default="192.168.137.44",
+    parser.add_argument("--ip", type=str, default="192.168.137.169",
                         help="Robot IP address. On robot or Local Naoqi: use '192.168.137.26'.")
     parser.add_argument("--port", type=int, default=9559,
                         help="Naoqi port number")
@@ -89,6 +89,6 @@ if __name__ == "__main__":
         print "Stopping..."
     """
 
-    del manager
+    #del manager
 
 

@@ -461,12 +461,18 @@ class OCSort(object):
 
 class OCSortManager(OCSort):
     def __init__(self, max_age=5, min_hits=3, iou_threshold=0.3, conf_thresh=0.4, delta_t=3, asso_func="iou",
-                 inertia=0.2, use_byte=False, **kwargs):
-
+                 inertia=0.2, use_byte=False, reset_target_thresh=30, **kwargs):
+        """ OCSortManager, does tracking and detection
+        Params:
+            reset_target_thresh: int
+                The threshold for the number of frames where the target is not present before resetting target
+        """
         OCSort.__init__(self, max_age=max_age, min_hits=min_hits, iou_threshold=iou_threshold, det_thresh=conf_thresh,
                         delta_t=delta_t, asso_func=asso_func, inertia=inertia, use_byte=use_byte)
         self.detector = YoloManager(**kwargs)
         self.target_id = None
+        self.target_absent_frames = 0
+        self.reset_target_thresh=reset_target_thresh
 
     def detector_predict(self, frame, augment=False, classes=None, agnostic_nms=False):
         return self.detector.predict(frame, augment=augment, conf_thres=self.det_thresh, classes=classes, iou_thres=self.iou_threshold, agnostic_nms=agnostic_nms)
@@ -492,6 +498,9 @@ class OCSortManager(OCSort):
         pred = self.detector_predict(frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
         points = self.detector.extract_keypoint_data(pred)
         pred = pred[(points[:,5,1]>points[:,9,1]) | (points[:,6,1]>points[:,10,1])]
+        # Current implementation of this check only looks at the position of estimated keypoint, but it does not look
+        # into the confidence score for relevant keypoints. This means for joints offscreen, the detector may give it
+        # weird values that may mess with the logic here.
         if len(pred) == 0:
             return super().update(np.empty((0, 5))) # Should I run tracking even though no target has been detected?
 
@@ -500,23 +509,33 @@ class OCSortManager(OCSort):
             track = self.update(frame, pred = pred)
         else: # Should be very rare
             # If multiple people have raised their hand, target the individual with the highest confidence score:
-            track = self.update(frame, pred = pred[pred[:,4].argmax()])
+            # Apparently, this tensor is only 1D, so I'll unsqueeze it for now
+            track = self.update(frame, pred = pred[pred[:,4].argmax()].unsqueeze(0))
         print("len(pred) = ", len(pred))
         print("track = ", track)
+
         self.target_id = int(track[0,-1]) if len(track) > 0 else None
 
-        print("Target detected with ID = ", self.target_id)
         return track
 
     def smart_update(self, frame, pred = None, augment=False, classes=None, agnostic_nms=False):
         #Made to be called by the client, automatically determines whether to call filtered_update or update
-        if self.target_id is None:
+        if self.target_id is None: # When there's no tracked target
             out = self.filtered_update(frame=frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
-        else:
+        else: # When there's a tracked target
             out = self.update(frame=frame, pred=pred, augment=augment, classes=classes, agnostic_nms=agnostic_nms, target_only=True)
+            if len(out) == 0: # When the tracked target is not present on the screen
+                self.target_absent_frames += 1
+                if self.target_absent_frames >= self.reset_target_thresh: # If the number of frames where the target
+                    # is absent is greater than or equal to the threshold, reset the target ID
+                    print("Target ", self.target_id, " is missing, looking for new target.")
+                    self.target_id = None
+                    self.target_absent_frames = 0
+
         #print("out shape = ", out.shape)
         print("out = ", out)
         print("target Id = ", self.target_id)
+
         return out
 
     def draw(self, prediction, img, show=None):

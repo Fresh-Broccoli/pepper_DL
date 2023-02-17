@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2b52b2d9-e7d6-4e44-9497-6f6aba11da82" name="Default Changelist" comment="Restructured folders&#10;&#10;Messed around with sys.path to avoid import errors&#10;&#10;OCSORT works within the server-client system with Pepper.">
+    <list default="true" id="2b52b2d9-e7d6-4e44-9497-6f6aba11da82" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/trackers/detection_models/edgeai_yolov5/yolo.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/trackers/detection_models/edgeai_yolov5/yolo.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/trackers/ocsort/ocsort.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/trackers/ocsort/ocsort.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/camera.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/camera.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/locomotion.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/locomotion.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/server.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -61,13 +62,20 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/client/trackers/sort" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings>
+        <option name="useSoftWraps" value="true" />
+      </console-settings>
+    </option>
+  </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\wangj\Documents\Python\crypto_bot\server\client" />
       <recent name="C:\Users\wangj\Documents\Python\crypto_bot\server\server" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.yolo (1)">
+  <component name="RunManager" selected="Python.camera">
     <configuration name="Unnamed" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="server" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -113,6 +121,9 @@
     <configuration name="client" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\ml\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client" />
       <option name="IS_MODULE_SDK" value="false" />
@@ -299,6 +310,9 @@
     <configuration name="ocsort" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\ml\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client/trackers/ocsort" />
       <option name="IS_MODULE_SDK" value="false" />
@@ -317,6 +331,9 @@
     <configuration name="server" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\pepper\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/server" />
       <option name="IS_MODULE_SDK" value="false" />
@@ -377,6 +394,9 @@
     <configuration name="yolo (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\ml\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client/trackers/detection_models/edgeai_yolov5" />
       <option name="IS_MODULE_SDK" value="false" />
@@ -395,6 +415,9 @@
     <configuration name="yolo" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\ml\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client/models/detection_models/edgeai_yolov5" />
       <option name="IS_MODULE_SDK" value="false" />
@@ -413,6 +436,7 @@
     <list>
       <item itemvalue="Python.Unnamed" />
       <item itemvalue="Python.camera" />
+      <item itemvalue="Python.client" />
       <item itemvalue="Python.detect" />
       <item itemvalue="Python.experiment (1)" />
       <item itemvalue="Python.experiment (2)" />
@@ -421,19 +445,19 @@
       <item itemvalue="Python.joints" />
       <item itemvalue="Python.locomotion" />
       <item itemvalue="Python.movement" />
-      <item itemvalue="Python.tracker" />
-      <item itemvalue="Python.client" />
       <item itemvalue="Python.ocsort" />
       <item itemvalue="Python.server" />
       <item itemvalue="Python.sort" />
+      <item itemvalue="Python.tracker" />
       <item itemvalue="Python.yolo (1)" />
+      <item itemvalue="Python.yolo" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.yolo (1)" />
-        <item itemvalue="Python.ocsort" />
         <item itemvalue="Python.client" />
         <item itemvalue="Python.server" />
+        <item itemvalue="Python.yolo (1)" />
+        <item itemvalue="Python.ocsort" />
         <item itemvalue="Python.sort" />
       </list>
     </recent_temporary>
@@ -576,7 +600,14 @@
       <option name="project" value="LOCAL" />
       <updated>1676418226550</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Follow Behaviour Update 1:&#10;&#10;- Added conditional follow: if the target is not raising their hand, the robot will ignore them.&#10;&#10;- If there are multiple people in the frame with their hands raised, the robot will approach the person with a higher confidence value.">
+      <created>1676431150800</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1676431150800</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -619,7 +650,8 @@
     <MESSAGE value="OCSort drawing incorrect bounding box fixed. Turns out scale was completely irrelevant, so it was deleted." />
     <MESSAGE value="For:&#10;&#10;yolo.py:&#10;    - added the ability to save bounding box data as a .csv&#10;    &#10;sort.py:&#10;    - added the ability to read .csv bounding box data and superimpose tracking over clean images" />
     <MESSAGE value="Restructured folders&#10;&#10;Messed around with sys.path to avoid import errors&#10;&#10;OCSORT works within the server-client system with Pepper." />
-    <option name="LAST_COMMIT_MESSAGE" value="Restructured folders&#10;&#10;Messed around with sys.path to avoid import errors&#10;&#10;OCSORT works within the server-client system with Pepper." />
+    <MESSAGE value="Follow Behaviour Update 1:&#10;&#10;- Added conditional follow: if the target is not raising their hand, the robot will ignore them.&#10;&#10;- If there are multiple people in the frame with their hands raised, the robot will approach the person with a higher confidence value." />
+    <option name="LAST_COMMIT_MESSAGE" value="Follow Behaviour Update 1:&#10;&#10;- Added conditional follow: if the target is not raising their hand, the robot will ignore them.&#10;&#10;- If there are multiple people in the frame with their hands raised, the robot will approach the person with a higher confidence value." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

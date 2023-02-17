@@ -25,6 +25,8 @@ class Server:
         self.child_functions = {
             "walkToward": self.motion_manager.walkToward,
             "walkTo": self.motion_manager.walkTo,
+            "rotate_head": self.motion_manager.rotate_head,
+            "rotate_head_abs": self.motion_manager.rotate_head_abs,
             "stop": self.motion_manager.stop,
 
         }
@@ -118,17 +120,21 @@ class Server:
                 time.sleep(wait)
                 self.send_image()
                 #m = self.conn.recv(8).decode()
-                command = self.receive_message()
+                commands = self.receive_message()
                 #code, func, params = command.split("|")
-                message = command.split("|")
-                print("command = ", command)
-                print("message = ", message)
-                if message[0] == "b":
+                messages = commands.split("$")
+                actions = [command.split("|") for command in messages[1:]]
+                #message = command.split("|")
+                print("actions = ", actions)
+                #print("message = ", message)
+                if messages[0] == "b":
                     break
-                elif message[0] == "c":
+                elif messages[0] == "c":
                     # center target
                     # Parsing arguments came from: https://stackoverflow.com/questions/9305387/string-of-kwargs-to-kwargs
-                    self.child_functions[message[1]](**dict((k, literal_eval(v)) for k, v in (pair.split('=') for pair in message[2].split())))
+                    for action in actions:
+                        self.child_functions[action[0]](**dict((k, literal_eval(v)) for k, v in (pair.split('=') for pair in action[1].split())))
+                    #self.child_functions[message[1]](**dict((k, literal_eval(v)) for k, v in (pair.split('=') for pair in message[2].split())))
 
     def receive_message(self, bts=1024):
         """ Receives encoded message from client and outputs the decoded text
@@ -144,7 +150,7 @@ if __name__ == '__main__':
 
     session = qi.Session()
 
-    ip = "192.168.137.210"
+    ip = "192.168.137.169"
     port = 9559
 
     try:
