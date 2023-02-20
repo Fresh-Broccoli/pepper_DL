@@ -150,7 +150,7 @@ if __name__ == '__main__':
 
     session = qi.Session()
 
-    ip = "192.168.137.169"
+    ip = "192.168.137.143"
     port = 9559
 
     try:
@@ -183,5 +183,6 @@ if __name__ == '__main__':
 
     del camera_manager
     del motion_manager
+    del life_service
     #motion_service.rest()
     #posture_service.goToPosture("Sit", fractionMaxSpeed)

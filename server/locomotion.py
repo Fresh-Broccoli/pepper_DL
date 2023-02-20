@@ -92,6 +92,7 @@ class MovementManager:
             forward: float
                 Controls the extent of moving Pepper's head forward. Ranges from -2.0857 to 2.0857.
                 This a relative position, meaning each float corresponds to the current location.
+                Positive means look down, negative means look up.
                 Setting a number outside the range will set it to the maximum or minimum depending on the input.
             left: float
                 Controls the extent of moving Pepper's head horizontally. Ranges from -0.7068 to 0.4451
@@ -133,7 +134,7 @@ class MovementManager:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ip", type=str, default="192.168.137.169",
+    parser.add_argument("--ip", type=str, default="192.168.137.143",
                         help="Robot IP address. On robot or Local Naoqi: use '127.0.0.1'.")
     parser.add_argument("--port", type=int, default=9559,
                         help="Naoqi port number")

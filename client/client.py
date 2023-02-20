@@ -90,7 +90,8 @@ class Client:
                         # Shape of pred: number of tracked targets x 5
                         # where 5 represents: (x1, y1, x2, y2, id)
                         self.dl_model.draw(pred, np.ascontiguousarray(img), show=1)
-                        m = self.center_target(pred, img.shape, vertical_offset=0.2)
+                        m = self.center_target(pred, img.shape, vertical_offset=0.8)
+                        print("m = ", m)
                         self.send_text(m)
                     except KeyboardInterrupt:
                         self.send_text("b")
@@ -279,7 +280,8 @@ class Client:
         """
         if len(box)!=1:
             #raise Exception(f"The length of box is {len(box)}, but it should be 1!")
-            return "c$stop|"
+            #return "c$stop|"
+            return "c$rotate_head_abs|"
         if len(img_shape)!=3:
             raise Exception(f"The shape of the image does not equal to 3!")
 
@@ -295,22 +297,32 @@ class Client:
         vertical_ratio = diff[1]/img_shape[0]
 
         if abs(horizontal_ratio) > stop_threshold:
+            #print("ratio = ", horizontal_ratio)
             # difference ratio greater than threshold, rotate at that ratio
             # locomotion_manager.walkToward(theta=horizontal_ratio)
-            #return f"c|walkToward|theta={str(horizontal_ratio*0.9)}"
-            return f"c$walkTo|theta={str(horizontal_ratio*0.9)}"
+            return f"c$walkToward|theta={str(horizontal_ratio*0.9)}"
+            #return f"c$walkTo|theta={str(horizontal_ratio*0.9)}"
         else:
             #return "c$stop|"
-            return self.approach_target(box, img_shape, command=f"rotate_head|forward={str(-vertical_ratio*0.9)}")
+            return self.approach_target(box, img_shape, command=f"rotate_head|forward={str(vertical_ratio*0.2)}")
 
-    def approach_target(self, box, img_shape, command=""):
+    def approach_target(self, box, img_shape, stop_threshold=0.65, move_back_threshold=0.8, command=""):
         # (x1, y1, x2, y2, id)
         box_area = (box[2]-box[0])*(box[3]-box[1])
         frame_area = img_shape[0]*img_shape[1]
         ratio = box_area/frame_area
         #return f"c|walkToward|x={str(1-ratio)}"
-        return "$".join(["c", command, f"walkTo|x={str(1-ratio)}"])
-        #return "$".join(["c", command, f"walkToward|x={str(1-ratio)}"])
+        if ratio > stop_threshold:
+            if ratio > move_back_threshold:
+                m = f"c$walkToward|x={str(ratio-1)}" # Move backwards
+                #m = f"c$walkTo|x={str(ratio-1)}" # Move backwards
+            else:
+                m = "c$" + command
+        else:
+            m = f"c$stop|$walkToward|x={str(1-ratio)}" # Move forward
+            #m = f"c$walkTo|x={str(1-ratio)}" # Move forward
+        #print("ratio = ", ratio)
+        return m
 
 if __name__ == '__main__':
     c = Client(image_size=[640,640])
