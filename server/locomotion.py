@@ -9,7 +9,12 @@ class MovementManager:
         self.motion_service  = session.service("ALMotion")
         self.posture_service = session.service("ALRobotPosture")
         self.motion_service.setStiffnesses("Head", 1.0)
+        # First, wake up.
+        self.motion_service.wakeUp()
         self.reset_posture()
+        # minimize Security Distance
+        self.motion_service.setTangentialSecurityDistance(0.05)
+        self.motion_service.setOrthogonalSecurityDistance(0.10)
 
     def reset_posture(self, speed=0.5):
         """ Makes the robot stand up straight. Used to reset posture.
@@ -134,7 +139,7 @@ class MovementManager:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ip", type=str, default="192.168.137.143",
+    parser.add_argument("--ip", type=str, default="192.168.137.131",
                         help="Robot IP address. On robot or Local Naoqi: use '127.0.0.1'.")
     parser.add_argument("--port", type=int, default=9559,
                         help="Naoqi port number")
@@ -149,5 +154,5 @@ if __name__ == "__main__":
         sys.exit(1)
 
     manager = MovementManager(session)
-
+    memory = session.service("ALMemory")
     # del manager

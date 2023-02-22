@@ -9,16 +9,18 @@ import cPickle
 import time
 from camera import CameraManager
 from locomotion import MovementManager
+from voice import SpeechManager
 from threading import Timer
 from ast import literal_eval
 # Copied from: https://www.digitalocean.com/community/tutorials/python-socket-programming-server-client
 
 class Server:
-    def __init__(self, camera_manager, motion_manager, port=5000):
+    def __init__(self, camera_manager, motion_manager, speech_manager, port=5000):
         self.host = socket.gethostname()
         self.port = port
         self.camera_manager = camera_manager
         self.motion_manager = motion_manager
+        self.speech_manager = speech_manager
         self.server_socket = socket.socket()
         self.server_socket.bind((self.host, self.port))
 
@@ -27,6 +29,8 @@ class Server:
             "walkTo": self.motion_manager.walkTo,
             "rotate_head": self.motion_manager.rotate_head,
             "rotate_head_abs": self.motion_manager.rotate_head_abs,
+            "target_lost": self.speech_manager.target_lost,
+            "target_detected": self.speech_manager.target_detected,
             "stop": self.motion_manager.stop,
 
         }
@@ -35,6 +39,7 @@ class Server:
         self.server_socket.listen(2)
         self.conn, self.address = self.server_socket.accept()
         print "Connection from: " + str(self.address)
+        self.speech_manager.say("Connected to deep learning client. Please raise your hand if you want me to follow you.")
 
     def neo_communicate(self):
         while True:
@@ -150,7 +155,7 @@ if __name__ == '__main__':
 
     session = qi.Session()
 
-    ip = "192.168.137.143"
+    ip = "192.168.137.8"
     port = 9559
 
     try:
@@ -159,24 +164,28 @@ if __name__ == '__main__':
         print ("Can't connect to Naoqi at ip \"" + ip + "\" on port " + str(port) + ".\n"
                                                                              "Please check your script arguments. Run with -h option for help.")
     life_service = session.service("ALAutonomousLife")
-    motion_service = session.service("ALMotion")
-    posture_service = session.service("ALRobotPosture")
+    #motion_service = session.service("ALMotion")
+    #posture_service = session.service("ALRobotPosture")
+
+
+    # minimize Security Distance
+    #motion_service.setTangentialSecurityDistance(0.05)
+    #motion_service.setOrthogonalSecurityDistance(0.10)
 
     life_service.setAutonomousAbilityEnabled("All", False) # Disable autonomous life
 
     # First, wake up.
-    motion_service.wakeUp()
+    #motion_service.wakeUp()
 
-    fractionMaxSpeed = 0.8
+    #fractionMaxSpeed = 0.8
     # Go to posture stand
-    posture_service.goToPosture("StandInit", fractionMaxSpeed)
-
-
+    #posture_service.goToPosture("StandInit", fractionMaxSpeed)
 
     camera_manager = CameraManager(session, resolution=1, colorspace=11, fps=12)
     motion_manager = MovementManager(session)
+    speech_manager = SpeechManager(session)
 
-    s = Server(camera_manager, motion_manager, )
+    s = Server(camera_manager, motion_manager, speech_manager)
     s.neo_communicate()
     #s.communicate()
     #server_program()
@@ -184,5 +193,4 @@ if __name__ == '__main__':
     del camera_manager
     del motion_manager
     del life_service
-    #motion_service.rest()
-    #posture_service.goToPosture("Sit", fractionMaxSpeed)
+    del speech_manager

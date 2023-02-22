@@ -86,11 +86,11 @@ class Client:
                     try:
                         img = self.receive_image(verbose=0)
                         #pred = self.dl_model.update(img)
-                        pred = self.dl_model.smart_update(img)
+                        pred, l = self.dl_model.smart_update(img)
                         # Shape of pred: number of tracked targets x 5
                         # where 5 represents: (x1, y1, x2, y2, id)
                         self.dl_model.draw(pred, np.ascontiguousarray(img), show=1)
-                        m = self.center_target(pred, img.shape, vertical_offset=0.8)
+                        m = self.center_target(pred, img.shape, vertical_offset=0.8, lost = l)
                         print("m = ", m)
                         self.send_text(m)
                     except KeyboardInterrupt:
@@ -252,7 +252,7 @@ class Client:
         self.client_socket.close()  # close the connection
         #return real_img, pred
 
-    def center_target(self, box, img_shape, stop_threshold = 0.1, vertical_offset=0.5):
+    def center_target(self, box, img_shape, stop_threshold = 0.1, vertical_offset=0.5, lost = None):
         """ Takes in target bounding box data and attempts to center it
         Preconditons:
             1. box must contain data about exactly 1 bounding box
@@ -281,7 +281,9 @@ class Client:
         if len(box)!=1:
             #raise Exception(f"The length of box is {len(box)}, but it should be 1!")
             #return "c$stop|"
-            return "c$rotate_head_abs|"
+            #return "c$stop|" + "$say|text=\"Target lost, searching for new target\"" if (len(box)==0 and self.dl_model.target_id is None) else "" + "$rotate_head_abs|"
+            return "c$stop|" + "$target_lost|" if lost=="l" else "" + "$rotate_head_abs|"
+            #return "c$stop|" + "$rotate_head_abs|"
         if len(img_shape)!=3:
             raise Exception(f"The shape of the image does not equal to 3!")
 
@@ -300,11 +302,13 @@ class Client:
             #print("ratio = ", horizontal_ratio)
             # difference ratio greater than threshold, rotate at that ratio
             # locomotion_manager.walkToward(theta=horizontal_ratio)
-            return f"c$walkToward|theta={str(horizontal_ratio*0.9)}"
+            o = f"c$walkToward|theta={str(horizontal_ratio*0.9)}"
             #return f"c$walkTo|theta={str(horizontal_ratio*0.9)}"
         else:
             #return "c$stop|"
-            return self.approach_target(box, img_shape, command=f"rotate_head|forward={str(vertical_ratio*0.2)}")
+            o = self.approach_target(box, img_shape, command=f"rotate_head|forward={str(vertical_ratio*0.2)}")
+            print("o = ", o)
+        return o[0:2] + "target_detected|" if lost=="t" else "" +o[2:]
 
     def approach_target(self, box, img_shape, stop_threshold=0.65, move_back_threshold=0.8, command=""):
         # (x1, y1, x2, y2, id)
@@ -314,12 +318,14 @@ class Client:
         #return f"c|walkToward|x={str(1-ratio)}"
         if ratio > stop_threshold:
             if ratio > move_back_threshold:
-                m = f"c$walkToward|x={str(ratio-1)}" # Move backwards
-                #m = f"c$walkTo|x={str(ratio-1)}" # Move backwards
+                m = f"c$walkTo|x={str(ratio-1)}" # Move backwards
+                #m = f"c$walkToward|x={str(ratio-1)}" # Move backwards
             else:
                 m = "c$" + command
         else:
-            m = f"c$stop|$walkToward|x={str(1-ratio)}" # Move forward
+            #m = f"c$stop|$walkToward|x={str(1-ratio)}" # Move forward
+            m = f"c$walkToward|x={str(1-ratio)}" # Move forward
+
             #m = f"c$walkTo|x={str(1-ratio)}" # Move forward
         #print("ratio = ", ratio)
         return m
