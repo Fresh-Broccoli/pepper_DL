@@ -89,7 +89,11 @@ class Client:
                         pred, l = self.dl_model.smart_update(img)
                         # Shape of pred: number of tracked targets x 5
                         # where 5 represents: (x1, y1, x2, y2, id)
+
                         self.dl_model.draw(pred, np.ascontiguousarray(img), show=1)
+
+                        # For capturing predictions
+                        #self.dl_model.draw(pred, np.ascontiguousarray(img), show=1,save_dir=os.path.join("pepper_test", "rotate"))
                         m = self.center_target(pred, img.shape, vertical_offset=0.8, lost = l)
                         print("m = ", m)
                         self.send_text(m)
@@ -239,7 +243,7 @@ class Client:
                             img = np.asarray(real_img)[:,:,::-1]
                             #pred = self.dl_model.predict(img)
                             pred = self.dl_model.update(img)
-                            self.dl_model.draw(pred, np.ascontiguousarray(img), show=1)
+                            self.dl_model.draw(pred, np.ascontiguousarray(img), show=1,) #save_dir=os.path.join("pepper_test", "rotate"))
                             self.client_socket.send("a".encode())
                         except KeyboardInterrupt:
                             self.client_socket.send("b".encode())
@@ -308,7 +312,7 @@ class Client:
             #return "c$stop|"
             o = self.approach_target(box, img_shape, command=f"rotate_head|forward={str(vertical_ratio*0.2)}")
             print("o = ", o)
-        return o[0:2] + "target_detected|" if lost=="t" else "" +o[2:]
+        return o[0:2] + ("target_detected|$" if lost=="t" else "") +o[2:]
 
     def approach_target(self, box, img_shape, stop_threshold=0.65, move_back_threshold=0.8, command=""):
         # (x1, y1, x2, y2, id)

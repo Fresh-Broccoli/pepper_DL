@@ -473,6 +473,7 @@ class OCSortManager(OCSort):
         self.target_id = None
         self.target_absent_frames = 0
         self.reset_target_thresh=reset_target_thresh
+        self.save_frame_count = 0
 
     def detector_predict(self, frame, augment=False, classes=None, agnostic_nms=False):
         return self.detector.predict(frame, augment=augment, conf_thres=self.det_thresh, classes=classes, iou_thres=self.iou_threshold, agnostic_nms=agnostic_nms)
@@ -553,12 +554,17 @@ class OCSortManager(OCSort):
 
         return out, m
 
-    def draw(self, prediction, img, show=None):
+    def draw(self, prediction, img, show=None, save_dir = None):
         for det_index, (*xyxy, id) in enumerate(reversed(prediction[:,:6])):
             plot_one_box(xyxy, img, label=(f'id: {str(int(id))}'), color=colors(0,True), line_thickness=2, kpt_label=False, steps=3, orig_shape=img.shape[:2])
+        if save_dir is not None:
+            self.save_frame_count += 1
+            file_name = os.path.join(save_dir, "{:08d}.jpg".format(self.save_frame_count))
+            cv2.imwrite(file_name, img)
         if show is not None:
             cv2.imshow("Image", img)
             cv2.waitKey(show)
+
 
 
 if __name__ == '__main__':
@@ -582,4 +588,4 @@ if __name__ == '__main__':
     #frame1 = cv2.imread(os.path.join(data_dir, "paris.jpg"))
 
     f1 = oc.update(frame1)
-    oc.draw(f1, frame1, 0)
+    oc.draw(f1, frame1, 0, save_dir=os.path.join(parent_dir(2), "pepper_test"))
