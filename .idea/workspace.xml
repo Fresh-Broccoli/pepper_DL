@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="2b52b2d9-e7d6-4e44-9497-6f6aba11da82" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/trackers/ocsort/ocsort.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/trackers/ocsort/ocsort.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -118,6 +116,9 @@
     <configuration name="client" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\ml\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client" />
       <option name="IS_MODULE_SDK" value="false" />
@@ -304,6 +305,9 @@
     <configuration name="ocsort" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\ml\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client/trackers/ocsort" />
       <option name="IS_MODULE_SDK" value="false" />
@@ -322,6 +326,9 @@
     <configuration name="server" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="C:\Users\wangj\Anaconda3\envs\pepper\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/server" />
       <option name="IS_MODULE_SDK" value="false" />
@@ -415,8 +422,8 @@
       <item itemvalue="Python.client" />
       <item itemvalue="Python.ocsort" />
       <item itemvalue="Python.server" />
-      <item itemvalue="Python.yolo (1)" />
       <item itemvalue="Python.voice" />
+      <item itemvalue="Python.yolo (1)" />
     </list>
     <recent_temporary>
       <list>
@@ -594,7 +601,14 @@
       <option name="project" value="LOCAL" />
       <updated>1677043198646</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Follow Behaviour:&#10;&#10;- Fixed the bug that prevents Pepper from responding to positive detection/tracking">
+      <created>1677204721949</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1677204721949</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -641,7 +655,8 @@
     <MESSAGE value="Framework:&#10;&#10;- The client can now send multiple functions to the server&#10;&#10;Follow Behaviour:&#10;&#10;- The robot will attempt to look at the target's head (approximately the top 80% of the bounding box)" />
     <MESSAGE value="Follow Behaviour:&#10;&#10;- The robot will reset its head position after losing track of the target&#10;- Changed moveTo to moveToward" />
     <MESSAGE value="Follow Behaviour:&#10;&#10;- The robot will tell the user when it is following or has lost the target" />
-    <option name="LAST_COMMIT_MESSAGE" value="Follow Behaviour:&#10;&#10;- The robot will tell the user when it is following or has lost the target" />
+    <MESSAGE value="Follow Behaviour:&#10;&#10;- Fixed the bug that prevents Pepper from responding to positive detection/tracking" />
+    <option name="LAST_COMMIT_MESSAGE" value="Follow Behaviour:&#10;&#10;- Fixed the bug that prevents Pepper from responding to positive detection/tracking" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
