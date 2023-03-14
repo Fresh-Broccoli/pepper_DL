@@ -2,11 +2,16 @@ import socket
 import os
 import sys
 
-from PIL import Image
 import numpy as np
 import qi
 import cPickle
 import time
+import argparse
+import io
+import base64
+
+from flask import Flask, request, Response, jsonify
+from PIL import Image
 from camera import CameraManager
 from locomotion import MovementManager
 from voice import SpeechManager
@@ -36,22 +41,23 @@ class Server:
         }
 
         print "Listening..."
-        self.server_socket.listen(2)
+        self.server_socket.listen(1)
         self.conn, self.address = self.server_socket.accept()
         print "Connection from: " + str(self.address)
         self.speech_manager.say("Connected to deep learning client. Please raise your hand if you want me to follow you.")
 
     def neo_communicate(self):
         while True:
-            fps = None
-            duration = None
-            pfps = cPickle.dumps(fps)
-            pduration = cPickle.dumps(duration)
-            print "Pickled fps = ", sys.getsizeof(pfps), " bytes."
-            print "Pickled fps = ", sys.getsizeof(pduration), " bytes."
-            self.conn.send(pfps)
-            self.conn.send(pduration)
-            self.livestream(fps, duration)
+            #fps = None
+            #duration = None
+            #pfps = cPickle.dumps(fps)
+            #pduration = cPickle.dumps(duration)
+            #print "Pickled fps = ", sys.getsizeof(pfps), " bytes."
+            #print "Pickled fps = ", sys.getsizeof(pduration), " bytes."
+            #self.conn.send(pfps)
+            #self.conn.send(pduration)
+
+            self.livestream(None, False)
 
     def communicate(self):
         while True:
@@ -151,11 +157,54 @@ class Server:
         """
         return self.conn.recv(bts).decode()
 
+# Initiate Qi Session
+session = qi.Session()
+parser = argparse.ArgumentParser(description="Please enter Pepper's IP address (and optional port number)")
+parser.add_argument("ip", type=str, default="192.168.43.183")
+parser.add_argument("port", type=int, default=9559)
+args = parser.parse_args()
+
+# Connecting to the robot
+# Decided not to use try-except because if the server failed to connect to the robot, then there's no point
+    # starting a Flask server
+session.connect("tcp://" + args.ip + ":" + str(args.port))
+
+# Robot setup:
+# Controls autonomous life behaviour, mainly used to disable it
+life_service = session.service("ALAutonomousLife")
+# Controls the robot's cameras
+camera_manager = CameraManager(session, resolution=1, colorspace=11, fps=30)
+# Controls the robot's locomotion
+motion_manager = MovementManager(session)
+# Controls the robot's speech
+speech_manager = SpeechManager(session)
+
+# Disable autonomous life because it can interfere with follow behaviour
+life_service.setAutonomousAbilityEnabled("All", False)
+
+# Start Flask server
+app = Flask(__name__)
+
+@app.route("/image/send_image", methods=["POST"])
+def send_image():
+    # Requests image from Pepper, then sends it to the client
+    img = camera_manager.get_image(raw=False) # Gets image as Pillow Image
+    rawBytes = io.BytesIO()
+    # Saves image as buffer
+    img.save(rawBytes, "JPEG")
+    rawBytes.seek(0)
+    img_base64 = base64.b64encode(rawBytes.read())
+    return jsonify({
+        'msg': 'success',
+        'img': str(img_base64),
+    })
+
 if __name__ == '__main__':
+
 
     session = qi.Session()
 
-    ip = "192.168.137.8"
+    ip = "192.168.43.183"
     port = 9559
 
     try:
@@ -164,8 +213,8 @@ if __name__ == '__main__':
         print ("Can't connect to Naoqi at ip \"" + ip + "\" on port " + str(port) + ".\n"
                                                                              "Please check your script arguments. Run with -h option for help.")
     life_service = session.service("ALAutonomousLife")
-    #motion_service = session.service("ALMotion")
-    #posture_service = session.service("ALRobotPosture")
+    motion_service = session.service("ALMotion")
+    posture_service = session.service("ALRobotPosture")
 
 
     # minimize Security Distance
@@ -185,7 +234,7 @@ if __name__ == '__main__':
     motion_manager = MovementManager(session)
     speech_manager = SpeechManager(session)
 
-    s = Server(camera_manager, motion_manager, speech_manager)
+    s = Server(camera_manager, motion_manager, speech_manager,)# port=45093)
     s.neo_communicate()
     #s.communicate()
     #server_program()

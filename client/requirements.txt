@@ -1,0 +1,8 @@
+numpy
+pandas
+matplotlib
+Flask
+Pillow
+opencv-python
+requests
+# Need to install a compatible version of PyTorch. I did not include this because it can vary from machine to machine.

@@ -40,7 +40,7 @@ class CameraManager():
 
     def convert_to_pillow(self, img, rotate=0):
         #start = time.time()
-        img = self.get_image()
+        #img = self.get_image()
         real_img = Image.frombuffer('RGB', (img[0], img[1]), bytes(img[6]))
         #real_img.show()
         return real_img.rotate(rotate)
@@ -53,7 +53,7 @@ class CameraManager():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ip", type=str, default="192.168.137.169",
+    parser.add_argument("--ip", type=str, default="192.168.43.183",
                         help="Robot IP address. On robot or Local Naoqi: use '192.168.137.26'.")
     parser.add_argument("--port", type=int, default=9559,
                         help="Naoqi port number")
@@ -69,26 +69,27 @@ if __name__ == "__main__":
         sys.exit(1)
 
     manager = CameraManager(session, resolution=5, colorspace=11, fps=1)
-    raw_image = manager.get_image()
-    image = manager.convert_to_pillow(raw_image)
+    #raw_image = manager.get_image()
+    #image = manager.convert_to_pillow(raw_image)
 
-    image.show()
-    """
+    #image.show()
+
     try:
         while True:
             start = time.time()
-            img = get_image(camera_service, video_client)
-            real_img = Image.frombuffer('RGB', (img[0], img[1]), bytes(img[6]))
+            img = manager.get_image()
+            #real_img = Image.frombuffer('RGB', (img[0], img[1]), bytes(img[6]))
+            real_img = manager.convert_to_pillow(img)
             end = time.time()
             print "It took " + str(start-end) + " to take a photo and display it"
-            real_img.show()
+            #real_img.show()
             #time.sleep(1)
     except KeyboardInterrupt:
         print
         print "Interrupted by user"
         print "Stopping..."
-    """
 
-    #del manager
+
+    del manager
 
 

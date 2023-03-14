@@ -34,6 +34,7 @@ class Client:
         #    self.dl_model = SortManager(**kwargs)
         self.dl_model = OCSortManager(use_byte=True, **kwargs)
         print(model, " loaded successfully!")
+        print(f"port: {self.port}")
         self.client_socket.connect((self.host, self.port))
 
     # Each model might require a unique function for configuration because they accept different parameters
@@ -44,9 +45,11 @@ class Client:
     #    self.client_socket.connect((self.host, self.port))
     def neo_communicate(self):
         while True:
-            fps = pickle.loads(self.client_socket.recv(1000), encoding="latin1")
-            duration = pickle.loads(self.client_socket.recv(1000), encoding="latin1")
-
+            #fps = pickle.loads(self.client_socket.recv(1000), encoding="latin1")
+            #duration = pickle.loads(self.client_socket.recv(1000), encoding="latin1")
+            time.sleep(1)
+            fps= None
+            duration = False
             wait = 1/fps if fps is not None else 0
             if duration:
                 count = 0
@@ -84,7 +87,7 @@ class Client:
             else:
                 while True:
                     try:
-                        img = self.receive_image(verbose=0)
+                        img = self.receive_image(verbose=1)
                         #pred = self.dl_model.update(img)
                         pred, l = self.dl_model.smart_update(img)
                         # Shape of pred: number of tracked targets x 5
@@ -130,6 +133,7 @@ class Client:
             a numpy array representing the image
         """
         raw_data = self.receive(bts)  # receive response
+        print("Received data is ", sys.getsizeof(raw_data), " bytes.")
         data = pickle.loads(raw_data, encoding='latin1')
         real_img = Image.frombuffer('RGB', (data[0], data[1]), bytes(data[6]))
         img = np.asarray(real_img)[:,:,::-1]
@@ -335,6 +339,6 @@ class Client:
         return m
 
 if __name__ == '__main__':
-    c = Client(image_size=[640,640])
+    c = Client(image_size=[640,640])#, port=45093)
     c.neo_communicate()
     #c.communicate()
