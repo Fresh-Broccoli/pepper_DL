@@ -8,7 +8,8 @@ from PIL import Image
 class CameraManager():
     def __init__(self, session, resolution=5, colorspace=11, fps=5):
         self.camera_service = session.service("ALVideoDevice")
-        self.video_client = self.camera_service.subscribe("cam", resolution, colorspace, fps)
+        #self.video_client = self.camera_service.subscribe("cam", resolution, colorspace, fps)
+        self.video_client = self.camera_service.subscribeCamera("cam", 0git , resolution, colorspace, fps)
 
         # Set all parameters to default
         self.camera_service.setAllParametersToDefault(0)
@@ -68,19 +69,19 @@ if __name__ == "__main__":
                                                                                              "Please check your script arguments. Run with -h option for help.")
         sys.exit(1)
 
-    manager = CameraManager(session, resolution=5, colorspace=11, fps=1)
+    manager = CameraManager(session, resolution=1, colorspace=11, fps=30)
     #raw_image = manager.get_image()
     #image = manager.convert_to_pillow(raw_image)
 
     #image.show()
-
+    """
     try:
         while True:
             start = time.time()
             img = manager.get_image()
             #real_img = Image.frombuffer('RGB', (img[0], img[1]), bytes(img[6]))
             real_img = manager.convert_to_pillow(img)
-            end = time.time()
+            end = time.time() - start
             print "It took " + str(start-end) + " to take a photo and display it"
             #real_img.show()
             #time.sleep(1)
@@ -92,4 +93,11 @@ if __name__ == "__main__":
 
     del manager
 
-
+    """
+    start = time.time()
+    frames = 60
+    for _ in range(frames):
+        img = manager.get_image(raw=False)
+        # real_img = Image.frombuffer('RGB', (img[0], img[1]), bytes(img[6]))
+    end = time.time() - start
+    print "It took " + str(end) + " to take " + str(frames)  + " photos and send to server, achieving " + str(frames/end) + "FPS."

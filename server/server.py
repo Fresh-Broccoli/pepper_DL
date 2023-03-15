@@ -160,27 +160,36 @@ class Server:
 # Initiate Qi Session
 session = qi.Session()
 parser = argparse.ArgumentParser(description="Please enter Pepper's IP address (and optional port number)")
-parser.add_argument("ip", type=str, default="192.168.43.183")
-parser.add_argument("port", type=int, default=9559)
+parser.add_argument("--ip", type=str, nargs='?', default="192.168.43.183")
+parser.add_argument("--port", type=int, nargs='?', default=9559)
 args = parser.parse_args()
 
+print("Received IP: ", args.ip)
+print("Received port: ", args.port)
 # Connecting to the robot
 # Decided not to use try-except because if the server failed to connect to the robot, then there's no point
     # starting a Flask server
 session.connect("tcp://" + args.ip + ":" + str(args.port))
 
+print("Connected to Pepper!")
+
 # Robot setup:
 # Controls autonomous life behaviour, mainly used to disable it
+print("Subscribing to live service...")
 life_service = session.service("ALAutonomousLife")
 # Controls the robot's cameras
+print("Subscribing to camera service...")
 camera_manager = CameraManager(session, resolution=1, colorspace=11, fps=30)
 # Controls the robot's locomotion
+print("Subscribing to movement service...")
 motion_manager = MovementManager(session)
 # Controls the robot's speech
+print("Subscribing to speech service...")
 speech_manager = SpeechManager(session)
 
 # Disable autonomous life because it can interfere with follow behaviour
 life_service.setAutonomousAbilityEnabled("All", False)
+
 
 # Start Flask server
 app = Flask(__name__)
@@ -199,47 +208,45 @@ def send_image():
         'img': str(img_base64),
     })
 
-if __name__ == '__main__':
+@app.route("/voice/startup_greeting", methods=["POST"])
+def startup_greeting():
+    # Makes Pepper greet the user and provide basic instructions
+    speech_manager.say("Connected to deep learning client. Please raise your hand if you want me to follow you.")
 
 
-    session = qi.Session()
+@app.route("/test/pepper_to_server_fps", methods=["POST"])
+def pepper_to_server_fps():
+    start = time.time()
+    frames = 60
+    for _ in range(frames):
+        img = camera_manager.get_image(raw=False)  # Gets image as Pillow Image
+        rawBytes = io.BytesIO()
+        # Saves image as buffer
+        img.save(rawBytes, "JPEG")
+        rawBytes.seek(0)
+        img_base64 = base64.b64encode(rawBytes.read())
+        img = np.array(Image.open(io.BytesIO(base64.b64decode(img_base64))))
+    end = time.time() - start
+    return jsonify({
+        "time":str(end),
+        "frames":str(frames)
+    })
+    print "It took " + str(end) + " seconds to send " + str(frames) + " frames at " + str(frames/end) + "FPS."
 
-    ip = "192.168.43.183"
-    port = 9559
-
-    try:
-        session.connect("tcp://" + ip + ":" + str(port))
-    except RuntimeError:
-        print ("Can't connect to Naoqi at ip \"" + ip + "\" on port " + str(port) + ".\n"
-                                                                             "Please check your script arguments. Run with -h option for help.")
-    life_service = session.service("ALAutonomousLife")
-    motion_service = session.service("ALMotion")
-    posture_service = session.service("ALRobotPosture")
-
-
-    # minimize Security Distance
-    #motion_service.setTangentialSecurityDistance(0.05)
-    #motion_service.setOrthogonalSecurityDistance(0.10)
-
-    life_service.setAutonomousAbilityEnabled("All", False) # Disable autonomous life
-
-    # First, wake up.
-    #motion_service.wakeUp()
-
-    #fractionMaxSpeed = 0.8
-    # Go to posture stand
-    #posture_service.goToPosture("StandInit", fractionMaxSpeed)
-
-    camera_manager = CameraManager(session, resolution=1, colorspace=11, fps=12)
-    motion_manager = MovementManager(session)
-    speech_manager = SpeechManager(session)
-
-    s = Server(camera_manager, motion_manager, speech_manager,)# port=45093)
-    s.neo_communicate()
-    #s.communicate()
-    #server_program()
-
+@app.route("/setup/end", methods=["POST"])
+def shutdown():
+    # Run to shut down
+    speech_manager.say("Shutting down")
     del camera_manager
     del motion_manager
     del life_service
     del speech_manager
+    return jsonify({
+        'msg': 'success',
+    })
+
+
+if __name__ == '__main__':
+    # start flask app
+    app.run(host="0.0.0.0", port=5000)
+
