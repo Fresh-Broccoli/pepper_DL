@@ -470,7 +470,7 @@ class OCSortManager(OCSort):
         OCSort.__init__(self, max_age=max_age, min_hits=min_hits, iou_threshold=iou_threshold, det_thresh=conf_thresh,
                         delta_t=delta_t, asso_func=asso_func, inertia=inertia, use_byte=use_byte)
         self.detector = YoloManager(**kwargs)
-        self.target_id = None
+        self.target_id = 0
         self.target_absent_frames = 0
         self.reset_target_thresh=reset_target_thresh
         self.save_frame_count = 0
@@ -501,7 +501,6 @@ class OCSortManager(OCSort):
         """
         pred = self.detector_predict(frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
         points = self.detector.extract_keypoint_data(pred)
-        m = None
         pred = pred[((points[:,5,1]>points[:,9,1]) & ((points[:,5,2]>kpt_conf_thresh) | (points[:,9,2]>kpt_conf_thresh))) | ((points[:,6,1]>points[:,10,1]) & ((points[:,6,2]>kpt_conf_thresh) | (points[:,10,2]>kpt_conf_thresh)))]
 
         # Current implementation of this check only looks at the position of estimated keypoint, but it does not look
@@ -527,15 +526,12 @@ class OCSortManager(OCSort):
         if len(track) > 0:
             if self.target_id != int(track[0,-1]):
                 self.target_id = int(track[0,-1])
-                m = "t"
-        print("mcode =", m)
-        return track, m
+        return track,
 
     def smart_update(self, frame, pred = None, augment=False, classes=None, agnostic_nms=False):
-        m = None
         #Made to be called by the client, automatically determines whether to call filtered_update or update
-        if self.target_id is None: # When there's no tracked target
-            out, m = self.filtered_update(frame=frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
+        if self.target_id <= 0: # When there's no tracked target
+            out = self.filtered_update(frame=frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
             #print("m", m)
         else: # When there's a tracked target
             out = self.update(frame=frame, pred=pred, augment=augment, classes=classes, agnostic_nms=agnostic_nms, target_only=True)
@@ -544,15 +540,14 @@ class OCSortManager(OCSort):
                 if self.target_absent_frames >= self.reset_target_thresh: # If the number of frames where the target
                     # is absent is greater than or equal to the threshold, reset the target ID
                     print("Target ", self.target_id, " is missing, looking for new target.")
-                    self.target_id = None
+                    self.target_id = 0
                     self.target_absent_frames = 0
-                    m = "l"
 
         #print("out shape = ", out.shape)
         print("out = ", out)
         print("target Id = ", self.target_id)
 
-        return out, m
+        return out
 
     def draw(self, prediction, img, show=None, save_dir = None):
         for det_index, (*xyxy, id) in enumerate(reversed(prediction[:,:6])):

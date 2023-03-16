@@ -44,10 +44,17 @@ class Client:
             cv2.imwrite(f"images/test_{time.time()}.png", img)
         return img
 
+    def predict(self, img):
+        if img is None:
+            img = self.get_image()
+        # Shape of pred: number of tracked targets x 5
+        # where 5 represents: (x1, y1, x2, y2, id)
+        return self.dl_model.smart_update
+
     def get_image_test(self, image_no=60):
         start_time = time.time()
         for _ in range(image_no):
-            self.get_image()
+            self.get_image(save=True)
         end_time = time.time() - start_time
         print(f"It took {str(end_time)} seconds to receive {str(image_no)} images. This means we were able to receive images from Pepper to server to client at {str(image_no/end_time)} FPS!")
 
@@ -64,7 +71,7 @@ class Client:
 
 
 if __name__ == "__main__":
-    c = Client(image_size=[640,640])
+    c = Client(image_size=[640,640], device="cuda")
     #img = c.get_image(show=False)
     #cv2.imwrite(f"images/test_{time.time()}.png", img)
 

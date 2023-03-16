@@ -9,7 +9,7 @@ class CameraManager():
     def __init__(self, session, resolution=5, colorspace=11, fps=5):
         self.camera_service = session.service("ALVideoDevice")
         #self.video_client = self.camera_service.subscribe("cam", resolution, colorspace, fps)
-        self.video_client = self.camera_service.subscribeCamera("cam", 0git , resolution, colorspace, fps)
+        self.video_client = self.camera_service.subscribeCamera("cam", 0, resolution, colorspace, fps)
 
         # Set all parameters to default
         self.camera_service.setAllParametersToDefault(0)

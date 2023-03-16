@@ -21,6 +21,9 @@ class YoloManager():
         self.stride = int(self.model.stride.max())  # model stride
         self.names = self.model.module.names if hasattr(self.model, 'module') else self.model.names  # get class names
         self.kpt_label = kpt_label
+        print(torch.cuda.is_available())
+        print(torch.cuda.device_count())
+        print(torch.cuda.current_device())
 
         if isinstance(image_size, (list,tuple)):
             assert len(image_size) ==2; "height and width of image has to be specified"
@@ -157,7 +160,7 @@ def parent_dir(back, d=None,):
 if __name__ == "__main__":
     from PIL import Image
 
-    manager = YoloManager(image_size=[640,640])
+    manager = YoloManager(image_size=[640,640], device="0")
 
 
     img = cv2.imread(os.path.join("data", "custom", "raising_hand.jpg"))

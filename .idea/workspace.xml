@@ -4,13 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="be960dc2-6cea-4ed1-a7f9-9b11096d53b8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/client/__init__.py" afterDir="false" />
+    <list default="true" id="be960dc2-6cea-4ed1-a7f9-9b11096d53b8" name="Changes" comment="Added some test code used to measure camera FPS">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/client/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/trackers/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/trackers/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/client2.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/client2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/trackers/detection_models/edgeai_yolov5/utils/torch_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/trackers/detection_models/edgeai_yolov5/utils/torch_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/trackers/detection_models/edgeai_yolov5/yolo.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/trackers/detection_models/edgeai_yolov5/yolo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/trackers/ocsort/ocsort.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/trackers/ocsort/ocsort.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/camera.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/camera.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/server.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,17 +75,17 @@
       <window_info id="Space Code Reviews" order="0" />
       <window_info id="Bookmarks" order="1" side_tool="true" />
       <window_info id="Pull Requests" order="2" />
-      <window_info active="true" content_ui="combo" id="Project" order="3" visible="true" weight="0.19921875" />
+      <window_info active="true" content_ui="combo" id="Project" order="3" visible="true" weight="0.14348958" />
       <window_info id="Commit" order="4" />
       <window_info id="Learn" order="5" show_stripe_button="false" />
       <window_info id="Structure" order="6" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="0" weight="0.33028847" />
+      <window_info anchor="bottom" id="Version Control" order="0" weight="0.31490386" />
       <window_info anchor="bottom" id="Python Packages" order="1" weight="0.33028847" />
       <window_info anchor="bottom" id="File Transfer" order="2" />
       <window_info anchor="bottom" id="Database Changes" order="3" />
       <window_info anchor="bottom" x="22" y="312" width="1876" height="415" id="Python Console" order="4" weight="0.39951923" />
       <window_info anchor="bottom" id="Problems View" order="5" weight="0.33028847" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="6" visible="true" weight="0.32740384" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="6" visible="true" weight="0.29759616" />
       <window_info anchor="bottom" id="TypeScript" order="7" />
       <window_info anchor="bottom" id="Services" order="8" weight="0.33028847" />
       <window_info anchor="bottom" id="Debug" order="9" weight="0.33028847" />
@@ -166,15 +166,40 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="yolo" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="pepper_DL" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="$USER_HOME$/anaconda3/envs/ml/bin/python" />
+      <option name="SDK_NAME" value="ml" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client/trackers/detection_models/edgeai_yolov5" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/client/trackers/detection_models/edgeai_yolov5/yolo.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <list>
+      <item itemvalue="Python.yolo" />
       <item itemvalue="Python.client2" />
       <item itemvalue="Python.client" />
       <item itemvalue="Python.server" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.client2" />
         <item itemvalue="Python.server" />
+        <item itemvalue="Python.yolo" />
+        <item itemvalue="Python.client2" />
         <item itemvalue="Python.client" />
       </list>
     </recent_temporary>
@@ -194,20 +219,41 @@
       <workItem from="1678755455002" duration="596000" />
       <workItem from="1678841727083" duration="3405000" />
       <workItem from="1678847868769" duration="388000" />
-      <workItem from="1678848691564" duration="599000" />
+      <workItem from="1678848691564" duration="725000" />
+      <workItem from="1678926585152" duration="151000" />
+      <workItem from="1678926923317" duration="80000" />
     </task>
+    <task id="LOCAL-00001" summary="Added some test code used to measure camera FPS">
+      <created>1678852794233</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1678852794233</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Added some test code used to measure camera FPS">
+      <created>1678852842183</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1678852842183</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added some test code used to measure camera FPS" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added some test code used to measure camera FPS" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/client/client2.py</url>
-          <line>35</line>
-          <option name="timeStamp" value="5" />
+          <url>file://$PROJECT_DIR$/client/trackers/detection_models/edgeai_yolov5/utils/torch_utils.py</url>
+          <line>65</line>
+          <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -215,6 +261,7 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/pepper_DL$client.coverage" NAME="client Coverage Results" MODIFIED="1678842707427" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/client" />
     <SUITE FILE_PATH="coverage/pepper_DL$client2.coverage" NAME="client2 Coverage Results" MODIFIED="1678847743623" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/client" />
+    <SUITE FILE_PATH="coverage/pepper_DL$yolo.coverage" NAME="yolo Coverage Results" MODIFIED="1678929058376" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/client/trackers/detection_models/edgeai_yolov5" />
     <SUITE FILE_PATH="coverage/pepper_DL$server.coverage" NAME="server Coverage Results" MODIFIED="1678846995137" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/server" />
   </component>
 </project>
