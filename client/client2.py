@@ -90,6 +90,6 @@ if __name__ == "__main__":
     #img = c.get_image(show=False)
     #cv2.imwrite(f"images/test_{time.time()}.png", img)
 
-    c.get_image_pred_test(30)
+    #c.get_image_pred_test(30)
     #c.pepper_to_server_fps()
     c.shutdown()

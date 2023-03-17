@@ -4,14 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="be960dc2-6cea-4ed1-a7f9-9b11096d53b8" name="Changes" comment="Added some test code used to measure camera FPS">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="be960dc2-6cea-4ed1-a7f9-9b11096d53b8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/client/client2.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/client2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/trackers/detection_models/edgeai_yolov5/yolo.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/trackers/detection_models/edgeai_yolov5/yolo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/trackers/ocsort/ocsort.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/trackers/ocsort/ocsort.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/camera.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/camera.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/voice.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/voice.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,7 +89,7 @@
       <window_info anchor="bottom" id="Dependency Checker" order="11" />
       <window_info anchor="right" id="Endpoints" />
       <window_info anchor="right" id="Database" />
-      <window_info anchor="right" id="SciView" visible="true" weight="0.32994792" />
+      <window_info anchor="right" id="SciView" weight="0.32994792" />
       <window_info anchor="right" id="Notifications" side_tool="true" weight="0.32994792" />
     </layout>
   </component>
@@ -223,7 +218,7 @@
       <workItem from="1678848691564" duration="725000" />
       <workItem from="1678926585152" duration="151000" />
       <workItem from="1678926923317" duration="80000" />
-      <workItem from="1679013725156" duration="3264000" />
+      <workItem from="1679013725156" duration="3481000" />
     </task>
     <task id="LOCAL-00001" summary="Added some test code used to measure camera FPS">
       <created>1678852794233</created>
@@ -239,7 +234,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678852842183</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="OCSORT + YOLOv5-Pose + CUDA successfully ported to Flask server">
+      <created>1679026248982</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1679026248982</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -247,7 +249,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added some test code used to measure camera FPS" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added some test code used to measure camera FPS" />
+    <MESSAGE value="OCSORT + YOLOv5-Pose + CUDA successfully ported to Flask server" />
+    <option name="LAST_COMMIT_MESSAGE" value="OCSORT + YOLOv5-Pose + CUDA successfully ported to Flask server" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -96,10 +96,6 @@ def pepper_to_server_fps():
 def shutdown():
     # Run to shut down
     speech_manager.say("Shutting down")
-    del camera_manager
-    del motion_manager
-    del life_service
-    #del speech_manager
     shutdown_server()
     return jsonify({
         'msg': 'success',
@@ -116,4 +112,7 @@ def shutdown_server():
 if __name__ == '__main__':
     # start flask app
     app.run(host="0.0.0.0", port=5000)
-
+    del camera_manager
+    del motion_manager
+    del life_service
+    del speech_manager
