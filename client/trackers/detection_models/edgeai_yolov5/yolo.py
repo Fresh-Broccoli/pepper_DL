@@ -21,9 +21,9 @@ class YoloManager():
         self.stride = int(self.model.stride.max())  # model stride
         self.names = self.model.module.names if hasattr(self.model, 'module') else self.model.names  # get class names
         self.kpt_label = kpt_label
-        print(torch.cuda.is_available())
-        print(torch.cuda.device_count())
-        print(torch.cuda.current_device())
+        #print(torch.cuda.is_available())
+        #print(torch.cuda.device_count())
+        #print(torch.cuda.current_device())
 
         if isinstance(image_size, (list,tuple)):
             assert len(image_size) ==2; "height and width of image has to be specified"
@@ -81,6 +81,11 @@ class YoloManager():
         pred = non_max_suppression(pred, conf_thres, iou_thres, classes=classes, agnostic=agnostic_nms, kpt_label=self.kpt_label)[0]
         if scale_to_original:
             self.scale_to_original(pred, original_shape)
+
+        # Torch tensors are different depending on whether they're using GPU or CPU, so we'll have to made some changes
+        if self.device.type != "cpu":
+            pred = pred.detach().cpu()
+
         return pred
 
     def scale_to_original(self, prediction, original_shape):
@@ -161,7 +166,6 @@ if __name__ == "__main__":
     from PIL import Image
 
     manager = YoloManager(image_size=[640,640], device="0")
-
 
     img = cv2.imread(os.path.join("data", "custom", "raising_hand.jpg"))
 

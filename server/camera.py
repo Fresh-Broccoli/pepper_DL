@@ -22,7 +22,7 @@ class CameraManager():
         # position 0: CameraIndex = 0 # Use the top camera
         # position 1: Parameter = 8 # Refers to vertical flip
         # position 3: newValue = 1 # Default image is upsidedown, so setting this param to 1 will flip it back
-        #self.camera_service.setParameter(0, 8, 1) # Vertical flip
+        self.camera_service.setParameter(0, 8, 1) # Vertical flip
         #self.camera_service.setParameter(0, 7, 1) # Horizontal flip
 
     def __del__(self):

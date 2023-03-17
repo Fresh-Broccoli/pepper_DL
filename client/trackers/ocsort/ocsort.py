@@ -482,6 +482,7 @@ class OCSortManager(OCSort):
         if pred is None:
             pred = self.detector_predict(frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
         bounding_boxes = self.detector.extract_bounding_box_data(pred)
+
         track = super().update(np.asarray(bounding_boxes))
         return track[track[:,-1]==self.target_id] if target_only else track
 
@@ -526,7 +527,7 @@ class OCSortManager(OCSort):
         if len(track) > 0:
             if self.target_id != int(track[0,-1]):
                 self.target_id = int(track[0,-1])
-        return track,
+        return track
 
     def smart_update(self, frame, pred = None, augment=False, classes=None, agnostic_nms=False):
         #Made to be called by the client, automatically determines whether to call filtered_update or update
@@ -550,6 +551,7 @@ class OCSortManager(OCSort):
         return out
 
     def draw(self, prediction, img, show=None, save_dir = None):
+        #if len(prediction) !=
         for det_index, (*xyxy, id) in enumerate(reversed(prediction[:,:6])):
             plot_one_box(xyxy, img, label=(f'id: {str(int(id))}'), color=colors(0,True), line_thickness=2, kpt_label=False, steps=3, orig_shape=img.shape[:2])
         if save_dir is not None:
