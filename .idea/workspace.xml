@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="be960dc2-6cea-4ed1-a7f9-9b11096d53b8" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/client2.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/client2.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/server.py" afterDir="false" />
     </list>
@@ -81,7 +82,7 @@
       <window_info anchor="bottom" id="Database Changes" order="3" />
       <window_info anchor="bottom" x="22" y="312" width="1876" height="415" id="Python Console" order="4" weight="0.39951923" />
       <window_info anchor="bottom" id="Problems View" order="5" weight="0.33028847" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="6" visible="true" weight="0.28413463" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="6" visible="true" weight="0.20336539" />
       <window_info anchor="bottom" id="TypeScript" order="7" />
       <window_info anchor="bottom" id="Services" order="8" weight="0.33028847" />
       <window_info anchor="bottom" id="Debug" order="9" weight="0.33028847" />
@@ -218,7 +219,8 @@
       <workItem from="1678848691564" duration="725000" />
       <workItem from="1678926585152" duration="151000" />
       <workItem from="1678926923317" duration="80000" />
-      <workItem from="1679013725156" duration="3481000" />
+      <workItem from="1679013725156" duration="3649000" />
+      <workItem from="1679364999490" duration="599000" />
     </task>
     <task id="LOCAL-00001" summary="Added some test code used to measure camera FPS">
       <created>1678852794233</created>
@@ -241,7 +243,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679026248982</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="OCSORT + YOLOv5-Pose + CUDA successfully ported to Flask server&#10;&#10;Also made it possible to shut down the server with a command from client2.py">
+      <created>1679026491665</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1679026491665</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -250,7 +259,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added some test code used to measure camera FPS" />
     <MESSAGE value="OCSORT + YOLOv5-Pose + CUDA successfully ported to Flask server" />
-    <option name="LAST_COMMIT_MESSAGE" value="OCSORT + YOLOv5-Pose + CUDA successfully ported to Flask server" />
+    <MESSAGE value="OCSORT + YOLOv5-Pose + CUDA successfully ported to Flask server&#10;&#10;Also made it possible to shut down the server with a command from client2.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="OCSORT + YOLOv5-Pose + CUDA successfully ported to Flask server&#10;&#10;Also made it possible to shut down the server with a command from client2.py" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -259,11 +269,6 @@
           <url>file://$PROJECT_DIR$/client/trackers/ocsort/ocsort.py</url>
           <line>554</line>
           <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/client/trackers/ocsort/ocsort.py</url>
-          <line>534</line>
-          <option name="timeStamp" value="5" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

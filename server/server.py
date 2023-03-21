@@ -72,6 +72,26 @@ def startup_greeting():
     # Makes Pepper greet the user and provide basic instructions
     speech_manager.say("Connected to deep learning client. Please raise your hand if you want me to follow you.")
 
+@app.route("/voice/say", methods=["POST"])
+def say():
+    # Makes Pepper say whatever based on what the client has sent over
+    speech_manager.say(request.data)
+
+
+@app.route("/setup/end", methods=["POST"])
+def shutdown():
+    # Run to shut down
+    speech_manager.say("Shutting down")
+    shutdown_server()
+    return jsonify({
+        'msg': 'success',
+    })
+
+def shutdown_server():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
 
 @app.route("/test/pepper_to_server_fps", methods=["POST"])
 def pepper_to_server_fps():
@@ -91,22 +111,6 @@ def pepper_to_server_fps():
         "frames":str(frames)
     })
     print "It took " + str(end) + " seconds to send " + str(frames) + " frames at " + str(frames/end) + "FPS."
-
-@app.route("/setup/end", methods=["POST"])
-def shutdown():
-    # Run to shut down
-    speech_manager.say("Shutting down")
-    shutdown_server()
-    return jsonify({
-        'msg': 'success',
-    })
-
-def shutdown_server():
-    func = request.environ.get('werkzeug.server.shutdown')
-    if func is None:
-        raise RuntimeError('Not running with the Werkzeug Server')
-    func()
-
 
 
 if __name__ == '__main__':

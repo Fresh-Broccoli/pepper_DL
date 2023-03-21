@@ -531,8 +531,7 @@ class OCSortManager(OCSort):
 
     def smart_update(self, frame, pred = None, augment=False, classes=None, agnostic_nms=False):
         #Made to be called by the client, automatically determines whether to call filtered_update or update
-        if self.target_id <= 0: # When there's no tracked target
-            out = self.filtered_update(frame=frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
+        if self.target_id <= 0: # When there's no tracked target            out = self.filtered_update(frame=frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
             #print("m", m)
         else: # When there's a tracked target
             out = self.update(frame=frame, pred=pred, augment=augment, classes=classes, agnostic_nms=agnostic_nms, target_only=True)
