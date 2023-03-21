@@ -471,6 +471,7 @@ class OCSortManager(OCSort):
                         delta_t=delta_t, asso_func=asso_func, inertia=inertia, use_byte=use_byte)
         self.detector = YoloManager(**kwargs)
         self.target_id = 0
+        self.max_target_id = 0
         self.target_absent_frames = 0
         self.reset_target_thresh=reset_target_thresh
         self.save_frame_count = 0
@@ -527,11 +528,14 @@ class OCSortManager(OCSort):
         if len(track) > 0:
             if self.target_id != int(track[0,-1]):
                 self.target_id = int(track[0,-1])
+                if self.target_id > self.max_target_id:
+                    self.max_target_id = self.target_id
         return track
 
     def smart_update(self, frame, pred = None, augment=False, classes=None, agnostic_nms=False):
         #Made to be called by the client, automatically determines whether to call filtered_update or update
-        if self.target_id <= 0: # When there's no tracked target            out = self.filtered_update(frame=frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
+        if self.target_id <= 0: # When there's no tracked target
+            out = self.filtered_update(frame=frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
             #print("m", m)
         else: # When there's a tracked target
             out = self.update(frame=frame, pred=pred, augment=augment, classes=classes, agnostic_nms=agnostic_nms, target_only=True)
@@ -546,6 +550,7 @@ class OCSortManager(OCSort):
         #print("out shape = ", out.shape)
         print("out = ", out)
         print("target Id = ", self.target_id)
+        print("max target Id = ", self.max_target_id)
 
         return out
 

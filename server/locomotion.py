@@ -70,7 +70,6 @@ class MovementManager:
 
     def stop(self):
         """ Stops walking
-
         """
         self.motion_service.stopMove()
 

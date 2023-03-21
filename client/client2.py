@@ -25,8 +25,18 @@ models = {
 
 
 class Client:
+
     def __init__(self, model="ocsort", address='http://localhost:5000', **kwargs):
         self.address = address
+        self.robot_actions = {
+            "walkToward": self.walkToward,
+            "walkTo": self.walkTo,
+            "rotate_head": self.rotate_head,
+            "rotate_head_abs": self.rotate_head_abs,
+            "say": self.say,
+            "target_lost": self.target_lost,
+            "target_detected": self.target_detected,
+        }
         print(f"Loading {model}...")
         self.dl_model = models[model](use_byte=True, **kwargs)
         print(model, " loaded successfully!")
@@ -58,9 +68,12 @@ class Client:
         self.dl_model.draw(prediction, np.ascontiguousarray(img), show=show, save_dir=save_dir)
 
     def follow_behaviour(self):
-        pass
+        while True:
+            pred, img = self.predict(img=None, draw=False)
+            self.center_target(pred, img.shape, )
 
-    def center_target(self, box, img_shape, stop_threshold = 0.1, vertical_offset=0.5, lost = None):
+
+    def center_target(self, box, img_shape, stop_threshold = 0.1, vertical_offset=0.5):
         """ Takes in target bounding box data and attempts to center it
         Preconditons:
             1. box must contain data about exactly 1 bounding box
@@ -86,41 +99,87 @@ class Client:
                 c = parameter in the format of param_name=param param_name2=param2 param_name3=param3 ...
                         this part is also optional, because functions that b is referring to might not require params
         """
-        if len(box)!=1:
-            #raise Exception(f"The length of box is {len(box)}, but it should be 1!")
-            #return "c$stop|"
-            #return "c$stop|" + "$say|text=\"Target lost, searching for new target\"" if (len(box)==0 and self.dl_model.target_id is None) else "" + "$rotate_head_abs|"
-            return "c$stop|" + "$target_lost|" if lost=="l" else "" + "$rotate_head_abs|"
-            #return "c$stop|" + "$rotate_head_abs|"
-        if len(img_shape)!=3:
+        if len(img_shape)!=3: # Check shape of image
             raise Exception(f"The shape of the image does not equal to 3!")
 
-        # Since there's an extra dimension, we'll take the first element, which is just the single detection
-        box = box[0]
+        if len(box)!=1: # Check number of tracks
+            # If not 1, then the target is either lost, or went off-screen
+            #raise Exception(f"The length of box is {len(box)}, but it should be 1!")
+            self.stop()
+            if self.dl_model.max_target_id > self.dl_model.target_id:
+                self.target_lost()
+            else:
+                self.rotate_head_abs()
+        else: # If there's only 1 track, center the camera on them
+            # Since there's an extra dimension, we'll take the first element, which is just the single detection
+            box = box[0]
 
-        # Following shapes will be (x, y) format
-        box_center = np.array([box[2]/2+box[0]/2, box[1]*(1-vertical_offset)+box[3]*vertical_offset])#box[1]/2+box[3]/2])
-        frame_center = np.array((img_shape[1]/2, img_shape[0]/2))
-        #diff = box_center - frame_center
-        diff = frame_center - box_center
-        horizontal_ratio = diff[0]/img_shape[1]
-        vertical_ratio = diff[1]/img_shape[0]
+            # Following shapes will be (x, y) format
+            box_center = np.array([box[2]/2+box[0]/2, box[1]*(1-vertical_offset)+box[3]*vertical_offset])#box[1]/2+box[3]/2])
+            frame_center = np.array((img_shape[1]/2, img_shape[0]/2))
+            #diff = box_center - frame_center
+            diff = frame_center - box_center
+            horizontal_ratio = diff[0]/img_shape[1]
+            vertical_ratio = diff[1]/img_shape[0]
 
-        if abs(horizontal_ratio) > stop_threshold:
-            #print("ratio = ", horizontal_ratio)
-            # difference ratio greater than threshold, rotate at that ratio
-            # locomotion_manager.walkToward(theta=horizontal_ratio)
-            o = f"c$walkToward|theta={str(horizontal_ratio*0.9)}"
-            #return f"c$walkTo|theta={str(horizontal_ratio*0.9)}"
+            if abs(horizontal_ratio) > stop_threshold:
+                self.walkToward(theta=horizontal_ratio*0.9)
+            else:
+                self.approach_target(box, img_shape, commands=["rotate_head"],commands_kwargs=[{"forward":vertical_ratio*0.2}])
+
+    def approach_target(self, box, img_shape, stop_threshold=0.65, move_back_threshold=0.8, commands=None, commands_kwargs=None):
+        # (x1, y1, x2, y2, id)
+        box_area = (box[2]-box[0])*(box[3]-box[1])
+        frame_area = img_shape[0]*img_shape[1]
+        ratio = box_area/frame_area
+        if ratio > stop_threshold:
+            if ratio > move_back_threshold:
+                self.walkTo(x=ratio-1)
+            else:
+                if commands is not None: # assumes that commands is a list
+                    for i in range(len(commands)):
+                        self.robot_actions[commands[i]](**commands_kwargs[i])
         else:
-            #return "c$stop|"
-            o = self.approach_target(box, img_shape, command=f"rotate_head|forward={str(vertical_ratio*0.2)}")
-            print("o = ", o)
-        return o[0:2] + ("target_detected|$" if lost=="t" else "") +o[2:]
+            self.walkToward(x=1-ratio)
+
+
+    #-------------------------------------------------------------------------------------------------------------------
+    # Robot controls ###################################################################################################
+    #-------------------------------------------------------------------------------------------------------------------
 
     def say(self, word):
         headers = {'content-type': "/voice/say"}
         response = requests.post(self.address + headers["content-type"], data=word)
+
+    def target_lost(self):
+        headers = {'content-type': "/voice/targetLost"}
+        response = requests.post(self.address + headers["content-type"], headers=headers)
+
+    def target_detected(self):
+        headers = {'content-type': "/voice/targetDetected"}
+        response = requests.post(self.address + headers["content-type"], headers=headers)
+
+    def stop(self):
+        headers = {'content-type': "/locomotion/stop"}
+        response = requests.post(self.address + headers["content-type"])
+
+    def walkTo(self, x=0, y=0, theta=0, verbose=False):
+        headers = {'content-type': "/locomotion/walkTo"}
+        response = requests.post(self.address + headers["content-type"] + f"?x={str(x)}&y={str(y)}&theta={str(theta)}&verbose={str(1 if verbose else 0)}")
+
+    def walkToward(self, x=0, y=0, theta=0, verbose=False):
+        headers = {'content-type': "/locomotion/walkToward"}
+        response = requests.post(self.address + headers["content-type"] + f"?x={str(x)}&y={str(y)}&theta={str(theta)}&verbose={str(1 if verbose else 0)}")
+
+    def rotate_head(self, forward=0, left=0, speed=0.2):
+        headers = {'content-type': "/locomotion/rotateHead"}
+        response = requests.post(self.address + headers[
+            "content-type"] + f"?forward={str(forward)}&left={str(left)}&speed={str(speed)}")
+
+    def rotate_head_abs(self, forward=0, left=0, speed=0.2):
+        headers = {'content-type': "/locomotion/rotateHeadAbs"}
+        response = requests.post(self.address + headers[
+            "content-type"] + f"?forward={str(forward)}&left={str(left)}&speed={str(speed)}")
 
 
     def shutdown(self):
@@ -151,6 +210,10 @@ class Client:
         end_time = time.time() - start_time
         print(f"It took {str(end_time)} seconds to receive {str(image_no)} images. This means we were able to receive images from Pepper to server to client at {str(image_no/end_time)} FPS!")
 
+def dummy_action():
+    # does nothing
+    pass
+
 
 if __name__ == "__main__":
     c = Client(image_size=[640,640], device="cuda", max_age=45)
@@ -159,8 +222,21 @@ if __name__ == "__main__":
     #img = c.get_image(show=False)
     #cv2.imwrite(f"images/test_{time.time()}.png", img)
 
-    c.say("I'm Pepper, I like eating pizza with pineapple")
-    c.say("I am not a fan of hamburgers with fish and tomato sauce")
-    #c.get_image_pred_test(30)
+    #c.say("I'm Pepper, I like eating pizza with pineapple")
+    #c.say("I am not a fan of hamburgers with fish and tomato sauce")
+    #c.walkTo(x=0.3)
+    #c.walkTo(y=0.3)
+    #c.walkTo(theta=0.3)
+    #c.walkToward(x=0.2, theta=0.2)
+    #c.rotate_head_abs(forward=1)
+    #time.sleep(3)
+    #c.rotate_head_abs(forward=-1)
+    #time.sleep(3)
+    #c.rotate_head_abs(left=1)
+    #time.sleep(3)
+    #c.rotate_head_abs(left=-1)
+    #time.sleep(3)
+    #c.follow_behaviour()
+    c.get_image_pred_test(30)
     #c.pepper_to_server_fps()
     c.shutdown()
