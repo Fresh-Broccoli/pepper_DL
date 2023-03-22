@@ -520,8 +520,8 @@ class OCSortManager(OCSort):
             # If multiple people have raised their hand, target the individual with the highest confidence score:
             # Apparently, this tensor is only 1D, so I'll unsqueeze it for now
             track = self.update(frame, pred = pred[pred[:,4].argmax()].unsqueeze(0))
-        print("len(pred) = ", len(pred))
-        print("track = ", track)
+        #print("len(pred) = ", len(pred))
+        #print("track = ", track)
 
         #self.target_id = int(track[0,-1]) if len(track) > 0 else None
 
@@ -548,7 +548,7 @@ class OCSortManager(OCSort):
                     self.target_absent_frames = 0
 
         #print("out shape = ", out.shape)
-        print("out = ", out)
+        #print("out = ", out)
         print("target Id = ", self.target_id)
         print("max target Id = ", self.max_target_id)
 

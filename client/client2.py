@@ -26,7 +26,7 @@ models = {
 
 class Client:
 
-    def __init__(self, model="ocsort", address='http://localhost:5000', **kwargs):
+    def __init__(self, model="ocsort", address='http://localhost:5000', verbose=False, **kwargs):
         self.address = address
         self.robot_actions = {
             "walkToward": self.walkToward,
@@ -37,6 +37,7 @@ class Client:
             "target_lost": self.target_lost,
             "target_detected": self.target_detected,
         }
+        self.verbose = verbose
         print(f"Loading {model}...")
         self.dl_model = models[model](use_byte=True, **kwargs)
         print(model, " loaded successfully!")
@@ -68,9 +69,12 @@ class Client:
         self.dl_model.draw(prediction, np.ascontiguousarray(img), show=show, save_dir=save_dir)
 
     def follow_behaviour(self):
-        while True:
-            pred, img = self.predict(img=None, draw=False)
-            self.center_target(pred, img.shape, )
+        try:
+            while True:
+                pred, img = self.predict(img=None, draw=False)
+                self.center_target(pred, img.shape, )
+        except:
+            pass
 
 
     def center_target(self, box, img_shape, stop_threshold = 0.1, vertical_offset=0.5):
@@ -107,7 +111,8 @@ class Client:
             #raise Exception(f"The length of box is {len(box)}, but it should be 1!")
             self.stop()
             if self.dl_model.max_target_id > self.dl_model.target_id:
-                self.target_lost()
+                print("Target Lost")
+                #self.target_lost()
             else:
                 self.rotate_head_abs()
         else: # If there's only 1 track, center the camera on them
@@ -147,44 +152,62 @@ class Client:
     # Robot controls ###################################################################################################
     #-------------------------------------------------------------------------------------------------------------------
 
-    def say(self, word):
+    def say(self, word, verbose = False):
         headers = {'content-type': "/voice/say"}
         response = requests.post(self.address + headers["content-type"], data=word)
+        if verbose or self.verbose:
+            print(f"say(word={word})")
 
-    def target_lost(self):
+    def target_lost(self, verbose = False):
         headers = {'content-type': "/voice/targetLost"}
         response = requests.post(self.address + headers["content-type"], headers=headers)
+        if verbose or self.verbose:
+            print(f"target_lost()")
 
-    def target_detected(self):
+    def target_detected(self, verbose = False):
         headers = {'content-type': "/voice/targetDetected"}
         response = requests.post(self.address + headers["content-type"], headers=headers)
+        if verbose or self.verbose:
+            print(f"target_detected()")
 
-    def stop(self):
+    def stop(self, verbose = False):
         headers = {'content-type': "/locomotion/stop"}
         response = requests.post(self.address + headers["content-type"])
+        if verbose or self.verbose:
+            print(f"stop()")
 
     def walkTo(self, x=0, y=0, theta=0, verbose=False):
         headers = {'content-type': "/locomotion/walkTo"}
         response = requests.post(self.address + headers["content-type"] + f"?x={str(x)}&y={str(y)}&theta={str(theta)}&verbose={str(1 if verbose else 0)}")
+        if verbose or self.verbose:
+            print(f"walkTo(x={str(x)}, y={str(y)}, theta={str(theta)})")
 
     def walkToward(self, x=0, y=0, theta=0, verbose=False):
         headers = {'content-type': "/locomotion/walkToward"}
         response = requests.post(self.address + headers["content-type"] + f"?x={str(x)}&y={str(y)}&theta={str(theta)}&verbose={str(1 if verbose else 0)}")
+        if verbose or self.verbose:
+            print(f"walkToward(x={str(x)}, y={str(y)}, theta={str(theta)})")
 
-    def rotate_head(self, forward=0, left=0, speed=0.2):
+    def rotate_head(self, forward=0, left=0, speed=0.2, verbose=False):
         headers = {'content-type': "/locomotion/rotateHead"}
         response = requests.post(self.address + headers[
             "content-type"] + f"?forward={str(forward)}&left={str(left)}&speed={str(speed)}")
+        if verbose or self.verbose:
+            print(f"rotate_head(forward={str(forward)}, left={str(left)}, speed={str(speed)})")
 
-    def rotate_head_abs(self, forward=0, left=0, speed=0.2):
+    def rotate_head_abs(self, forward=0, left=0, speed=0.2, verbose=False):
         headers = {'content-type': "/locomotion/rotateHeadAbs"}
         response = requests.post(self.address + headers[
             "content-type"] + f"?forward={str(forward)}&left={str(left)}&speed={str(speed)}")
+        if verbose or self.verbose:
+            print(f"rotate_head_abs(forward={str(forward)}, left={str(left)}, speed={str(speed)})")
 
 
-    def shutdown(self):
+    def shutdown(self, verbose=False):
         headers = {'content-type': "/setup/end"}
         response = requests.post(self.address + headers["content-type"], headers=headers)
+        if verbose or self.verbose:
+            print("shutdown()")
 
     #------------------------------------------------------------------------------------------------------------------
     # Test code #######################################################################################################
@@ -216,14 +239,14 @@ def dummy_action():
 
 
 if __name__ == "__main__":
-    c = Client(image_size=[640,640], device="cuda", max_age=45)
+    c = Client(image_size=[640,640], device="cuda", max_age=60, verbose=True)
     #c = Client(image_size=[640, 640], device="cpu")
 
-    #img = c.get_image(show=False)
-    #cv2.imwrite(f"images/test_{time.time()}.png", img)
-
+    # Voice functions:
     #c.say("I'm Pepper, I like eating pizza with pineapple")
     #c.say("I am not a fan of hamburgers with fish and tomato sauce")
+
+    # Locomotion functions:
     #c.walkTo(x=0.3)
     #c.walkTo(y=0.3)
     #c.walkTo(theta=0.3)
@@ -236,7 +259,14 @@ if __name__ == "__main__":
     #time.sleep(3)
     #c.rotate_head_abs(left=-1)
     #time.sleep(3)
-    #c.follow_behaviour()
-    c.get_image_pred_test(30)
+
+
+    # Image test functions
+    #c.get_image_pred_test(30)
     #c.pepper_to_server_fps()
+
+    # Main follow behaviour:
+    c.follow_behaviour()
+
+    # Must call
     c.shutdown()

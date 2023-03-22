@@ -8,8 +8,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/client2.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/client2.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/trackers/ocsort/ocsort.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/trackers/ocsort/ocsort.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/locomotion.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/locomotion.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/server.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -222,7 +220,8 @@
       <workItem from="1678926585152" duration="151000" />
       <workItem from="1678926923317" duration="80000" />
       <workItem from="1679013725156" duration="3649000" />
-      <workItem from="1679364999490" duration="1228000" />
+      <workItem from="1679364999490" duration="1290000" />
+      <workItem from="1679458643294" duration="1201000" />
     </task>
     <task id="LOCAL-00001" summary="Added some test code used to measure camera FPS">
       <created>1678852794233</created>
@@ -259,7 +258,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679367392320</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Added:&#10;&#10;- Pepper can now say whatever I want it to say rather than using a dictionary of predefined sentences&#10;&#10;Ported:&#10;&#10;- Every robot action to Flask&#10;- Follow behaviour to Flask">
+      <created>1679377524577</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1679377524577</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -270,7 +276,8 @@
     <MESSAGE value="OCSORT + YOLOv5-Pose + CUDA successfully ported to Flask server" />
     <MESSAGE value="OCSORT + YOLOv5-Pose + CUDA successfully ported to Flask server&#10;&#10;Also made it possible to shut down the server with a command from client2.py" />
     <MESSAGE value="Added:&#10;&#10;- Pepper can now say whatever I want it to say rather than using a dictionary of predefined sentences" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added:&#10;&#10;- Pepper can now say whatever I want it to say rather than using a dictionary of predefined sentences" />
+    <MESSAGE value="Added:&#10;&#10;- Pepper can now say whatever I want it to say rather than using a dictionary of predefined sentences&#10;&#10;Ported:&#10;&#10;- Every robot action to Flask&#10;- Follow behaviour to Flask" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added:&#10;&#10;- Pepper can now say whatever I want it to say rather than using a dictionary of predefined sentences&#10;&#10;Ported:&#10;&#10;- Every robot action to Flask&#10;- Follow behaviour to Flask" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
