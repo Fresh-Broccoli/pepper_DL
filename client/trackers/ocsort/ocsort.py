@@ -471,7 +471,7 @@ class OCSortManager(OCSort):
                         delta_t=delta_t, asso_func=asso_func, inertia=inertia, use_byte=use_byte)
         self.detector = YoloManager(**kwargs)
         self.target_id = 0
-        self.max_target_id = 0
+        self.max_target_id = 1
         self.target_absent_frames = 0
         self.reset_target_thresh=reset_target_thresh
         self.save_frame_count = 0

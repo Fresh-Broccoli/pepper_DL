@@ -69,12 +69,19 @@ class Client:
         self.dl_model.draw(prediction, np.ascontiguousarray(img), show=show, save_dir=save_dir)
 
     def follow_behaviour(self):
+
         try:
             while True:
+                if self.dl_model.target_id != self.dl_model.max_target_id:
+                    self.spin(speed=0.1)
                 pred, img = self.predict(img=None, draw=False)
                 self.center_target(pred, img.shape, )
-        except:
-            pass
+        except Exception as e:
+            print(e)
+
+
+
+
 
 
     def center_target(self, box, img_shape, stop_threshold = 0.1, vertical_offset=0.5):
@@ -94,27 +101,21 @@ class Client:
                 tell the robot to stop rotating, otherwise, the robot will be told to rotate at a rate proportional to
                 this ratio.
             vertical_offset: float between 0 and 1
-
-
-        Returns:
-            a string in the format a|b|c, where:
-                a = message code, tells the server what mode it should be running (or what kind of data to expect)
-                b = function the server will call
-                c = parameter in the format of param_name=param param_name2=param2 param_name3=param3 ...
-                        this part is also optional, because functions that b is referring to might not require params
         """
         if len(img_shape)!=3: # Check shape of image
             raise Exception(f"The shape of the image does not equal to 3!")
 
-        if len(box)!=1: # Check number of tracks
+        if len(box)>1: # Check number of tracks
             # If not 1, then the target is either lost, or went off-screen
             #raise Exception(f"The length of box is {len(box)}, but it should be 1!")
             self.stop()
-            if self.dl_model.max_target_id > self.dl_model.target_id:
+            if self.dl_model.target_id == 0:
                 print("Target Lost")
                 #self.target_lost()
             else:
                 self.rotate_head_abs()
+        elif len(box) == 0:
+            pass
         else: # If there's only 1 track, center the camera on them
             # Since there's an extra dimension, we'll take the first element, which is just the single detection
             box = box[0]
@@ -138,8 +139,10 @@ class Client:
         frame_area = img_shape[0]*img_shape[1]
         ratio = box_area/frame_area
         if ratio > stop_threshold:
+            # Add end condition here:
+
             if ratio > move_back_threshold:
-                self.walkTo(x=ratio-1)
+                self.walkTo(x=(ratio-1)/2)
             else:
                 if commands is not None: # assumes that commands is a list
                     for i in range(len(commands)):
@@ -147,6 +150,10 @@ class Client:
         else:
             self.walkToward(x=1-ratio)
 
+    def spin(self, left=True, speed=0.2, verbose = False):
+        self.walkToward(theta = speed if left else -speed, verbose=verbose)
+        # Keep resetting head position
+        self.rotate_head_abs()
 
     #-------------------------------------------------------------------------------------------------------------------
     # Robot controls ###################################################################################################
@@ -237,9 +244,12 @@ def dummy_action():
     # does nothing
     pass
 
+def quick_shutdown():
+    headers = {'content-type': "/setup/end"}
+    response = requests.post("http://localhost:5000" + headers["content-type"], headers=headers)
 
 if __name__ == "__main__":
-    c = Client(image_size=[640,640], device="cuda", max_age=60, verbose=True)
+    #c = Client(image_size=[640,640], device="cuda", max_age=60, verbose=True)
     #c = Client(image_size=[640, 640], device="cpu")
 
     # Voice functions:
@@ -266,7 +276,8 @@ if __name__ == "__main__":
     #c.pepper_to_server_fps()
 
     # Main follow behaviour:
-    c.follow_behaviour()
+    #c.follow_behaviour()
 
     # Must call
-    c.shutdown()
+    #c.shutdown()
+    quick_shutdown()
