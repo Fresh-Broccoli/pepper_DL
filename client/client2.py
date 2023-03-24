@@ -38,6 +38,9 @@ class Client:
             "target_detected": self.target_detected,
         }
         self.verbose = verbose
+        self.vertical_ratio = None
+        self.horizontal_ratio = None
+        self.last_box = None
         print(f"Loading {model}...")
         self.dl_model = models[model](use_byte=True, **kwargs)
         print(model, " loaded successfully!")
@@ -75,14 +78,11 @@ class Client:
                 if self.dl_model.target_id != self.dl_model.max_target_id:
                     self.spin(speed=0.1)
                 pred, img = self.predict(img=None, draw=False)
+                #print("Length of pred: ", len(pred))
                 self.center_target(pred, img.shape, )
+                self.last_box = pred
         except Exception as e:
             print(e)
-
-
-
-
-
 
     def center_target(self, box, img_shape, stop_threshold = 0.1, vertical_offset=0.5):
         """ Takes in target bounding box data and attempts to center it
@@ -115,7 +115,12 @@ class Client:
             else:
                 self.rotate_head_abs()
         elif len(box) == 0:
-            pass
+            # If the length of box is zero, that means Pepper just lost track of the target before it officially
+            # declares the target lost. In this window, we can still recover the track by making Pepper move towards
+            # wherever the target could've shifted to
+            if self.vertical_ratio is not None and self.horizontal_ratio is not None:
+                self.walkToward(theta=self.horizontal_ratio*1.5)
+
         else: # If there's only 1 track, center the camera on them
             # Since there's an extra dimension, we'll take the first element, which is just the single detection
             box = box[0]
@@ -129,9 +134,15 @@ class Client:
             vertical_ratio = diff[1]/img_shape[0]
 
             if abs(horizontal_ratio) > stop_threshold:
+                # If horizontal ratio is not within the stop threshold, rotate to center the target
                 self.walkToward(theta=horizontal_ratio*0.9)
             else:
+                # Otherwise, approach target
                 self.approach_target(box, img_shape, commands=["rotate_head"],commands_kwargs=[{"forward":vertical_ratio*0.2}])
+
+            # Saves a copy of the last ratio
+            self.vertical_ratio = vertical_ratio
+            self.horizontal_ratio = horizontal_ratio
 
     def approach_target(self, box, img_shape, stop_threshold=0.65, move_back_threshold=0.8, commands=None, commands_kwargs=None):
         # (x1, y1, x2, y2, id)
@@ -142,7 +153,7 @@ class Client:
             # Add end condition here:
 
             if ratio > move_back_threshold:
-                self.walkTo(x=(ratio-1)/2)
+                self.walkTo(x=(ratio-1)/3)
             else:
                 if commands is not None: # assumes that commands is a list
                     for i in range(len(commands)):
@@ -280,4 +291,6 @@ if __name__ == "__main__":
 
     # Must call
     #c.shutdown()
+
+    # Call to quickly shut down without creating an instance of Client
     quick_shutdown()

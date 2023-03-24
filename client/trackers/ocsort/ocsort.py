@@ -475,6 +475,7 @@ class OCSortManager(OCSort):
         self.target_absent_frames = 0
         self.reset_target_thresh=reset_target_thresh
         self.save_frame_count = 0
+        self.last_box = None
 
     def detector_predict(self, frame, augment=False, classes=None, agnostic_nms=False):
         return self.detector.predict(frame, augment=augment, conf_thres=self.det_thresh, classes=classes, iou_thres=self.iou_threshold, agnostic_nms=agnostic_nms)
@@ -546,6 +547,10 @@ class OCSortManager(OCSort):
                     print("Target ", self.target_id, " is missing, looking for new target.")
                     self.target_id = 0
                     self.target_absent_frames = 0
+
+        if len(out) == 1 and self.target_id > 0:
+            # Saves last track
+            self.last_box = out
 
         #print("out shape = ", out.shape)
         #print("out = ", out)
