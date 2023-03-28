@@ -571,7 +571,11 @@ class OCSortManager(OCSort):
             cv2.imshow("Image", img)
             cv2.waitKey(show)
 
-
+    def reset_trackers(self):
+        self.trackers = []
+        self.target_id = 0
+        self.target_absent_frames = 0
+        self.last_box = None
 
 if __name__ == '__main__':
 

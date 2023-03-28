@@ -75,9 +75,18 @@ class Client:
 
         try:
             while True:
+                ctarget_id = self.dl_model.target_id
                 if self.dl_model.target_id != self.dl_model.max_target_id:
                     self.spin(speed=0.1)
                 pred, img = self.predict(img=None, draw=False)
+                if ctarget_id == 0:
+                    if ctarget_id != self.dl_model.target_id :
+                        self.stop()
+                        self.say("Target detected")
+                else:
+                    if ctarget_id != self.dl_model.target_id:
+                        self.stop()
+                        self.say("Target Lost")
                 #print("Length of pred: ", len(pred))
                 self.center_target(pred, img.shape, )
                 self.last_box = pred
@@ -118,7 +127,7 @@ class Client:
             # If the length of box is zero, that means Pepper just lost track of the target before it officially
             # declares the target lost. In this window, we can still recover the track by making Pepper move towards
             # wherever the target could've shifted to
-            if self.vertical_ratio is not None and self.horizontal_ratio is not None:
+            if self.vertical_ratio is not None and self.horizontal_ratio is not None and self.dl_model.target_id!=0:
                 self.walkToward(theta=self.horizontal_ratio*1.5)
 
         else: # If there's only 1 track, center the camera on them
@@ -149,15 +158,19 @@ class Client:
         box_area = (box[2]-box[0])*(box[3]-box[1])
         frame_area = img_shape[0]*img_shape[1]
         ratio = box_area/frame_area
-        if ratio > stop_threshold:
+        if ratio >= stop_threshold:
             # Add end condition here:
-
+            self.stop()
+            self.say("Hello, I'm Pepper, do you require my assistance?")
+            self.dl_model.reset_trackers()
+            """
             if ratio > move_back_threshold:
                 self.walkTo(x=(ratio-1)/3)
             else:
                 if commands is not None: # assumes that commands is a list
                     for i in range(len(commands)):
                         self.robot_actions[commands[i]](**commands_kwargs[i])
+            """
         else:
             self.walkToward(x=1-ratio)
 
@@ -260,8 +273,17 @@ def quick_shutdown():
     response = requests.post("http://localhost:5000" + headers["content-type"], headers=headers)
 
 if __name__ == "__main__":
+
+    def follow():
+        c = Client(image_size=[640,640], device="cuda", max_age=60, verbose=True)
+        #c = Client(image_size=[640, 640], device="cpu", max_age=60, verbose=True)
+        # Main follow behaviour:
+        c.follow_behaviour()
+        # Must call
+        c.shutdown()
+
     #c = Client(image_size=[640,640], device="cuda", max_age=60, verbose=True)
-    #c = Client(image_size=[640, 640], device="cpu")
+    #c = Client(image_size=[640, 640], device="cpu", max_age=60, verbose=True)
 
     # Voice functions:
     #c.say("I'm Pepper, I like eating pizza with pineapple")
@@ -283,7 +305,7 @@ if __name__ == "__main__":
 
 
     # Image test functions
-    #c.get_image_pred_test(30)
+    #c.get_image_pred_test(60)
     #c.pepper_to_server_fps()
 
     # Main follow behaviour:
@@ -291,6 +313,8 @@ if __name__ == "__main__":
 
     # Must call
     #c.shutdown()
+
+    #follow()
 
     # Call to quickly shut down without creating an instance of Client
     quick_shutdown()

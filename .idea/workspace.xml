@@ -72,7 +72,7 @@
       <window_info id="Space Code Reviews" order="0" />
       <window_info id="Bookmarks" order="1" side_tool="true" />
       <window_info id="Pull Requests" order="2" />
-      <window_info active="true" content_ui="combo" id="Project" order="3" visible="true" weight="0.10338542" />
+      <window_info active="true" content_ui="combo" id="Project" order="3" visible="true" weight="0.10234375" />
       <window_info id="Commit" order="4" />
       <window_info id="Learn" order="5" show_stripe_button="false" />
       <window_info id="Structure" order="6" side_tool="true" />
@@ -82,7 +82,7 @@
       <window_info anchor="bottom" id="Database Changes" order="3" />
       <window_info anchor="bottom" x="22" y="312" width="1876" height="415" id="Python Console" order="4" weight="0.39951923" />
       <window_info anchor="bottom" id="Problems View" order="5" weight="0.33028847" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="6" visible="true" weight="0.22451922" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="6" visible="true" weight="0.22259615" />
       <window_info anchor="bottom" id="TypeScript" order="7" />
       <window_info anchor="bottom" id="Services" order="8" weight="0.33028847" />
       <window_info anchor="bottom" id="Debug" order="9" weight="0.33028847" />
@@ -222,7 +222,8 @@
       <workItem from="1679013725156" duration="3649000" />
       <workItem from="1679364999490" duration="1290000" />
       <workItem from="1679458643294" duration="2903000" />
-      <workItem from="1679629114654" duration="599000" />
+      <workItem from="1679629114654" duration="775000" />
+      <workItem from="1679966086861" duration="599000" />
     </task>
     <task id="LOCAL-00001" summary="Added some test code used to measure camera FPS">
       <created>1678852794233</created>
@@ -280,7 +281,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679463685851</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Added:&#10;- Pepper will look for the target if it lost track (depends on framerate)">
+      <created>1679634897302</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1679634897302</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -294,7 +302,8 @@
     <MESSAGE value="Added:&#10;&#10;- Pepper can now say whatever I want it to say rather than using a dictionary of predefined sentences&#10;&#10;Ported:&#10;&#10;- Every robot action to Flask&#10;- Follow behaviour to Flask" />
     <MESSAGE value="QoL:&#10;- Added verbose to see what Pepper actions are being called" />
     <MESSAGE value="QoL:&#10;- Added verbose to see what Pepper actions are being called&#10;&#10;Added:&#10;- Default behaviour when no targets are being tracked. Pepper will spin around at a slow rate while resetting its head angle" />
-    <option name="LAST_COMMIT_MESSAGE" value="QoL:&#10;- Added verbose to see what Pepper actions are being called&#10;&#10;Added:&#10;- Default behaviour when no targets are being tracked. Pepper will spin around at a slow rate while resetting its head angle" />
+    <MESSAGE value="Added:&#10;- Pepper will look for the target if it lost track (depends on framerate)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added:&#10;- Pepper will look for the target if it lost track (depends on framerate)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
