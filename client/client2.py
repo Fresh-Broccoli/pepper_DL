@@ -42,7 +42,7 @@ class Client:
         self.horizontal_ratio = None
         self.last_box = None
         print(f"Loading {model}...")
-        self.dl_model = models[model](use_byte=True, **kwargs)
+        self.dl_model = models[model](use_byte=True, hand_raise_frames_thresh=5, **kwargs)
         print(model, " loaded successfully!")
 
     def get_image(self,show=False, save=False, save_name=None):
@@ -72,9 +72,10 @@ class Client:
         self.dl_model.draw(prediction, np.ascontiguousarray(img), show=show, save_dir=save_dir)
 
     def follow_behaviour(self):
-
+        self.stop()
         try:
             while True:
+                self.rotate_head_abs()
                 ctarget_id = self.dl_model.target_id
                 if self.dl_model.target_id != self.dl_model.max_target_id:
                     self.spin(speed=0.1)
@@ -142,16 +143,16 @@ class Client:
             horizontal_ratio = diff[0]/img_shape[1]
             vertical_ratio = diff[1]/img_shape[0]
 
+            # Saves a copy of the last ratio
+            self.vertical_ratio = vertical_ratio
+            self.horizontal_ratio = horizontal_ratio
+
             if abs(horizontal_ratio) > stop_threshold:
                 # If horizontal ratio is not within the stop threshold, rotate to center the target
                 self.walkToward(theta=horizontal_ratio*0.9)
             else:
                 # Otherwise, approach target
                 self.approach_target(box, img_shape, commands=["rotate_head"],commands_kwargs=[{"forward":vertical_ratio*0.2}])
-
-            # Saves a copy of the last ratio
-            self.vertical_ratio = vertical_ratio
-            self.horizontal_ratio = horizontal_ratio
 
     def approach_target(self, box, img_shape, stop_threshold=0.65, move_back_threshold=0.8, commands=None, commands_kwargs=None):
         # (x1, y1, x2, y2, id)
@@ -172,7 +173,7 @@ class Client:
                         self.robot_actions[commands[i]](**commands_kwargs[i])
             """
         else:
-            self.walkToward(x=1-ratio)
+            self.walkToward(x=1-ratio, y=self.horizontal_ratio*ratio)
 
     def spin(self, left=True, speed=0.2, verbose = False):
         self.walkToward(theta = speed if left else -speed, verbose=verbose)

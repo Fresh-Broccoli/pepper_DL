@@ -461,7 +461,7 @@ class OCSort(object):
 
 class OCSortManager(OCSort):
     def __init__(self, max_age=5, min_hits=3, iou_threshold=0.3, conf_thresh=0.4, delta_t=3, asso_func="iou",
-                 inertia=0.2, use_byte=False, reset_target_thresh=15, **kwargs):
+                 inertia=0.2, use_byte=False, reset_target_thresh=15, hand_raise_frames_thresh=3 , **kwargs):
         """ OCSortManager, does tracking and detection
         Params:
             reset_target_thresh: int
@@ -476,6 +476,8 @@ class OCSortManager(OCSort):
         self.reset_target_thresh=reset_target_thresh
         self.save_frame_count = 0
         self.last_box = None
+        self.hand_raise_frames_thresh = hand_raise_frames_thresh
+        self.hand_raise_frames = 0
 
     def detector_predict(self, frame, augment=False, classes=None, agnostic_nms=False):
         return self.detector.predict(frame, augment=augment, conf_thres=self.det_thresh, classes=classes, iou_thres=self.iou_threshold, agnostic_nms=agnostic_nms)
@@ -504,33 +506,41 @@ class OCSortManager(OCSort):
         """
         pred = self.detector_predict(frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
         points = self.detector.extract_keypoint_data(pred)
-        pred = pred[((points[:,5,1]>points[:,9,1]) & ((points[:,5,2]>kpt_conf_thresh) | (points[:,9,2]>kpt_conf_thresh))) | ((points[:,6,1]>points[:,10,1]) & ((points[:,6,2]>kpt_conf_thresh) | (points[:,10,2]>kpt_conf_thresh)))]
+        # Filters prediction by only keeping those with their wrist keypoint above the shoulder keypoint only if
+        # both keypoints are have high confidence (visibility)
+        pred = pred[((points[:,5,1]>points[:,9,1]) & ((points[:,5,2]>kpt_conf_thresh) & (points[:,9,2]>kpt_conf_thresh))) | ((points[:,6,1]>points[:,10,1]) & ((points[:,6,2]>kpt_conf_thresh) & (points[:,10,2]>kpt_conf_thresh)))]
 
-        # Current implementation of this check only looks at the position of estimated keypoint, but it does not look
-        # into the confidence score for relevant keypoints. This means for joints offscreen, the detector may give it
-        # weird values that may mess with the logic here.
-        #pred = pred[(points[:,5,1]>points[:,9,1]) | (points[:,6,1]>points[:,10,1])]
+        # If there are more than 1 preds after filtering, we know that Pepper is seeing multiple people with their
+        # hands raised. In that case, we'll take the person with the highest confidence
+        # An alternative is to take the person with the largest bounding box area
+        if len(pred) >= 1:
+            # Update hand raise frame
+            self.hand_raise_frames += 1
+            # By confidence
+            pred = max(pred, key = lambda x: x[4]).unsqueeze(0)
+            # By area
+            #pred = max(pred, key = lambda x: (x[2]-x[0])*(x[3]-x[1])).unsqueeze(0)
 
-        if len(pred) == 0:
-            track = super().update(np.empty((0, 5))) # Should I run tracking even though no target has been detected?
+            if self.hand_raise_frames >= self.hand_raise_frames_thresh:
+                track = self.update(frame, pred=pred)
+                print("Tracked track: ", track)
+                #self.hand_raise_frames = 0
+            else:
+                track = super().update(np.empty((0, 5)))
 
-        elif len(pred) == 1:
-            # SORT requires at least 2 frames of the target to initiate track
-            track = self.update(frame, pred = pred)
-        else: # Should be very rare
-            # If multiple people have raised their hand, target the individual with the highest confidence score:
-            # Apparently, this tensor is only 1D, so I'll unsqueeze it for now
-            track = self.update(frame, pred = pred[pred[:,4].argmax()].unsqueeze(0))
-        #print("len(pred) = ", len(pred))
-        #print("track = ", track)
+            #track = self.update(frame, pred=pred)
 
-        #self.target_id = int(track[0,-1]) if len(track) > 0 else None
+        else:
+            # Hand raise frames must be consecutive
+            self.hand_raise_frames = 0
+            track = super().update(np.empty((0, 5)))  # Should I run tracking even though no target has been detected?
 
         if len(track) > 0:
             if self.target_id != int(track[0,-1]):
                 self.target_id = int(track[0,-1])
                 if self.target_id > self.max_target_id:
                     self.max_target_id = self.target_id
+        print("self.hand_raise_frames:", self.hand_raise_frames)
         return track
 
     def smart_update(self, frame, pred = None, augment=False, classes=None, agnostic_nms=False):
