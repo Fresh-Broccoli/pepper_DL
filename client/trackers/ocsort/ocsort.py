@@ -9,7 +9,7 @@ import sys
 import cv2
 import numpy as np
 
-# Get rid of the dot at the fron to use this as a standalone file.
+# Get rid of the dot at the front to use this as a standalone file.
 from .association import *
 #from association import *
 
@@ -546,6 +546,7 @@ class OCSortManager(OCSort):
     def smart_update(self, frame, pred = None, augment=False, classes=None, agnostic_nms=False):
         #Made to be called by the client, automatically determines whether to call filtered_update or update
         if self.target_id <= 0: # When there's no tracked target
+
             out = self.filtered_update(frame=frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
             #print("m", m)
         else: # When there's a tracked target
@@ -601,11 +602,20 @@ if __name__ == '__main__':
             return parent
 
     oc = OCSortManager(use_byte=True)
-    data_dir = os.path.join(parent_dir(1), "detection_models", "edgeai_yolov5", "data", "photos")
+    #data_dir = os.path.join(parent_dir(1), "detection_models", "edgeai_yolov5", "data", "photos")
     #data_dir = os.path.join("edgeai_yolov5", "data", "custom")
-    frame1 = cv2.imread(os.path.join(data_dir, "frame1.jpg"))
-    frame2 = cv2.imread(os.path.join(data_dir, "frame2.jpg"))
+    #frame1 = cv2.imread(os.path.join(data_dir, "frame1.jpg"))
+    #frame2 = cv2.imread(os.path.join(data_dir, "frame2.jpg"))
     #frame1 = cv2.imread(os.path.join(data_dir, "paris.jpg"))
 
-    f1 = oc.update(frame1)
-    oc.draw(f1, frame1, 0, save_dir=os.path.join(parent_dir(2), "pepper_test"))
+    #f1 = oc.update(frame1)
+    #oc.draw(f1, frame1, 0, save_dir=os.path.join(parent_dir(2), "pepper_test"))
+
+    data_dir = os.path.join(parent_dir(1), "botsort", "imgs")
+    output_dir = os.path.join(parent_dir(1), "botsort", "output")
+    images = [os.path.join(data_dir, img) for img in sorted(os.listdir(data_dir))]
+    for p in images:
+        print(p)
+        img = cv2.imread(p)
+        output = oc.update(img)
+        print(output)

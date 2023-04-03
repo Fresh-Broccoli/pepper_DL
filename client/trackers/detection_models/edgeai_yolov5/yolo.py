@@ -167,6 +167,7 @@ if __name__ == "__main__":
 
     manager = YoloManager(image_size=[640,640], device="0")
 
+
     img = cv2.imread(os.path.join("data", "custom", "raising_hand.jpg"))
 
     preprocessed_img = manager.preprocess_frame(img)

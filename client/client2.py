@@ -18,9 +18,14 @@ from trackers.sort.sort import SortManager
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "models", "ocsort"))
 from trackers.ocsort.ocsort import OCSortManager
 
+# BoTSORT:
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "models", "botsort"))
+from trackers.botsort.bot_sort import *
+
 models = {
     "sort":SortManager,
     "ocsort":OCSortManager,
+    "botsort":BoTSortManager,
 }
 
 
@@ -42,7 +47,7 @@ class Client:
         self.horizontal_ratio = None
         self.last_box = None
         print(f"Loading {model}...")
-        self.dl_model = models[model](use_byte=True, hand_raise_frames_thresh=5, **kwargs)
+        self.dl_model = models[model](hand_raise_frames_thresh=5, **kwargs)
         print(model, " loaded successfully!")
 
     def get_image(self,show=False, save=False, save_name=None):
@@ -283,8 +288,14 @@ if __name__ == "__main__":
         # Must call
         c.shutdown()
 
-    #c = Client(image_size=[640,640], device="cuda", max_age=60, verbose=True)
-    #c = Client(image_size=[640, 640], device="cpu", max_age=60, verbose=True)
+
+    args = make_parser().parse_args()
+    args.ablation = False
+    args.mot20 = not args.fuse_score
+
+    #c = Client(image_size=[640,640], device="cuda", max_age=60, use_byte=True, verbose=True)
+    #c = Client(image_size=[640, 640], device="cpu", max_age=60, use_byte=True, verbose=True)
+    c = Client(model="botsort", device="cuda", verbose=True, args=args)
 
     # Voice functions:
     #c.say("I'm Pepper, I like eating pizza with pineapple")
@@ -318,4 +329,4 @@ if __name__ == "__main__":
     #follow()
 
     # Call to quickly shut down without creating an instance of Client
-    quick_shutdown()
+    #quick_shutdown()
