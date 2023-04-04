@@ -6,6 +6,7 @@ from collections import deque
 import os
 import sys
 import argparse
+import torch
 
 from . import matching
 from .gmc import GMC
@@ -192,7 +193,7 @@ class STrack(BaseTrack):
     def box_id(self):
         """ [left, top, right, bottom, id]
         """
-        return np.append(self.xywh, [self.track_id])
+        return np.append(self.tlbr, [self.track_id])
 
 
     @staticmethod
@@ -263,7 +264,7 @@ class BoTSORT(object):
 
     def update(self, output_results, img):
         # Firstly convert output to numpy array
-        output_results = output_results.detach().cpu().numpy()
+        output_results = output_results.detach().cpu().numpy() if torch.is_tensor(output_results) else output_results
         self.frame_id += 1
         activated_starcks = []
         refind_stracks = []
@@ -545,7 +546,7 @@ class BoTSortManager(BoTSORT):
         if pred is None:
             pred = self.detector_predict(frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
         bounding_boxes = self.detector.extract_bounding_box_data(pred)
-
+        #print("YOLO prediction:", bounding_boxes)
         track = super().update(np.asarray(bounding_boxes), frame)
         return [t for t in track if t.track_id == self.target_id] if target_only else track
         #return track[track[:,-1]==self.target_id] if target_only else track
@@ -569,7 +570,7 @@ class BoTSortManager(BoTSORT):
         # Filters prediction by only keeping those with their wrist keypoint above the shoulder keypoint only if
         # both keypoints are have high confidence (visibility)
         pred = pred[((points[:,5,1]>points[:,9,1]) & ((points[:,5,2]>kpt_conf_thresh) & (points[:,9,2]>kpt_conf_thresh))) | ((points[:,6,1]>points[:,10,1]) & ((points[:,6,2]>kpt_conf_thresh) & (points[:,10,2]>kpt_conf_thresh)))]
-
+        #print("YOLO prediction:", pred)
         # If there are more than 1 preds after filtering, we know that Pepper is seeing multiple people with their
         # hands raised. In that case, we'll take the person with the highest confidence
         # An alternative is to take the person with the largest bounding box area
@@ -583,7 +584,7 @@ class BoTSortManager(BoTSORT):
 
             if self.hand_raise_frames >= self.hand_raise_frames_thresh:
                 track = self.update(frame, pred=pred)
-                print("Tracked track: ", track)
+                #print("Tracked track: ", track)
                 #self.hand_raise_frames = 0
             else:
                 track = []
@@ -595,8 +596,8 @@ class BoTSortManager(BoTSORT):
             track = []  # Should I run tracking even though no target has been detected?
 
         if len(track) > 0:
-            if self.target_id != int(track[0,-1]):
-                self.target_id = int(track[0,-1])
+            if self.target_id != int(track[0].track_id):
+                self.target_id = int(track[0].track_id)
                 if self.target_id > self.max_target_id:
                     self.max_target_id = self.target_id
         print("self.hand_raise_frames:", self.hand_raise_frames)
@@ -626,7 +627,7 @@ class BoTSortManager(BoTSORT):
         print("target Id = ", self.target_id)
         print("max target Id = ", self.max_target_id)
 
-        return [t.box_id for t in out] # Need to convert to [x1, y1, x2, y2, id] format
+        return np.array([np.array(t.box_id) for t in out]) # Need to convert to [x1, y1, x2, y2, id] format
 
     def draw(self, prediction, img, show=None, save_dir = None):
         #if len(prediction) !=

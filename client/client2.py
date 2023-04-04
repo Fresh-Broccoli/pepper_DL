@@ -1,6 +1,4 @@
-import socket
 import sys
-import pickle
 import numpy as np
 import os
 import cv2
@@ -11,8 +9,8 @@ import base64
 from PIL import Image
 
 # SORT:
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "models", "sort"))
-from trackers.sort.sort import SortManager
+#sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "models", "sort"))
+#from trackers.sort.sort import SortManager
 
 # OCSORT:
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "models", "ocsort"))
@@ -23,7 +21,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "mo
 from trackers.botsort.bot_sort import *
 
 models = {
-    "sort":SortManager,
+    #"sort":SortManager,
     "ocsort":OCSortManager,
     "botsort":BoTSortManager,
 }
@@ -47,7 +45,7 @@ class Client:
         self.horizontal_ratio = None
         self.last_box = None
         print(f"Loading {model}...")
-        self.dl_model = models[model](hand_raise_frames_thresh=5, **kwargs)
+        self.dl_model = models[model](**kwargs)
         print(model, " loaded successfully!")
 
     def get_image(self,show=False, save=False, save_name=None):
@@ -68,7 +66,7 @@ class Client:
         # Shape of pred: number of tracked targets x 5
         # where 5 represents: (x1, y1, x2, y2, id)
         pred = self.dl_model.smart_update(img)
-
+        #pred = self.dl_model.update(img)
         if draw:
             self.draw(pred, img, save_dir="images")
         return pred, img
@@ -85,6 +83,7 @@ class Client:
                 if self.dl_model.target_id != self.dl_model.max_target_id:
                     self.spin(speed=0.1)
                 pred, img = self.predict(img=None, draw=False)
+                print("Prediction:", pred)
                 if ctarget_id == 0:
                     if ctarget_id != self.dl_model.target_id :
                         self.stop()
@@ -98,6 +97,7 @@ class Client:
                 self.last_box = pred
         except Exception as e:
             print(e)
+            self.shutdown()
 
     def center_target(self, box, img_shape, stop_threshold = 0.1, vertical_offset=0.5):
         """ Takes in target bounding box data and attempts to center it
@@ -266,8 +266,8 @@ class Client:
     def get_image_pred_test(self, image_no=60):
         start_time = time.time()
         for i in range(image_no):
-            pred, img = self.predict(None, draw=True)
-        end_time = time.time() - start_time
+            pred, img = self.predict(None, draw=False)
+            end_time = time.time() - start_time
         print(f"It took {str(end_time)} seconds to receive {str(image_no)} images. This means we were able to receive images from Pepper to server to client at {str(image_no/end_time)} FPS!")
 
 def dummy_action():
@@ -280,23 +280,86 @@ def quick_shutdown():
 
 if __name__ == "__main__":
 
-    def follow():
-        c = Client(image_size=[640,640], device="cuda", max_age=60, verbose=True)
+    def ocfollow():
+        c = Client(model="ocsort", image_size=[640,640], device="cuda", max_age=60, verbose=False, hand_raise_frames_thresh=3)
         #c = Client(image_size=[640, 640], device="cpu", max_age=60, verbose=True)
         # Main follow behaviour:
         c.follow_behaviour()
         # Must call
         c.shutdown()
 
-
+    # BoTSORT default params
     args = make_parser().parse_args()
     args.ablation = False
     args.mot20 = not args.fuse_score
 
+    def botfollow():
+        #c = Client(model="botsort", image_size=[640,640], device="cuda", max_age=60, verbose=True, hand_raise_frames_thresh=3)
+        c = Client(model="botsort", image_size=[640,640], device="cuda", verbose=False, args=args, hand_raise_frames_thresh=3)
+        # Main follow behaviour:
+        c.follow_behaviour()
+        # Must call
+        c.shutdown()
+
+    def livestream_camera_botsort():
+        c = Client(model="botsort", image_size=[640, 640], device="cuda", verbose=False, args=args,
+                   hand_raise_frames_thresh=3)
+        vertical_offset = 0.5
+        try:
+            while True:
+                pred, img = c.predict(img=None, draw=False)
+                if len(pred) > 0:
+                    box = pred[0]
+                    img_shape = img.shape
+                    box_center = np.array([box[2] / 2 + box[0] / 2, box[1] * (1 - vertical_offset) + box[
+                        3] * vertical_offset])  # box[1]/2+box[3]/2])
+                    frame_center = np.array((img_shape[1] / 2, img_shape[0] / 2))
+                    # diff = box_center - frame_center
+                    diff = frame_center - box_center
+                    horizontal_ratio = diff[0] / img_shape[1]
+                    vertical_ratio = diff[1] / img_shape[0]
+                    area = (box[2]-box[0])*(box[3]-box[1])
+                    area_ratio = area/(img_shape[0]*img_shape[1])
+                    print("BoT Prediction:", pred)
+                    print("Area ratio:", area_ratio)
+                    print("horizontal_ratio:", horizontal_ratio)
+                    print("vertical_ratio:", vertical_ratio)
+
+        except Exception as e:
+            print(e)
+            c.shutdown()
+
+    def livestream_camera_ocsort():
+        c = Client(model="ocsort", image_size=[640,640], device="cuda", max_age=60, verbose=False, hand_raise_frames_thresh=3)
+        vertical_offset = 0.5
+        try:
+            while True:
+                pred, img = c.predict(img=None, draw=False)
+                if len(pred) > 0:
+                    box = pred[0]
+                    img_shape = img.shape
+                    box_center = np.array([box[2] / 2 + box[0] / 2, box[1] * (1 - vertical_offset) + box[
+                        3] * vertical_offset])  # box[1]/2+box[3]/2])
+                    frame_center = np.array((img_shape[1] / 2, img_shape[0] / 2))
+                    # diff = box_center - frame_center
+                    diff = frame_center - box_center
+                    horizontal_ratio = diff[0] / img_shape[1]
+                    vertical_ratio = diff[1] / img_shape[0]
+                    area = (box[2]-box[0])*(box[3]-box[1])
+                    area_ratio = area/(img_shape[0]*img_shape[1])
+                    print("Prediction:", pred)
+                    print("Area ratio:", area_ratio)
+                    print("horizontal_ratio:", horizontal_ratio)
+                    print("vertical_ratio:", vertical_ratio)
+
+        except Exception as e:
+            print(e)
+            c.shutdown()
+
     #c = Client(image_size=[640,640], device="cuda", max_age=60, use_byte=True, verbose=True)
     #c = Client(image_size=[640, 640], device="cpu", max_age=60, use_byte=True, verbose=True)
-    c = Client(model="botsort", device="cuda", verbose=True, args=args)
-
+    #c = Client(model="ocsort", device="cuda", use_byte=True, verbose=True)
+    #c = Client(model="botsort", device="cuda", verbose=True, args=args)
     # Voice functions:
     #c.say("I'm Pepper, I like eating pizza with pineapple")
     #c.say("I am not a fan of hamburgers with fish and tomato sauce")
@@ -325,8 +388,9 @@ if __name__ == "__main__":
 
     # Must call
     #c.shutdown()
-
-    #follow()
+    #livestream_camera_ocsort()
+    #livestream_camera_botsort()
+    botfollow()
 
     # Call to quickly shut down without creating an instance of Client
-    #quick_shutdown()
+    quick_shutdown()
