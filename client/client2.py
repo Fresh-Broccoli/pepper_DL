@@ -50,6 +50,7 @@ class Client:
             "target_lost": self.target_lost,
             "target_detected": self.target_detected,
         }
+        self.model_name = model
         self.verbose = verbose
         self.vertical_ratio = None
         self.horizontal_ratio = None
