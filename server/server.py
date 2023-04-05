@@ -20,8 +20,8 @@ from voice import SpeechManager
 session = qi.Session()
 parser = argparse.ArgumentParser(description="Please enter Pepper's IP address (and optional port number)")
 parser.add_argument("--ip", type=str, nargs='?', default="192.168.1.102")
-# IP on phone: 192.168.43.183
 # IP on router: 192.168.1.102
+# IP on router: 169.254.220.108
 parser.add_argument("--port", type=int, nargs='?', default=9559)
 args = parser.parse_args()
 

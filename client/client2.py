@@ -20,10 +20,20 @@ from trackers.ocsort.ocsort import OCSortManager
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "models", "botsort"))
 from trackers.botsort.bot_sort import *
 
+# BoTSORT:
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "models", "botsort"))
+from trackers.botsort.bot_sort import BoTSortManager, bot_sort_make_parser
+
+# ByteTrack:
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "models", "bytetrack"))
+from trackers.bytetrack.byte_tracker import ByteTrackManager, byte_track_make_parser
+
+
 models = {
     #"sort":SortManager,
     "ocsort":OCSortManager,
     "botsort":BoTSortManager,
+    "bytetrack":ByteTrackManager,
 }
 
 
@@ -83,7 +93,7 @@ class Client:
                 if self.dl_model.target_id != self.dl_model.max_target_id:
                     self.spin(speed=0.1)
                 pred, img = self.predict(img=None, draw=False)
-                print("Prediction:", pred)
+                #print("Prediction:", pred)
                 if ctarget_id == 0:
                     if ctarget_id != self.dl_model.target_id :
                         self.stop()
@@ -93,6 +103,29 @@ class Client:
                         self.stop()
                         self.say("Target Lost")
                 #print("Length of pred: ", len(pred))
+                self.center_target(pred, img.shape, )
+                self.last_box = pred
+        except Exception as e:
+            print(e)
+            self.shutdown()
+
+    def experiment_follow(self):
+        self.stop()
+        try:
+            while True:
+                self.rotate_head_abs()
+                ctarget_id = self.dl_model.target_id
+                pred, img = self.predict(img=None, draw=False)
+                print("Prediction shape:", pred.shape)
+                print("Image shape:", img.shape)
+                if ctarget_id == 0:
+                    if ctarget_id != self.dl_model.target_id:
+                        self.stop()
+                        self.say("Target detected")
+                else:
+                    if ctarget_id != self.dl_model.target_id:
+                        self.stop()
+                        self.say("Target Lost")
                 self.center_target(pred, img.shape, )
                 self.last_box = pred
         except Exception as e:
@@ -159,7 +192,7 @@ class Client:
                 # Otherwise, approach target
                 self.approach_target(box, img_shape, commands=["rotate_head"],commands_kwargs=[{"forward":vertical_ratio*0.2}])
 
-    def approach_target(self, box, img_shape, stop_threshold=0.65, move_back_threshold=0.8, commands=None, commands_kwargs=None):
+    def approach_target(self, box, img_shape, stop_threshold=0.70, move_back_threshold=0.9, commands=None, commands_kwargs=None):
         # (x1, y1, x2, y2, id)
         box_area = (box[2]-box[0])*(box[3]-box[1])
         frame_area = img_shape[0]*img_shape[1]
@@ -280,117 +313,11 @@ def quick_shutdown():
 
 if __name__ == "__main__":
 
-    def ocfollow():
-        c = Client(model="ocsort", image_size=[640,640], device="cuda", max_age=60, verbose=False, hand_raise_frames_thresh=3)
-        #c = Client(image_size=[640, 640], device="cpu", max_age=60, verbose=True)
-        # Main follow behaviour:
-        c.follow_behaviour()
-        # Must call
-        c.shutdown()
+    args = byte_track_make_parser().parse_args()
 
-    # BoTSORT default params
-    args = make_parser().parse_args()
-    args.ablation = False
-    args.mot20 = not args.fuse_score
+    c = Client(model="bytetrack", device="cuda", verbose=True, args=args,
+               hand_raise_frames_thresh=3)
 
-    def botfollow():
-        #c = Client(model="botsort", image_size=[640,640], device="cuda", max_age=60, verbose=True, hand_raise_frames_thresh=3)
-        c = Client(model="botsort", image_size=[640,640], device="cuda", verbose=False, args=args, hand_raise_frames_thresh=3)
-        # Main follow behaviour:
-        c.follow_behaviour()
-        # Must call
-        c.shutdown()
-
-    def livestream_camera_botsort():
-        c = Client(model="botsort", image_size=[640, 640], device="cuda", verbose=False, args=args,
-                   hand_raise_frames_thresh=3)
-        vertical_offset = 0.5
-        try:
-            while True:
-                pred, img = c.predict(img=None, draw=False)
-                if len(pred) > 0:
-                    box = pred[0]
-                    img_shape = img.shape
-                    box_center = np.array([box[2] / 2 + box[0] / 2, box[1] * (1 - vertical_offset) + box[
-                        3] * vertical_offset])  # box[1]/2+box[3]/2])
-                    frame_center = np.array((img_shape[1] / 2, img_shape[0] / 2))
-                    # diff = box_center - frame_center
-                    diff = frame_center - box_center
-                    horizontal_ratio = diff[0] / img_shape[1]
-                    vertical_ratio = diff[1] / img_shape[0]
-                    area = (box[2]-box[0])*(box[3]-box[1])
-                    area_ratio = area/(img_shape[0]*img_shape[1])
-                    print("BoT Prediction:", pred)
-                    print("Area ratio:", area_ratio)
-                    print("horizontal_ratio:", horizontal_ratio)
-                    print("vertical_ratio:", vertical_ratio)
-
-        except Exception as e:
-            print(e)
-            c.shutdown()
-
-    def livestream_camera_ocsort():
-        c = Client(model="ocsort", image_size=[640,640], device="cuda", max_age=60, verbose=False, hand_raise_frames_thresh=3)
-        vertical_offset = 0.5
-        try:
-            while True:
-                pred, img = c.predict(img=None, draw=False)
-                if len(pred) > 0:
-                    box = pred[0]
-                    img_shape = img.shape
-                    box_center = np.array([box[2] / 2 + box[0] / 2, box[1] * (1 - vertical_offset) + box[
-                        3] * vertical_offset])  # box[1]/2+box[3]/2])
-                    frame_center = np.array((img_shape[1] / 2, img_shape[0] / 2))
-                    # diff = box_center - frame_center
-                    diff = frame_center - box_center
-                    horizontal_ratio = diff[0] / img_shape[1]
-                    vertical_ratio = diff[1] / img_shape[0]
-                    area = (box[2]-box[0])*(box[3]-box[1])
-                    area_ratio = area/(img_shape[0]*img_shape[1])
-                    print("Prediction:", pred)
-                    print("Area ratio:", area_ratio)
-                    print("horizontal_ratio:", horizontal_ratio)
-                    print("vertical_ratio:", vertical_ratio)
-
-        except Exception as e:
-            print(e)
-            c.shutdown()
-
-    #c = Client(image_size=[640,640], device="cuda", max_age=60, use_byte=True, verbose=True)
-    #c = Client(image_size=[640, 640], device="cpu", max_age=60, use_byte=True, verbose=True)
-    #c = Client(model="ocsort", device="cuda", use_byte=True, verbose=True)
-    #c = Client(model="botsort", device="cuda", verbose=True, args=args)
-    # Voice functions:
-    #c.say("I'm Pepper, I like eating pizza with pineapple")
-    #c.say("I am not a fan of hamburgers with fish and tomato sauce")
-
-    # Locomotion functions:
-    #c.walkTo(x=0.3)
-    #c.walkTo(y=0.3)
-    #c.walkTo(theta=0.3)
-    #c.walkToward(x=0.2, theta=0.2)
-    #c.rotate_head_abs(forward=1)
-    #time.sleep(3)
-    #c.rotate_head_abs(forward=-1)
-    #time.sleep(3)
-    #c.rotate_head_abs(left=1)
-    #time.sleep(3)
-    #c.rotate_head_abs(left=-1)
-    #time.sleep(3)
-
-
-    # Image test functions
-    #c.get_image_pred_test(60)
-    #c.pepper_to_server_fps()
-
-    # Main follow behaviour:
-    #c.follow_behaviour()
-
+    c.experiment_follow()
     # Must call
     #c.shutdown()
-    #livestream_camera_ocsort()
-    #livestream_camera_botsort()
-    botfollow()
-
-    # Call to quickly shut down without creating an instance of Client
-    quick_shutdown()
