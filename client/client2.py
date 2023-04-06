@@ -58,8 +58,9 @@ class Client:
         print(f"Loading {model}...")
         self.dl_model = models[model](**kwargs)
         print(model, " loaded successfully!")
+        self.start_time = 0
 
-    def get_image(self,show=False, save=False, save_name=None):
+    def get_image(self, show=False, save=False, path=None, save_name=None):
         headers = {'content-type':"/image/send_image"}
         response = requests.post(self.address+headers["content-type"], headers=headers)
         j = response.json()
@@ -68,21 +69,18 @@ class Client:
             cv2.imshow("Pepper_Image", img)
             cv2.waitKey(1)
         if save:
-            cv2.imwrite(f"images/{save_name}.png", img)
+            cv2.imwrite(f"images/{save_name}.png" if path is None else os.path.join(path, save_name), img)
         return img
 
-    def predict(self, img, draw=True):
+    def predict(self, img, draw=True, save_dir = None):
         if img is None:
             img = self.get_image()
         # Shape of pred: number of tracked targets x 5
         # where 5 represents: (x1, y1, x2, y2, id)
         pred = self.dl_model.smart_update(img)
-        #pred = self.dl_model.update(img)
-        print("pred:", pred)
-        print("pred type:", type(pred))
-        print("pred shape:", pred.shape)
+
         if draw:
-            self.draw(pred, img, save_dir="images")
+            self.draw(pred, img, save_dir="images" if save_dir is None else save_dir)
         return pred, img
 
     def draw(self, prediction, img, show=None, save_dir=None):
@@ -92,7 +90,7 @@ class Client:
         self.stop()
         try:
             while True:
-                self.rotate_head_abs()
+                self.rotate_head_abs(verbose=False)
                 ctarget_id = self.dl_model.target_id
                 if self.dl_model.target_id != self.dl_model.max_target_id:
                     self.spin(speed=0.1)
@@ -114,21 +112,24 @@ class Client:
             print(e)
             self.shutdown()
 
-    def experiment_follow(self, save_name=None):
+    def experiment_follow(self, save_dir=None, draw=False):
         self.stop()
+
         try:
             while True:
-                self.rotate_head_abs()
+                self.rotate_head_abs(verbose=False)
                 ctarget_id = self.dl_model.target_id
                 pred, img = self.predict(img=None, draw=False)
+                if draw:
+                    self.draw(pred, img, save_dir=save_dir)
                 #print("Prediction shape:", pred.shape)
                 #print("Image shape:", img.shape)
                 if ctarget_id == 0:
                     if ctarget_id != self.dl_model.target_id:
                         self.stop()
-                        if save_name is not None:
-                            cv2.imwrite(f"exp_img/{save_name}.png", img)
                         self.say("Target detected")
+                        self.start_time = time.time()
+
                 else:
                     if ctarget_id != self.dl_model.target_id:
                         self.stop()
@@ -208,6 +209,7 @@ class Client:
             # Add end condition here:
             self.stop()
             self.say("Hello, I'm Pepper, do you require my assistance?")
+            self.end_time = time.time() - self.start_time
             self.dl_model.reset_trackers()
             """
             if ratio > move_back_threshold:
@@ -232,58 +234,58 @@ class Client:
     def say(self, word, verbose = False):
         headers = {'content-type': "/voice/say"}
         response = requests.post(self.address + headers["content-type"], data=word)
-        if verbose or self.verbose:
+        if verbose ^ self.verbose: # XOR
             print(f"say(word={word})")
 
     def target_lost(self, verbose = False):
         headers = {'content-type': "/voice/targetLost"}
         response = requests.post(self.address + headers["content-type"], headers=headers)
-        if verbose or self.verbose:
+        if verbose ^ self.verbose:
             print(f"target_lost()")
 
     def target_detected(self, verbose = False):
         headers = {'content-type': "/voice/targetDetected"}
         response = requests.post(self.address + headers["content-type"], headers=headers)
-        if verbose or self.verbose:
+        if verbose ^ self.verbose:
             print(f"target_detected()")
 
     def stop(self, verbose = False):
         headers = {'content-type': "/locomotion/stop"}
         response = requests.post(self.address + headers["content-type"])
-        if verbose or self.verbose:
+        if verbose ^ self.verbose:
             print(f"stop()")
 
     def walkTo(self, x=0, y=0, theta=0, verbose=False):
         headers = {'content-type': "/locomotion/walkTo"}
         response = requests.post(self.address + headers["content-type"] + f"?x={str(x)}&y={str(y)}&theta={str(theta)}&verbose={str(1 if verbose else 0)}")
-        if verbose or self.verbose:
+        if verbose ^ self.verbose:
             print(f"walkTo(x={str(x)}, y={str(y)}, theta={str(theta)})")
 
     def walkToward(self, x=0, y=0, theta=0, verbose=False):
         headers = {'content-type': "/locomotion/walkToward"}
         response = requests.post(self.address + headers["content-type"] + f"?x={str(x)}&y={str(y)}&theta={str(theta)}&verbose={str(1 if verbose else 0)}")
-        if verbose or self.verbose:
+        if verbose ^ self.verbose:
             print(f"walkToward(x={str(x)}, y={str(y)}, theta={str(theta)})")
 
     def rotate_head(self, forward=0, left=0, speed=0.2, verbose=False):
         headers = {'content-type': "/locomotion/rotateHead"}
         response = requests.post(self.address + headers[
             "content-type"] + f"?forward={str(forward)}&left={str(left)}&speed={str(speed)}")
-        if verbose or self.verbose:
+        if verbose ^ self.verbose:
             print(f"rotate_head(forward={str(forward)}, left={str(left)}, speed={str(speed)})")
 
     def rotate_head_abs(self, forward=0, left=0, speed=0.2, verbose=False):
         headers = {'content-type': "/locomotion/rotateHeadAbs"}
         response = requests.post(self.address + headers[
             "content-type"] + f"?forward={str(forward)}&left={str(left)}&speed={str(speed)}")
-        if verbose or self.verbose:
+        if verbose ^ self.verbose:
             print(f"rotate_head_abs(forward={str(forward)}, left={str(left)}, speed={str(speed)})")
 
 
     def shutdown(self, verbose=False):
         headers = {'content-type': "/setup/end"}
         response = requests.post(self.address + headers["content-type"], headers=headers)
-        if verbose or self.verbose:
+        if verbose ^ self.verbose:
             print("shutdown()")
 
     #------------------------------------------------------------------------------------------------------------------
@@ -320,11 +322,17 @@ def quick_shutdown():
 
 if __name__ == "__main__":
 
-    args = byte_track_make_parser().parse_args()
+    #args = byte_track_make_parser().parse_args()
 
-    c = Client(model="bytetrack", device="cuda", verbose=True, args=args,
+    #c = Client(model="bytetrack", device="cuda", verbose=True, args=args,
+    #           hand_raise_frames_thresh=3)
+
+    #c.experiment_follow()
+
+    c = Client(model="ocsort", device="cuda", verbose=True,
                hand_raise_frames_thresh=3)
 
-    c.experiment_follow()
+    # c.get_image(save=True, path="exp_img/distance/forward", save_name="1m")
+
     # Must call
     #c.shutdown()

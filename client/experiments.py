@@ -1,6 +1,6 @@
 from client2 import *
 import requests
-
+import os
 
 def initiate_oc():
     return Client(model="ocsort", image_size=[640, 640], device="cuda", verbose=True, hand_raise_frames_thresh=3)
@@ -21,25 +21,60 @@ def initiate_byte():
                hand_raise_frames_thresh=3)
 
 
-def oc_exp():
+def oc_exp(draw = True, trial="distance", case="1m", shutdown=True, verbose=True, clear_img=False):
+    p = os.path.join("exp_img", "OCSORT", trial, case)
+    if not os.path.exists(p):
+        os.makedirs(p)
+    elif clear_img:
+        print("Clearing old images...")
+        for f in os.listdir(p):
+            os.remove(os.path.join(p,f))
+        print("Clearing old images successful!")
     # Used for both the distance and occlusion trial for OCSORT
     c = initiate_oc()
 
     # Main follow behaviour:
-    c.experiment_follow()
-    # Must call
-    c.shutdown()
+    try:
+        c.experiment_follow(save_dir=p, draw=draw)
+    except:
+        if shutdown:
+            c.shutdown()
+        return c
 
-def bot_exp():
+def bot_exp(draw = True, trial="distance", case="1m", shutdown=True, clear_img=False):
+    p = os.path.join("exp_img", "BoTSORT", trial, case)
+    if not os.path.exists(p):
+        os.makedirs(p)
+    elif clear_img:
+        print("Clearing old images...")
+        for f in os.listdir(p):
+            os.remove(os.path.join(p, f))
+        print("Clearing old images successful!")
+    # Used for both the distance and occlusion trial for OCSORT
     c = initiate_bot()
     # Main follow behaviour:
-    c.experiment_follow()
+    c.experiment_follow(save_dir=p, draw=draw)
 
-def byte_exp():
+    if shutdown:
+        c.shutdown()
+
+
+def byte_exp(draw = True, trial="distance", case="1m", shutdown=True, clear_img=False):
+    p = os.path.join("exp_img", "ByteTrack", trial, case)
+    if not os.path.exists(p):
+        os.makedirs(p)
+    elif clear_img:
+        print("Clearing old images...")
+        for f in os.listdir(p):
+            os.remove(os.path.join(p, f))
+        print("Clearing old images successful!")
+    # Used for both the distance and occlusion trial for OCSORT
     c = initiate_byte()
 
-    c.experiment_follow()
+    c.experiment_follow(save_dir=p, draw=draw)
 
+    if shutdown:
+        c.shutdown()
 
 def ocfollow():
     c = initiate_oc()
@@ -132,12 +167,13 @@ if __name__ == "__main__":
     #args.ablation = False
     #args.mot20 = not args.fuse_score
 
-    #try:
-        #oc_exp()
-        #bot_exp()
-        #byte_exp()
-    #oc = initiate_oc()
-    bot = initiate_bot()
+    try:
+        #c = initiate_oc()
+        c = oc_exp(trial="occlusion", case="5m/1", clear_img=True)
+        #bot_exp(trial="occlusion", case="5m", clear_img=True)
+        #byte_exp(trial="occlusion", case="5m", clear_img=True)
+    #oc = initiate_oc(trial="occlusion", case="5m")
+    #bot = initiate_bot()
     #pred, img = bot.predict(None, draw=False)
     #print("pred:", pred)
     #print("pred type:", type(pred))
@@ -145,10 +181,11 @@ if __name__ == "__main__":
 
 
     #bot = initiate_bot()
-    byte = initiate_byte()
+    #byte = initiate_byte()
     #for c in [oc, bot, byte]:
     #    get_image_pred_test(client = c)
-    get_image_pred_test(byte,)
+    #get_image_pred_test(byte,)
     #oc.shutdown()
-#except:
-    #    quick_shutdown()
+    except:
+        print("Time it took for the robot to reach the target: ", c.end_time)
+        quick_shutdown()
