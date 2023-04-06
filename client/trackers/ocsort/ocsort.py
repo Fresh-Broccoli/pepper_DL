@@ -540,7 +540,7 @@ class OCSortManager(OCSort):
                 self.target_id = int(track[0,-1])
                 if self.target_id > self.max_target_id:
                     self.max_target_id = self.target_id
-        print("self.hand_raise_frames:", self.hand_raise_frames)
+        #print("self.hand_raise_frames:", self.hand_raise_frames)
         return track
 
     def smart_update(self, frame, pred = None, augment=False, classes=None, agnostic_nms=False):
@@ -565,15 +565,15 @@ class OCSortManager(OCSort):
 
         #print("out shape = ", out.shape)
         #print("out = ", out)
-        print("target Id = ", self.target_id)
-        print("max target Id = ", self.max_target_id)
+        #print("target Id = ", self.target_id)
+        #print("max target Id = ", self.max_target_id)
 
         return out
 
     def draw(self, prediction, img, show=None, save_dir = None):
         #if len(prediction) !=
         for det_index, (*xyxy, id) in enumerate(reversed(prediction[:,:6])):
-            plot_one_box(xyxy, img, label=(f'id: {str(int(id))}'), color=colors(0,True), line_thickness=2, kpt_label=False, steps=3, orig_shape=img.shape[:2])
+            plot_one_box(xyxy, img, label=(f'id: {str(int(id))}'), color=colors(int(id),True), line_thickness=2, kpt_label=False, steps=3, orig_shape=img.shape[:2])
         if save_dir is not None:
             self.save_frame_count += 1
             file_name = os.path.join(save_dir, "{:08d}.jpg".format(self.save_frame_count))

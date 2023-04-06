@@ -68,7 +68,7 @@ class Client:
             cv2.imshow("Pepper_Image", img)
             cv2.waitKey(1)
         if save:
-            cv2.imwrite(f"images/{save_name.png}", img)
+            cv2.imwrite(f"images/{save_name}.png", img)
         return img
 
     def predict(self, img, draw=True):
@@ -78,6 +78,9 @@ class Client:
         # where 5 represents: (x1, y1, x2, y2, id)
         pred = self.dl_model.smart_update(img)
         #pred = self.dl_model.update(img)
+        print("pred:", pred)
+        print("pred type:", type(pred))
+        print("pred shape:", pred.shape)
         if draw:
             self.draw(pred, img, save_dir="images")
         return pred, img
@@ -99,6 +102,7 @@ class Client:
                     if ctarget_id != self.dl_model.target_id :
                         self.stop()
                         self.say("Target detected")
+
                 else:
                     if ctarget_id != self.dl_model.target_id:
                         self.stop()
@@ -110,18 +114,20 @@ class Client:
             print(e)
             self.shutdown()
 
-    def experiment_follow(self):
+    def experiment_follow(self, save_name=None):
         self.stop()
         try:
             while True:
                 self.rotate_head_abs()
                 ctarget_id = self.dl_model.target_id
                 pred, img = self.predict(img=None, draw=False)
-                print("Prediction shape:", pred.shape)
-                print("Image shape:", img.shape)
+                #print("Prediction shape:", pred.shape)
+                #print("Image shape:", img.shape)
                 if ctarget_id == 0:
                     if ctarget_id != self.dl_model.target_id:
                         self.stop()
+                        if save_name is not None:
+                            cv2.imwrite(f"exp_img/{save_name}.png", img)
                         self.say("Target detected")
                 else:
                     if ctarget_id != self.dl_model.target_id:

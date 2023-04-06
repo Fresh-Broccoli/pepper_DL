@@ -474,6 +474,8 @@ class BoTSORT(object):
         # output_stracks = [track for track in self.tracked_stracks if track.is_activated]
         output_stracks = [track for track in self.tracked_stracks]
 
+        # Some post-processing to make it compatible with draw
+        output_stracks = np.empty((0,5)) if len(output_stracks) == 0 else output_stracks
 
         return output_stracks
 
@@ -547,7 +549,8 @@ class BoTSortManager(BoTSORT):
         bounding_boxes = self.detector.extract_bounding_box_data(pred)
         #print("YOLO prediction:", bounding_boxes)
         track = super().update(np.asarray(bounding_boxes), frame)
-        return [t for t in track if t.track_id == self.target_id] if target_only else track
+        track = np.array([t.box_id for t in track if t.track_id == self.target_id]) if target_only else np.array([t.box_id for t in track])
+        return track if len(track) > 0 else np.empty((0,5))
         #return track[track[:,-1]==self.target_id] if target_only else track
 
     def filtered_update(self, frame, augment=False, classes=None, agnostic_nms=False, kpt_conf_thresh=0.5):
@@ -586,20 +589,20 @@ class BoTSortManager(BoTSORT):
                 #print("Tracked track: ", track)
                 #self.hand_raise_frames = 0
             else:
-                track = []
+                track = np.empty((0, 5))
             #track = self.update(frame, pred=pred)
 
         else:
             # Hand raise frames must be consecutive
             self.hand_raise_frames = 0
-            track = []  # Should I run tracking even though no target has been detected?
+            track = np.empty((0, 5))  # Should I run tracking even though no target has been detected?
 
         if len(track) > 0:
-            if self.target_id != int(track[0].track_id):
-                self.target_id = int(track[0].track_id)
+            if self.target_id != int(track[0, -1]):
+                self.target_id = int(track[0, -1])
                 if self.target_id > self.max_target_id:
                     self.max_target_id = self.target_id
-        print("self.hand_raise_frames:", self.hand_raise_frames)
+        #print("self.hand_raise_frames:", self.hand_raise_frames)
         return track
 
     def smart_update(self, frame, pred = None, augment=False, classes=None, agnostic_nms=False):
@@ -623,15 +626,16 @@ class BoTSortManager(BoTSORT):
 
         #print("out shape = ", out.shape)
         #print("out = ", out)
-        print("target Id = ", self.target_id)
-        print("max target Id = ", self.max_target_id)
-
-        return np.array([np.array(t.box_id) for t in out]) # Need to convert to [x1, y1, x2, y2, id] format
+        #print("target Id = ", self.target_id)
+        #print("max target Id = ", self.max_target_id)
+        return out
+        #return np.array([np.array(t.box_id) for t in out]) if len(out) > 0 else out
+        # Need to convert to [x1, y1, x2, y2, id] format
 
     def draw(self, prediction, img, show=None, save_dir = None):
         #if len(prediction) !=
         for det_index, (*xyxy, id) in enumerate(reversed(prediction[:,:6])):
-            plot_one_box(xyxy, img, label=(f'id: {str(int(id))}'), color=colors(0,True), line_thickness=2, kpt_label=False, steps=3, orig_shape=img.shape[:2])
+            plot_one_box(xyxy, img, label=(f'id: {str(int(id))}'), color=colors(int(id),True), line_thickness=2, kpt_label=False, steps=3, orig_shape=img.shape[:2])
         if save_dir is not None:
             self.save_frame_count += 1
             file_name = os.path.join(save_dir, "{:08d}.jpg".format(self.save_frame_count))
