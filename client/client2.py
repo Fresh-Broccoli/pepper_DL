@@ -39,7 +39,7 @@ models = {
 
 class Client:
 
-    def __init__(self, model="ocsort", address='http://localhost:5000', verbose=False, **kwargs):
+    def __init__(self, model="ocsort", address='http://localhost:5000', verbose=False, experimental=False, **kwargs):
         self.address = address
         self.robot_actions = {
             "walkToward": self.walkToward,
@@ -58,7 +58,11 @@ class Client:
         print(f"Loading {model}...")
         self.dl_model = models[model](**kwargs)
         print(model, " loaded successfully!")
-        self.start_time = 0
+        self.experimental = experimental
+        if experimental:
+            self.start_time = 0
+            self.end_time = None
+            self.terminate = False
 
     def get_image(self, show=False, save=False, path=None, save_name=None):
         headers = {'content-type':"/image/send_image"}
@@ -112,14 +116,23 @@ class Client:
             print(e)
             self.shutdown()
 
+    # Only use if experimental is True
     def experiment_follow(self, save_dir=None, draw=False):
+        data = {
+                    "frames":0,
+                    "time":0,
+                }
         self.stop()
 
         try:
+            start_time = time.time()
             while True:
                 self.rotate_head_abs(verbose=False)
                 ctarget_id = self.dl_model.target_id
+                st = time.time()
                 pred, img = self.predict(img=None, draw=False)
+                data["time"] = data["time"] + time.time() - st
+                data["frames"] = data["frames"] + 1
                 if draw:
                     self.draw(pred, img, save_dir=save_dir)
                 #print("Prediction shape:", pred.shape)
@@ -134,13 +147,20 @@ class Client:
                     if ctarget_id != self.dl_model.target_id:
                         self.stop()
                         self.say("Target Lost")
-                self.center_target(pred, img.shape, )
+                self.center_target(pred, img.shape, experimental=True)
+                if self.terminate and self.experimental:
+                    break
                 self.last_box = pred
         except Exception as e:
             print(e)
-            self.shutdown()
+        finally:
+            #self.shutdown()
+            data["start_time"] = start_time
+            data["behaviour_time"] = self.end_time
+            data["occluded_frame_count"] = self.dl_model.target_absent_frames
+            return data
 
-    def center_target(self, box, img_shape, stop_threshold = 0.1, vertical_offset=0.5):
+    def center_target(self, box, img_shape, stop_threshold = 0.1, vertical_offset=0.5, experimental=False):
         """ Takes in target bounding box data and attempts to center it
         Preconditons:
             1. box must contain data about exactly 1 bounding box
@@ -200,6 +220,8 @@ class Client:
                 # Otherwise, approach target
                 self.approach_target(box, img_shape, commands=["rotate_head"],commands_kwargs=[{"forward":vertical_ratio*0.2}])
 
+
+
     def approach_target(self, box, img_shape, stop_threshold=0.70, move_back_threshold=0.9, commands=None, commands_kwargs=None):
         # (x1, y1, x2, y2, id)
         box_area = (box[2]-box[0])*(box[3]-box[1])
@@ -209,7 +231,9 @@ class Client:
             # Add end condition here:
             self.stop()
             self.say("Hello, I'm Pepper, do you require my assistance?")
-            self.end_time = time.time() - self.start_time
+            if self.experimental:
+                self.end_time = time.time() - self.start_time
+                self.terminate = True
             self.dl_model.reset_trackers()
             """
             if ratio > move_back_threshold:
@@ -291,6 +315,7 @@ class Client:
     #------------------------------------------------------------------------------------------------------------------
     # Test code #######################################################################################################
     #------------------------------------------------------------------------------------------------------------------
+
     def get_image_test(self, image_no=60):
         start_time = time.time()
         for i in range(image_no):

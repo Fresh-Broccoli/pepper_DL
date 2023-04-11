@@ -523,7 +523,7 @@ class OCSortManager(OCSort):
 
             if self.hand_raise_frames >= self.hand_raise_frames_thresh:
                 track = self.update(frame, pred=pred)
-                print("Tracked track: ", track)
+                #print("Tracked track: ", track)
                 #self.hand_raise_frames = 0
             else:
                 track = super().update(np.empty((0, 5)))
