@@ -1,0 +1,8 @@
+trial: "occlusion"
+distance: "3.5m"
+attempt_no: 2
+model: "ocsort"
+clear_img: False
+clear_log: False
+draw: False
+verbose: False

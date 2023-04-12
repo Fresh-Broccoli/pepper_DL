@@ -3,7 +3,7 @@ import csv
 from client2 import *
 import requests
 import os
-
+import argparse
 
 # OCSORT:
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "models", "ocsort"))
@@ -28,8 +28,8 @@ def initiate_byte(experimental=False, verbose=True):
                hand_raise_frames_thresh=3)
 
 
-def oc_exp(draw = True, trial="distance", case="1m", attempt_no=1, verbose=False, clear_img=False, clear_log=False):
-    p = os.path.join("exp_img", "OCSORT", trial, case)
+def oc_exp(draw = True, trial="distance", distance="1m", attempt_no=1, verbose=False, clear_img=False, clear_log=False):
+    p = os.path.join("exp_img", "OCSORT", trial, distance)
     print("Save directory:", p)
     if not os.path.exists(p):
         os.makedirs(p)
@@ -44,15 +44,15 @@ def oc_exp(draw = True, trial="distance", case="1m", attempt_no=1, verbose=False
     # Main follow behaviour:
     data = c.experiment_follow(save_dir=p, draw=draw)
 
-    header = None if not clear_log else ["Attempt_no", "Model", "Distance", "Time_to_Target", "FPS", "Occluded_Frames_Count"]
-    write_entry(os.path.join("exp_logs", trial+"_log.csv"), [attempt_no, "OCSORT", case, data["behaviour_time"], data["frames"] /data["time"], data["occluded_frame_count"]], header, "a" if not clear_log else "w")
+    # Write up data
+    data_writer(trial, attempt_no, distance, "OCSORT", data, clear_log=clear_log)
 
     print("Frames sent:", data["frames"])
     print("Time from detection to end condition:", data["behaviour_time"])
     print("FPS:", data["frames"] /data["time"])
 
-def bot_exp(draw = True, trial="distance", case="1m", verbose=False, clear_img=False):
-    p = os.path.join("exp_img", "BoTSORT", trial, case)
+def bot_exp(draw = True, trial="distance", distance="1m", attempt_no=1, verbose=False, clear_img=False, clear_log=False):
+    p = os.path.join("exp_img", "BoTSORT", trial, distance)
     if not os.path.exists(p):
         os.makedirs(p)
     elif clear_img:
@@ -61,16 +61,20 @@ def bot_exp(draw = True, trial="distance", case="1m", verbose=False, clear_img=F
             os.remove(os.path.join(p, f))
         print("Clearing old images successful!")
     # Used for both the distance and occlusion trial for OCSORT
-    c = initiate_bot(experimental=True, verbose=False)
+    c = initiate_bot(experimental=True, verbose=verbose)
     # Main follow behaviour:
     data = c.experiment_follow(save_dir=p, draw=draw)
+
+    # Write up data
+    data_writer(trial, attempt_no, distance, "BoTSORT", data, clear_log=clear_log)
+
     print("Frames sent:", data["frames"])
     print("Time from detection to end condition:", data["behaviour_time"])
     print("FPS:", data["frames"] /data["time"])
 
 
-def byte_exp(draw = True, trial="distance", case="1m", verbose=False, clear_img=False):
-    p = os.path.join("exp_img", "ByteTrack", trial, case)
+def byte_exp(draw = True, trial="distance", distance="1m", attempt_no=1, verbose=False, clear_img=False, clear_log=False):
+    p = os.path.join("exp_img", "ByteTrack", trial, distance)
     if not os.path.exists(p):
         os.makedirs(p)
     elif clear_img:
@@ -79,9 +83,13 @@ def byte_exp(draw = True, trial="distance", case="1m", verbose=False, clear_img=
             os.remove(os.path.join(p, f))
         print("Clearing old images successful!")
     # Used for both the distance and occlusion trial for OCSORT
-    c = initiate_byte(experimental=True, verbose=False)
+    c = initiate_byte(experimental=True, verbose=verbose)
 
     data = c.experiment_follow(save_dir=p, draw=draw)
+
+    # Write up data
+    data_writer(trial, attempt_no, distance, "BYTETRACK", data, clear_log=clear_log)
+
     print("Frames sent:", data["frames"])
     print("Time from detection to end condition:", data["behaviour_time"])
     print("FPS:", data["frames"] /data["time"])
@@ -184,6 +192,14 @@ def yolo_experiment():
                 c.draw(prediction=pred, img=img)
                 cv2.imwrite(os.path.join("exp_img", "resolution_test", "yolo_output", resolution, t, im), img)
 
+def data_writer(trial, attempt_no, distance, model, data, clear_log=False):
+    header = None if not clear_log else ["Attempt_no", "Model", "Distance", "Time_to_Target", "FPS",
+                                         "Occluded_Frames_Count"]
+    write_entry(os.path.join("exp_logs", trial + "_log.csv"),
+                [attempt_no, model, distance, data["behaviour_time"], data["frames"] / data["time"],
+                 data["occluded_frame_count"]], header, "a" if not clear_log else "w")
+
+
 def write_entry(file_dir, data, headers=None, mode="a"):
     with open(file_dir, mode) as f:
             writer = csv.writer(f)
@@ -195,10 +211,77 @@ def quick_shutdown():
     headers = {'content-type': "/setup/end"}
     response = requests.post("http://localhost:5000" + headers["content-type"], headers=headers)
 
+def experiment_args():
+    # For boolean variables, only specify those you want to be True. Ignore for False
+    parser = argparse.ArgumentParser("Pepper Trial Experiment")
 
+    # Logging args
+    parser.add_argument(
+        "--trial",
+        default="occlusion",
+        type=str,
+        help="Type of trial we're doing, either 'occlusion' or 'distance'",
+    )
+    parser.add_argument(
+        "--distance",
+        default="1.5m",
+        type=str,
+        help="Distance between target and robot")
+    parser.add_argument(
+        "--attempt_no",
+        default=1,
+        type=int,
+        help="The n-th attempt of this trial")
 
+    parser.add_argument(
+        "--model",
+        default="ocsort",
+        type=str,
+        help="Model used to run trial. Will be used for both logging and determining which model to use. Currently, you can choose between 'ocsort', 'botsort', and 'bytetrack'")
 
+    # Local files
+    parser.add_argument(
+        "--clear_img",
+        default=False,
+        type=bool,
+        help="Determines whether we should clear images of a particular trial before running")
+
+    parser.add_argument(
+        "--clear_log",
+        default=False,
+        type=bool,
+        help="Determines whether we should clear the log of a particular trial before running")
+
+    parser.add_argument(
+        "--draw",
+        default=False,
+        type=bool,
+        help="Determines whether we should draw and save bounding boxes of all frames during this particular experiment")
+
+    # Etc
+    parser.add_argument(
+        "--verbose",
+        default=False,
+        type=bool,
+        help="Determines whether or not to print out the robot's actions at each step")
+
+    return parser
+
+# Used to initiate experiment instance by name
+name_to_model = {
+    "ocsort":oc_exp,
+    "botsort":bot_exp,
+    "bytetrack":byte_exp
+}
+
+import yaml
 if __name__ == "__main__":
+    # args = vars(experiment_args().parse_args())
+    # print(args)
+
+    with open("config.yaml", "r") as yaml_file:
+        args = yaml.safe_load(yaml_file)
+
     #try:
         #c = initiate_oc()
         #c = oc_exp(trial="occlusion", case="5m/1", clear_img=True)
@@ -223,5 +306,10 @@ if __name__ == "__main__":
     #    quick_shutdown()
 
     #bot_exp(draw=True, trial="occlusion", case="1m", clear_img=True)
-    oc_exp(draw=False, trial="occlusion", case="2.5m", attempt_no=2, clear_img=False, verbose=True, clear_log=True)
+    m = name_to_model[args["model"]]
+
+    args.pop("model")
+
+    m(**args)
+    #oc_exp(draw=False, trial="occlusion", case="1.5m", attempt_no=1, clear_img=False, verbose=True, clear_log=True)
     #byte_exp(draw=True, trial="occlusion", case="1m", clear_img=True)
