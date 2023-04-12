@@ -194,10 +194,10 @@ def yolo_experiment():
 
 def data_writer(trial, attempt_no, distance, model, data, clear_log=False):
     header = None if not clear_log else ["Attempt_no", "Model", "Distance", "Time_to_Target", "FPS",
-                                         "Occluded_Frames_Count"]
+                                         "Occluded_Frames_Count", "Outcome"]
     write_entry(os.path.join("exp_logs", trial + "_log.csv"),
-                [attempt_no, model, distance, data["behaviour_time"], data["frames"] / data["time"],
-                 data["occluded_frame_count"]], header, "a" if not clear_log else "w")
+                [attempt_no, model, distance, data["behaviour_time"] if data["behaviour_time"] is not None else "NA", data["frames"] / data["time"],
+                 data["occluded_frame_count"], "Failure" if data["failure"] else "Success"], header, "a" if not clear_log else "w")
 
 
 def write_entry(file_dir, data, headers=None, mode="a"):

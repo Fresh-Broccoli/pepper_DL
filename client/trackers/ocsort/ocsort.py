@@ -473,6 +473,7 @@ class OCSortManager(OCSort):
         self.target_id = 0
         self.max_target_id = 1
         self.target_absent_frames = 0
+        self.largest_target_absent_frames = 0
         self.reset_target_thresh=reset_target_thresh
         self.save_frame_count = 0
         self.last_box = None
@@ -553,6 +554,8 @@ class OCSortManager(OCSort):
             out = self.update(frame=frame, pred=pred, augment=augment, classes=classes, agnostic_nms=agnostic_nms, target_only=True)
             if len(out) == 0: # When the tracked target is not present on the screen
                 self.target_absent_frames += 1
+                self.largest_target_absent_frames = self.target_absent_frames if self.largest_target_absent_frames < self.target_absent_frames else self.largest_target_absent_frames
+                #print("Absent frames = ", self.target_absent_frames)
                 if self.target_absent_frames >= self.reset_target_thresh: # If the number of frames where the target
                     # is absent is greater than or equal to the threshold, reset the target ID
                     print("Target ", self.target_id, " is missing, looking for new target.")

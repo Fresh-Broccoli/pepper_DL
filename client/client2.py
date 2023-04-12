@@ -123,7 +123,7 @@ class Client:
                     "time":0,
                 }
         self.stop()
-
+        failure = False
         try:
             start_time = time.time()
             while True:
@@ -147,6 +147,9 @@ class Client:
                     if ctarget_id != self.dl_model.target_id:
                         self.stop()
                         self.say("Target Lost")
+                        failure = True
+                        break
+
                 self.center_target(pred, img.shape, experimental=True)
                 if self.terminate and self.experimental:
                     break
@@ -157,7 +160,8 @@ class Client:
             #self.shutdown()
             data["start_time"] = start_time
             data["behaviour_time"] = self.end_time
-            data["occluded_frame_count"] = self.dl_model.target_absent_frames
+            data["occluded_frame_count"] = self.dl_model.largest_target_absent_frames
+            data["failure"] = failure
             return data
 
     def center_target(self, box, img_shape, stop_threshold = 0.1, vertical_offset=0.5, experimental=False):

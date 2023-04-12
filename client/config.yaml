@@ -1,8 +1,8 @@
 trial: "occlusion"
 distance: "3.5m"
-attempt_no: 2
+attempt_no: 10
 model: "ocsort"
-clear_img: False
+clear_img: True
 clear_log: False
-draw: False
+draw: True
 verbose: False
