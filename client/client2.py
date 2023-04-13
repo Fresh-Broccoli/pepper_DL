@@ -188,7 +188,7 @@ class Client:
         if len(box)>1: # Check number of tracks
             # If not 1, then the target is either lost, or went off-screen
             #raise Exception(f"The length of box is {len(box)}, but it should be 1!")
-            self.stop()
+            # self.stop()
             if self.dl_model.target_id == 0:
                 print("Target Lost")
                 #self.target_lost()

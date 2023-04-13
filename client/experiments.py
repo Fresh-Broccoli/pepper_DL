@@ -29,7 +29,7 @@ def initiate_byte(experimental=False, verbose=True):
 
 
 def oc_exp(draw = True, trial="distance", distance="1m", attempt_no=1, verbose=False, clear_img=False, clear_log=False):
-    p = os.path.join("exp_img", "OCSORT", trial, distance)
+    p = os.path.join("exp_img", "OCSORT", trial, distance, str(attempt_no))
     print("Save directory:", p)
     if not os.path.exists(p):
         os.makedirs(p)
@@ -52,7 +52,7 @@ def oc_exp(draw = True, trial="distance", distance="1m", attempt_no=1, verbose=F
     print("FPS:", data["frames"] /data["time"])
 
 def bot_exp(draw = True, trial="distance", distance="1m", attempt_no=1, verbose=False, clear_img=False, clear_log=False):
-    p = os.path.join("exp_img", "BoTSORT", trial, distance)
+    p = os.path.join("exp_img", "BoTSORT", trial, distance, str(attempt_no))
     if not os.path.exists(p):
         os.makedirs(p)
     elif clear_img:
@@ -74,7 +74,7 @@ def bot_exp(draw = True, trial="distance", distance="1m", attempt_no=1, verbose=
 
 
 def byte_exp(draw = True, trial="distance", distance="1m", attempt_no=1, verbose=False, clear_img=False, clear_log=False):
-    p = os.path.join("exp_img", "ByteTrack", trial, distance)
+    p = os.path.join("exp_img", "ByteTrack", trial, distance, str(attempt_no))
     if not os.path.exists(p):
         os.makedirs(p)
     elif clear_img:
