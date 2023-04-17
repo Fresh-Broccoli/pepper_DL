@@ -65,13 +65,14 @@ class YoloManager():
         """
         return prediction[:, :5]
 
-    def extract_keypoint_data(self, prediction):
+    def extract_keypoint_data(self, prediction, reshape=True):
         # Extracts prediction keypoints and reshapes them into:
         #   (number of detections, 17 key points, 3 features consisting of x, y, confidence)
-        return prediction[:, 6:].reshape(prediction.shape[0], 17,3)
+        out = prediction[:, 6:]
+        return out.reshape(prediction.shape[0], 17,3) if reshape else out
 
-    def extract_bounding_box_and_keypoint(self, prediction):
-        return self.extract_bounding_box_data(prediction), self.extract_keypoint_data(prediction)
+    def extract_bounding_box_and_keypoint(self, prediction, reshape_kpt=True):
+        return self.extract_bounding_box_data(prediction), self.extract_keypoint_data(prediction, reshape_kpt)
 
     def predict(self, frame, augment=False, conf_thres=0.25, classes=None, iou_thres=0.45, agnostic_nms=False, preprocess=True, scale_to_original=True):
         if preprocess:
@@ -95,7 +96,9 @@ class YoloManager():
     def draw(self, prediction, img, show=True):
         # for det_index, (*xyxy, conf, cls) in enumerate(reversed(prediction[:,:6])):
         for det_index, (*xyxy, conf, cls) in enumerate(prediction[:,:6]):
-            plot_one_box(xyxy, img, label=(f'{self.names[int(cls)]} {conf:.2f}'), color=colors(int(cls),True), line_thickness=2, kpt_label=self.kpt_label, kpts=prediction[det_index, 6:], steps=3, orig_shape=img.shape[:2])
+            plot_one_box(xyxy, img, label=(f'{self.names[int(cls)]} {conf:.2f}'), color=colors(int(cls),True),
+                         line_thickness=2, kpt_label=self.kpt_label, kpts=prediction[det_index, 6:],
+                         steps=3, orig_shape=img.shape[:2])
         if show:
             cv2.imshow("Image", img)
             cv2.waitKey(0)

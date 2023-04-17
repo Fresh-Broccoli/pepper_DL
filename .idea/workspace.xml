@@ -10,6 +10,8 @@
       <change beforePath="$PROJECT_DIR$/client/config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/client/config.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/exp_logs/occlusion_log.csv" beforeDir="false" afterPath="$PROJECT_DIR$/client/exp_logs/occlusion_log.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/experiments.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/experiments.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/trackers/detection_models/edgeai_yolov5/yolo.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/trackers/detection_models/edgeai_yolov5/yolo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/trackers/ocsort/ocsort.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/trackers/ocsort/ocsort.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,21 +52,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "TODO_SCOPE": "All Places",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "pepper__flask",
-    "last_opened_file_path": "/mnt/SSD4TB/GoogleDrive/code/pepper_DL/client/exp_logs",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;TODO_SCOPE&quot;: &quot;All Places&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;pepper__flask&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/mnt/SSD4TB/GoogleDrive/code/pepper_DL/client/exp_logs&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
       <console-settings>
@@ -78,18 +80,18 @@
       <window_info id="Space Code Reviews" order="0" />
       <window_info id="Bookmarks" order="1" side_tool="true" />
       <window_info id="Pull Requests" order="2" weight="0.32994792" />
-      <window_info active="true" content_ui="combo" id="Project" order="3" visible="true" weight="0.14140625" />
+      <window_info active="true" content_ui="combo" id="Project" order="3" visible="true" weight="0.10182291" />
       <window_info id="Commit" order="4" />
       <window_info id="Learn" order="5" show_stripe_button="false" />
       <window_info id="Structure" order="6" side_tool="true" />
-      <window_info anchor="bottom" id="Find" show_stripe_button="false" weight="0.33028847" />
+      <window_info anchor="bottom" id="Find" weight="0.33062977" />
       <window_info anchor="bottom" id="Version Control" order="0" weight="0.31490386" />
       <window_info anchor="bottom" id="Python Packages" order="1" weight="0.33028847" />
       <window_info anchor="bottom" id="File Transfer" order="2" />
       <window_info anchor="bottom" id="Database Changes" order="3" />
       <window_info anchor="bottom" x="22" y="312" width="1876" height="415" id="Python Console" order="4" weight="0.39951923" />
       <window_info anchor="bottom" id="Problems View" order="5" weight="0.33028847" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="6" visible="true" weight="0.35048077" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="6" visible="true" weight="0.3360577" />
       <window_info anchor="bottom" id="TypeScript" order="7" />
       <window_info anchor="bottom" id="Services" order="8" weight="0.33028847" />
       <window_info anchor="bottom" id="Debug" order="9" show_stripe_button="false" weight="0.33028847" />
@@ -273,7 +275,10 @@
       <workItem from="1681174494273" duration="3130000" />
       <workItem from="1681265670407" duration="599000" />
       <workItem from="1681267825923" duration="3406000" />
-      <workItem from="1681347864688" duration="1847000" />
+      <workItem from="1681347864688" duration="1886000" />
+      <workItem from="1681436892143" duration="737000" />
+      <workItem from="1681443760362" duration="599000" />
+      <workItem from="1681703428131" duration="3090000" />
     </task>
     <task id="LOCAL-00001" summary="Added some test code used to measure camera FPS">
       <created>1678852794233</created>
@@ -422,7 +427,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681275224024</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Added:&#10;- Results for OCSORT and ByteTrack">
+      <created>1681353845852</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1681353845852</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -448,14 +460,15 @@
     <MESSAGE value="Added:&#10;- Automatic logging for trials" />
     <MESSAGE value="Added:&#10;- Rewritten some code to make experiments easier to carry out" />
     <MESSAGE value="Added:&#10;- Results for OCSORT&#10;- Made trackers accumulate counts of frames where the target is missing" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added:&#10;- Results for OCSORT&#10;- Made trackers accumulate counts of frames where the target is missing" />
+    <MESSAGE value="Added:&#10;- Results for OCSORT and ByteTrack" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added:&#10;- Results for OCSORT and ByteTrack" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="python-line">
           <url>file://$PROJECT_DIR$/client/trackers/ocsort/ocsort.py</url>
-          <line>577</line>
+          <line>583</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="python-line">
@@ -490,13 +503,18 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="python-line">
           <url>file://$PROJECT_DIR$/client/experiments.py</url>
-          <line>282</line>
+          <line>288</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="python-line">
           <url>file://$PROJECT_DIR$/client/experiments.py</url>
           <line>93</line>
           <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/client/trackers/ocsort/ocsort.py</url>
+          <line>3</line>
+          <option name="timeStamp" value="21" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

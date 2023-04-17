@@ -1,6 +1,6 @@
 trial: "occlusion"
-distance: "3.5m"
-attempt_no: 4
+distance: "1.5m"
+attempt_no: 10
 model: "botsort"
 clear_img: True
 clear_log: False

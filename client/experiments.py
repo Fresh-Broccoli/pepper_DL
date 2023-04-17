@@ -9,23 +9,23 @@ import argparse
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "models", "ocsort"))
 from trackers.ocsort.ocsort import OCSortManager
 
-def initiate_oc(experimental=False, verbose = True, device="cuda"):
-    return Client(model="ocsort", image_size=[640, 640], device=device, verbose=verbose, hand_raise_frames_thresh=3, experimental=experimental,)
+def initiate_oc(experimental=False, verbose = True, device="cuda", **kwargs):
+    return Client(model="ocsort", image_size=[640, 640], device=device, verbose=verbose, hand_raise_frames_thresh=3, experimental=experimental, **kwargs)
 
-def initiate_bot(experimental=False, verbose=True, device="cuda"):
+def initiate_bot(experimental=False, verbose=True, device="cuda", **kwargs):
     # BoTSORT default params
     args = bot_sort_make_parser().parse_args()
     args.ablation = False
     args.mot20 = not args.fuse_score
 
     return Client(model="botsort", image_size=[640, 640], device=device, verbose=verbose, experimental=experimental, args=args,
-               hand_raise_frames_thresh=3)
+               hand_raise_frames_thresh=3, **kwargs)
 
-def initiate_byte(experimental=False, verbose=True, device="cuda"):
+def initiate_byte(experimental=False, verbose=True, device="cuda", **kwargs):
     args = byte_track_make_parser().parse_args()
 
     return Client(model="bytetrack", device=device, verbose=verbose, experimental=experimental, args=args,
-               hand_raise_frames_thresh=3)
+               hand_raise_frames_thresh=3, **kwargs)
 
 
 def oc_exp(draw = True, trial="distance", distance="1m", attempt_no=1, verbose=False, clear_img=False, clear_log=False):
@@ -94,8 +94,8 @@ def byte_exp(draw = True, trial="distance", distance="1m", attempt_no=1, verbose
     print("Time from detection to end condition:", data["behaviour_time"])
     print("FPS:", data["frames"] /data["time"])
 
-def ocfollow(verbose = True, device="cuda"):
-    c = initiate_oc(verbose = verbose, device=device)
+def ocfollow(verbose = True, device="cuda", **kwargs):
+    c = initiate_oc(verbose = verbose, device=device, **kwargs)
     #c = Client(image_size=[640, 640], device="cpu", max_age=60, verbose=True)
     # Main follow behaviour:
     c.follow_behaviour()
@@ -103,13 +103,19 @@ def ocfollow(verbose = True, device="cuda"):
     c.shutdown()
 
 
-def botfollow():
-    c = initiate_bot()
+def botfollow(verbose = True, device="cuda", **kwargs):
+    c = initiate_bot(verbose = verbose, device=device, **kwargs)
     # Main follow behaviour:
     c.follow_behaviour()
     # Must call
     c.shutdown()
 
+def bytefollow(verbose = True, device="cuda", **kwargs):
+    c = initiate_byte(verbose = verbose, device=device, **kwargs)
+    # Main follow behaviour:
+    c.follow_behaviour()
+    # Must call
+    c.shutdown()
 
 def livestream_camera_botsort():
     c = initiate_bot()
@@ -284,5 +290,6 @@ if __name__ == "__main__":
     #m(**args)
 
     # Run deep learning behaviour for end-user
-    ocfollow(device="cpu")
-    #oc_exp
+    ocfollow(device="cuda", max_age=50, use_byte=True)
+    #botfollow(device="cuda")
+    #bytefollow(device="cuda")

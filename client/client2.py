@@ -92,29 +92,29 @@ class Client:
 
     def follow_behaviour(self):
         self.stop()
-        try:
-            while True:
-                self.rotate_head_abs(verbose=False)
-                ctarget_id = self.dl_model.target_id
-                if self.dl_model.target_id != self.dl_model.max_target_id:
-                    self.spin(speed=0.1)
-                pred, img = self.predict(img=None, draw=False)
-                #print("Prediction:", pred)
-                if ctarget_id == 0:
-                    if ctarget_id != self.dl_model.target_id :
-                        self.stop()
-                        self.say("Target detected")
+        #try:
+        while True:
+            self.rotate_head_abs(verbose=False)
+            ctarget_id = self.dl_model.target_id
+            #if self.dl_model.target_id != self.dl_model.max_target_id:
+            #    self.spin(speed=0.1)
+            pred, img = self.predict(img=None, draw=False)
+            print("Prediction:", pred)
+            if ctarget_id == 0:
+                if ctarget_id != self.dl_model.target_id :
+                    self.stop()
+                    self.say("Target detected")
 
-                else:
-                    if ctarget_id != self.dl_model.target_id:
-                        self.stop()
-                        self.say("Target Lost")
-                #print("Length of pred: ", len(pred))
-                self.center_target(pred, img.shape, )
-                self.last_box = pred
-        except Exception as e:
-            print(e)
-            self.shutdown()
+            else:
+                if ctarget_id != self.dl_model.target_id:
+                    self.stop()
+                    self.say("Target Lost")
+            #print("Length of pred: ", len(pred))
+            self.center_target(pred, img.shape, )
+            self.last_box = pred
+        #except Exception as e:
+        #    print(e)
+        #    self.shutdown()
 
     # Only use if experimental is True
     def experiment_follow(self, save_dir=None, draw=False):
