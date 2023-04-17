@@ -9,22 +9,22 @@ import argparse
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "models", "ocsort"))
 from trackers.ocsort.ocsort import OCSortManager
 
-def initiate_oc(experimental=False, verbose = True):
-    return Client(model="ocsort", image_size=[640, 640], device="cuda", verbose=verbose, hand_raise_frames_thresh=3, experimental=experimental,)
+def initiate_oc(experimental=False, verbose = True, device="cuda"):
+    return Client(model="ocsort", image_size=[640, 640], device=device, verbose=verbose, hand_raise_frames_thresh=3, experimental=experimental,)
 
-def initiate_bot(experimental=False, verbose=True):
+def initiate_bot(experimental=False, verbose=True, device="cuda"):
     # BoTSORT default params
     args = bot_sort_make_parser().parse_args()
     args.ablation = False
     args.mot20 = not args.fuse_score
 
-    return Client(model="botsort", image_size=[640, 640], device="cuda", verbose=verbose, experimental=experimental, args=args,
+    return Client(model="botsort", image_size=[640, 640], device=device, verbose=verbose, experimental=experimental, args=args,
                hand_raise_frames_thresh=3)
 
-def initiate_byte(experimental=False, verbose=True):
+def initiate_byte(experimental=False, verbose=True, device="cuda"):
     args = byte_track_make_parser().parse_args()
 
-    return Client(model="bytetrack", device="cuda", verbose=verbose, experimental=experimental, args=args,
+    return Client(model="bytetrack", device=device, verbose=verbose, experimental=experimental, args=args,
                hand_raise_frames_thresh=3)
 
 
@@ -94,8 +94,8 @@ def byte_exp(draw = True, trial="distance", distance="1m", attempt_no=1, verbose
     print("Time from detection to end condition:", data["behaviour_time"])
     print("FPS:", data["frames"] /data["time"])
 
-def ocfollow():
-    c = initiate_oc()
+def ocfollow(verbose = True, device="cuda"):
+    c = initiate_oc(verbose = verbose, device=device)
     #c = Client(image_size=[640, 640], device="cpu", max_age=60, verbose=True)
     # Main follow behaviour:
     c.follow_behaviour()
@@ -276,40 +276,13 @@ name_to_model = {
 
 import yaml
 if __name__ == "__main__":
-    # args = vars(experiment_args().parse_args())
-    # print(args)
+    # Run experiments
+    #with open("config.yaml", "r") as yaml_file:
+    #    args = yaml.safe_load(yaml_file)
+    #m = name_to_model[args["model"]]
+    #args.pop("model")
+    #m(**args)
 
-    with open("config.yaml", "r") as yaml_file:
-        args = yaml.safe_load(yaml_file)
-
-    #try:
-        #c = initiate_oc()
-        #c = oc_exp(trial="occlusion", case="5m/1", clear_img=True)
-        #bot_exp(draw=False, trial="occlusion", case="5m", clear_img=False)
-        #byte_exp(trial="occlusion", case="5m", clear_img=True)
-    #oc = initiate_oc(trial="occlusion", case="5m")
-    #bot = initiate_bot()
-    #pred, img = bot.predict(None, draw=False)
-    #print("pred:", pred)
-    #print("pred type:", type(pred))
-    #print("pred shape:", pred.shape)
-
-
-    #bot = initiate_bot()
-    #byte = initiate_byte()
-    #for c in [oc, bot, byte]:
-    #    get_image_pred_test(client = c)
-    #get_image_pred_test(byte,)
-    #oc.shutdown()
-    #except:
-    #    print("Time it took for the robot to reach the target: ", c.end_time)
-    #    quick_shutdown()
-
-    #bot_exp(draw=True, trial="occlusion", case="1m", clear_img=True)
-    m = name_to_model[args["model"]]
-
-    args.pop("model")
-
-    m(**args)
-    #oc_exp(draw=False, trial="occlusion", case="1.5m", attempt_no=1, clear_img=False, verbose=True, clear_log=True)
-    #byte_exp(draw=True, trial="occlusion", case="1m", clear_img=True)
+    # Run deep learning behaviour for end-user
+    ocfollow(device="cpu")
+    #oc_exp
