@@ -363,8 +363,11 @@ class OCSort(object):
         det_scores = np.ones((dets.shape[0], 1))
         dets = np.concatenate((dets, det_scores), axis=1)
 
-        remain_inds = scores > self.det_thresh
-        
+        remain_inds = (scores > self.det_thresh)
+        print("cates:", cates)
+        print("remain_inds:", remain_inds)
+        print("cates.shape:", cates.shape)
+        print("remain_inds.shape:", remain_inds.shape)
         cates = cates[remain_inds]
         dets = dets[remain_inds]
 
@@ -546,11 +549,11 @@ class OCSortManager(OCSort):
         #print("self.hand_raise_frames:", self.hand_raise_frames)
         return track
 
-    def smart_update(self, frame, pred = None, augment=False, classes=None, agnostic_nms=False):
+    def smart_update(self, frame, pred = None, augment=False, classes=None, agnostic_nms=False, kpt_conf_thresh=0.5):
         #Made to be called by the client, automatically determines whether to call filtered_update or update
         if self.target_id <= 0: # When there's no tracked target
 
-            out = self.filtered_update(frame=frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
+            out = self.filtered_update(frame=frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms, kpt_conf_thresh=kpt_conf_thresh)
             #print("m", m)
         else: # When there's a tracked target
             # Get prediction first
@@ -614,28 +617,26 @@ if __name__ == '__main__':
     ocm = OCSortManager(use_byte=True)
     oc = OCSort(use_byte=True, det_thresh=0.4)
     y = YoloManager(image_size=[640,640], device="0")
-    #data_dir = os.path.join(parent_dir(1), "detection_models", "edgeai_yolov5", "data", "photos")
-    #data_dir = os.path.join("edgeai_yolov5", "data", "custom")
-    #frame1 = cv2.imread(os.path.join(data_dir, "frame1.jpg"))
-    #frame2 = cv2.imread(os.path.join(data_dir, "frame2.jpg"))
-    #frame1 = cv2.imread(os.path.join(data_dir, "paris.jpg"))
-
-    #f1 = oc.update(frame1)
-    #oc.draw(f1, frame1, 0, save_dir=os.path.join(parent_dir(2), "pepper_test"))
-
-    data_dir = os.path.join(parent_dir(2), "images")
-    output_dir = "output"
+    data_dir = os.path.join(parent_dir(2), "images", "crossinghands")
+    output_dir = os.path.join("output", "crossinghands")
+    #data_dir = os.path.join(parent_dir(2), "images")
+    #output_dir = os.path.join("output")
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
     images = sorted(os.listdir(data_dir))
     #print("Directory of input images:", data_dir)
     #print("Directory of output images:", output_dir)
     for p in images:
-        #print(p)
+
         img = cv2.imread(os.path.join(data_dir, p))
+
+        # Rescale to 160x120
+        #img = cv2.resize(img, (160,120), interpolation = cv2.INTER_AREA)
+
         pred = y.predict(img)
         #print("Shape of pred:", pred.shape)
-        pred = pred.detach().cpu()
+        pred = pred.detach().cpu().numpy()
+
         bounding_boxes, kpts = y.extract_bounding_box_and_keypoint(pred, reshape_kpt=False)
         #print("Shape of bounding boxes:", bounding_boxes.shape)
         #print("Shape of keypoints:",kpts.shape)
@@ -643,7 +644,15 @@ if __name__ == '__main__':
         bounding_boxes = bounding_boxes[:,:-1]
         #print("Shape of bounding boxes:", bounding_boxes.shape)
         cates = np.ones(bounding_boxes.shape[0])
-
+        nkpts = kpts.reshape(pred.shape[0], 17,3)
+        print("Right wrist:", nkpts[:,10])
+        print("Right elbow:", nkpts[:, 8])
+        print("Right shoulder:", nkpts[:, 6])
+        print("Left wrist:", nkpts[:, 9])
+        print("Left elbow:", nkpts[:, 7])
+        print("Left shoulder:", nkpts[:, 5])
+        #print("cates:",cates)
+        #print("scores:", scores)
         if len(bounding_boxes) == 0:
             bounding_boxes = np.zeros([0,4])
             cates = np.ones(0)
