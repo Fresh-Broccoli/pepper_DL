@@ -39,7 +39,7 @@ models = {
 
 class Client:
 
-    def __init__(self, model="ocsort", address='http://localhost:5000', verbose=False, experimental=False, **kwargs):
+    def __init__(self, model="ocsort", address='http://localhost:5000', verbose=False, experimental=False, walk_speed_modifier=0.9,**kwargs):
         self.address = address
         self.robot_actions = {
             "walkToward": self.walkToward,
@@ -58,6 +58,7 @@ class Client:
         print(f"Loading {model}...")
         self.dl_model = models[model](**kwargs)
         print(model, " loaded successfully!")
+        self.walk_speed_modifier = walk_speed_modifier
         self.experimental = experimental
         if experimental:
             self.start_time = 0
@@ -219,7 +220,7 @@ class Client:
 
             if abs(horizontal_ratio) > stop_threshold:
                 # If horizontal ratio is not within the stop threshold, rotate to center the target
-                self.walkToward(theta=horizontal_ratio*0.9)
+                self.walkToward(theta=horizontal_ratio*self.walk_speed_modifier)
             else:
                 # Otherwise, approach target
                 self.approach_target(box, img_shape, commands=["rotate_head"],commands_kwargs=[{"forward":vertical_ratio*0.2}])
