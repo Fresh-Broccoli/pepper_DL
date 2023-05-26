@@ -235,10 +235,13 @@ class Client:
         if ratio >= stop_threshold:
             # Add end condition here:
             self.stop()
-            self.say("Hello, I'm Pepper, do you require my assistance?")
+
             if self.experimental:
                 self.end_time = time.time() - self.start_time
                 self.terminate = True
+                self.say("Trial Success")
+            else:
+                self.say("Hello, I'm Pepper, do you require my assistance?")
             self.dl_model.reset_trackers()
             """
             if ratio > move_back_threshold:
