@@ -60,16 +60,18 @@ To use this code, you need to set up the hardware and software. Let's start with
 For the software, follow these steps:
 1. Clone [this repo](https://github.com/Wjjay/pepper_DL/tree/pepper_flask)
 2. On Anaconda, create a Python 2, and a Python 3 virtual environment
-3. Visit this [website](https://www.aldebaran.com/en/support/pepper-naoqi-2-9/downloads-softwares) and download the Python 2.7 SDK with the same OS that you're using, and the same NAOqi version as your Pepper robot
+3. Visit this [website](https://www.aldebaran.com/en/support/pepper-naoqi-2-9/downloads-softwares) and download the Python 2.7 SDK with the same OS that you're using, and the same NAOqi version as your Pepper robot[^1]
 4. Unzip the Python SDK and copy-paste its contents into the Python 2 environment that you've just created, replacing everything
-5. Activate the Python 2 environment, and install the packages in this [requirements.txt](https://github.com/Wjjay/pepper_DL/blob/pepper_flask/server/requirements.txt) file
-6. Activate the Python 3 environment, and install the packages in this [requirements.txt](https://github.com/Wjjay/pepper_DL/blob/pepper_flask/client/requirements.txt) file
+5. Activate the Python 2 environment, and install the packages in this [requirements.txt](https://github.com/Wjjay/pepper_DL/blob/pepper_flask/server/requirements.txt) file[^2]
+6. Activate the Python 3 environment, and install the packages in this [requirements.txt](https://github.com/Wjjay/pepper_DL/blob/pepper_flask/client/requirements.txt) file[^3]
 
-**Note that this has been tested on Linux (Ubuntu) and it works. We haven't tested it on other OS, but there should be no reason for them to not work.**
+[^1]: *This has been tested on Linux (Ubuntu) and it works. We haven't tested it on other OS, but there should be no reason for them to not work.*
+[^2]: *Pip may not necessarily install all dependencies for you. So, when you run the program later, it may tell you to install additional dependencies*
+[^3]: *In our project, we used Pytorch, but because there are many ways to install it depending on your hardware, you have to figure this out yourself*
 
 ## Execution
 
-Before execution, make sure that Pepper's surround is clear, otherwise, you may risk damaging the robot.
+Before execution, make sure that Pepper's surrounding is clear, otherwise, you may risk damaging the robot.
 
 To run the behaviour:
 1. Turn on Pepper, and double-tap its chest button to make it turn of automatic life. It'll assume this lifeless posture if you're successful
