@@ -62,8 +62,9 @@ For the software, follow these steps:
 2. On Anaconda, create a Python 2, and a Python 3 virtual environment
 3. Visit this [website](https://www.aldebaran.com/en/support/pepper-naoqi-2-9/downloads-softwares) and download the Python 2.7 SDK with the same OS that you're using, and the same NAOqi version as your Pepper robot[^1]
 4. Unzip the Python SDK and copy-paste its contents into the Python 2 environment that you've just created, replacing everything
-5. Activate the Python 2 environment, and install the packages in this [requirements.txt](https://github.com/Wjjay/pepper_DL/blob/pepper_flask/server/requirements.txt) file[^2]
-6. Activate the Python 3 environment, and install the packages in this [requirements.txt](https://github.com/Wjjay/pepper_DL/blob/pepper_flask/client/requirements.txt) file[^3]
+5. Activate the Python 2 environment, and install the packages in [requirements.txt](https://github.com/Wjjay/pepper_DL/blob/pepper_flask/server/requirements.txt) [^2]
+6. Activate the Python 3 environment, and install the packages in [requirements1.txt](https://github.com/Wjjay/pepper_DL/blob/pepper_flask/client/requirements1.txt) 
+7. In the same Python 3 environment, install the packages in [requirements2.txt](https://github.com/Wjjay/pepper_DL/blob/pepper_flask/client/requirements2.txt) [^3]
 
 [^1]: *This has been tested on Linux (Ubuntu) and it works. We haven't tested it on other OS, but there should be no reason for them to not work.*
 [^2]: *Pip may not necessarily install all dependencies for you. So, when you run the program later, it may tell you to install additional dependencies*
@@ -79,4 +80,4 @@ To run the behaviour:
 3. In the Python 2 terminal, cd into the directory of [server](https://github.com/Wjjay/pepper_DL/tree/pepper_flask/server)
 4. In the Python 3 terminal, cd into the directory of [client](https://github.com/Wjjay/pepper_DL/tree/pepper_flask/client)
 5. In the Python 2 terminal, run `python server.py --ip *Pepper's IP address*`, if successful, Pepper should stand up-right again
-6. In the Python 3 terminal, run `python client2.py`, if successful, Pepper should start rotating to look for potential targets. At this stage, you can raise your hand to initiate its tracking mode
+6. In the Python 3 terminal, run `python experiments.py` (should run the follow behaviour with OC-SORT), if successful, Pepper should start rotating to look for potential targets. At this stage, you can raise your hand to initiate its tracking mode
