@@ -6,6 +6,7 @@ import time
 import requests
 import io
 import base64
+import traceback
 from PIL import Image
 
 # SORT:
@@ -77,7 +78,7 @@ class Client:
             cv2.imwrite(f"images/{save_name}.png" if path is None else os.path.join(path, save_name), img)
         return img
 
-    def predict(self, img, draw=True, save_dir = None):
+    def predict(self, img, draw=True, save_dir = None, show=False):
         if img is None:
             img = self.get_image()
         # Shape of pred: number of tracked targets x 5
@@ -85,21 +86,21 @@ class Client:
         pred = self.dl_model.smart_update(img)
 
         if draw:
-            self.draw(pred, img, save_dir="images" if save_dir is None else save_dir)
+            self.draw(pred, img, save_dir="images" if save_dir is None else save_dir, show=show)
         return pred, img
 
-    def draw(self, prediction, img, show=None, save_dir=None):
-        self.dl_model.draw(prediction, np.ascontiguousarray(img), show=show, save_dir=save_dir)
+    def draw(self, prediction, img, show=None, save_dir=None, save=False):
+        self.dl_model.draw(prediction, np.ascontiguousarray(img), show=show, save_dir=save_dir, save=save)
 
-    def follow_behaviour(self):
+    def follow_behaviour(self, draw=False, show=False, spin_speed=0.1):
         self.stop()
         try:
             while True:
                 self.rotate_head_abs(verbose=False)
                 ctarget_id = self.dl_model.target_id
                 if self.dl_model.target_id != self.dl_model.max_target_id:
-                    self.spin(speed=0.1)
-                pred, img = self.predict(img=None, draw=False)
+                    self.spin(speed=spin_speed)
+                pred, img = self.predict(img=None, draw=draw, show=show)
                 #print("Prediction:", pred)
                 if ctarget_id == 0:
                     if ctarget_id != self.dl_model.target_id :
@@ -114,7 +115,8 @@ class Client:
                 self.center_target(pred, img.shape, )
                 self.last_box = pred
         except Exception as e:
-            print(e)
+            #print(e)
+            traceback.print_exc()
             self.shutdown()
 
     # Only use if experimental is True
@@ -131,7 +133,7 @@ class Client:
                 self.rotate_head_abs(verbose=False)
                 ctarget_id = self.dl_model.target_id
                 st = time.time()
-                pred, img = self.predict(img=None, draw=False)
+                pred, img = self.predict(img=None, draw=draw)
                 data["time"] = data["time"] + time.time() - st
                 data["frames"] = data["frames"] + 1
                 if draw:
