@@ -168,7 +168,7 @@ def livestream_camera_ocsort():
 def get_image_pred_test(client, image_no=60):
     start_time = time.time()
     for i in range(image_no):
-        pred, img = client.predict(img=None, draw=True)
+        pred, img = client.predict(img=None, draw=False, show=False)
         #print(pred.shape)
         end_time = time.time() - start_time
     print(f"It took {str(end_time)} seconds to receive {str(image_no)} images and process them through YOLO-Pose + {client.model_name}. This means we were able to receive images from Pepper to server to client at {str(image_no/end_time)} FPS!")

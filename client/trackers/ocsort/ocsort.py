@@ -461,7 +461,7 @@ class OCSort(object):
 
 class OCSortManager(OCSort):
     def __init__(self, max_age=5, min_hits=3, iou_threshold=0.3, conf_thresh=0.4, delta_t=3, asso_func="iou",
-                 inertia=0.2, use_byte=False, reset_target_thresh=15, hand_raise_frames_thresh=3 , **kwargs):
+                 inertia=0.2, use_byte=False, reset_target_thresh=15, hand_raise_frames_thresh=3, show_height=480, show_width=640, **kwargs):
         """ OCSortManager, does tracking and detection
         Params:
             reset_target_thresh: int
@@ -479,6 +479,13 @@ class OCSortManager(OCSort):
         self.last_box = None
         self.hand_raise_frames_thresh = hand_raise_frames_thresh
         self.hand_raise_frames = 0
+
+        # For drawing:
+        self.show_height=show_height
+        self.show_width = show_width
+        # Creating and Resizing display window:
+        cv2.namedWindow("Image", cv2.WINDOW_NORMAL)
+        cv2.resizeWindow("Image", self.show_width, self.show_height)
 
     def detector_predict(self, frame, augment=False, classes=None, agnostic_nms=False):
         return self.detector.predict(frame, augment=augment, conf_thres=self.det_thresh, classes=classes, iou_thres=self.iou_threshold, agnostic_nms=agnostic_nms)
@@ -573,17 +580,18 @@ class OCSortManager(OCSort):
 
         return out
 
-    def draw(self, prediction, img, show=None, save_dir = None):
+    def draw(self, prediction, img, show=None, save_dir = None, save=False):
         #if len(prediction) !=
         for det_index, (*xyxy, id) in enumerate(reversed(prediction[:,:6])):
             plot_one_box(xyxy, img, label=(f'id: {str(int(id))}'), color=colors(int(id),True), line_thickness=2, kpt_label=False, steps=3, orig_shape=img.shape[:2])
-        if save_dir is not None:
-            self.save_frame_count += 1
-            file_name = os.path.join(save_dir, "{:08d}.jpg".format(self.save_frame_count))
-            cv2.imwrite(file_name, img)
+        if save:
+            if save_dir is not None:
+                self.save_frame_count += 1
+                file_name = os.path.join(save_dir, "{:08d}.jpg".format(self.save_frame_count))
+                cv2.imwrite(file_name, img)
         if show is not None:
             cv2.imshow("Image", img)
-            cv2.waitKey(show)
+            cv2.waitKey(1)
 
     def reset_trackers(self):
         self.trackers = []
