@@ -6,10 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="be960dc2-6cea-4ed1-a7f9-9b11096d53b8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FollowCome2Me/manifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/FollowCome2Me/manifest.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/client2.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/client2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/client/config.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/exp_logs/occlusion_log.csv" beforeDir="false" afterPath="$PROJECT_DIR$/client/exp_logs/occlusion_log.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/experiments.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/experiments.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/trackers/detection_models/edgeai_yolov5/yolo.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/trackers/detection_models/edgeai_yolov5/yolo.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,21 +50,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "TODO_SCOPE": "All Places",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "pepper__flask",
-    "last_opened_file_path": "/mnt/SSD4TB/GoogleDrive/code/pepper_DL/client/exp_logs",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;TODO_SCOPE&quot;: &quot;All Places&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;pepper__flask&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/monashnlp/Desktop/pepper/pepper_DL&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
       <console-settings>
@@ -115,7 +115,6 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="$USER_HOME$/anaconda3/envs/ml/bin/python" />
-      <option name="SDK_NAME" value="ml" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client/trackers/botsort" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -138,7 +137,6 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="$USER_HOME$/anaconda3/envs/ml/bin/python" />
-      <option name="SDK_NAME" value="ml" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -205,7 +203,6 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="$USER_HOME$/anaconda3/envs/ml/bin/python" />
-      <option name="SDK_NAME" value="ml" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client/trackers/detection_models/edgeai_yolov5" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -221,11 +218,11 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.experiments" />
       <item itemvalue="Python.bot_sort" />
-      <item itemvalue="Python.yolo" />
       <item itemvalue="Python.client2" />
+      <item itemvalue="Python.experiments" />
       <item itemvalue="Python.server" />
+      <item itemvalue="Python.yolo" />
     </list>
     <recent_temporary>
       <list>
@@ -492,11 +489,6 @@
           <url>file://$PROJECT_DIR$/client/experiments.py</url>
           <line>282</line>
           <option name="timeStamp" value="19" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/client/experiments.py</url>
-          <line>93</line>
-          <option name="timeStamp" value="20" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

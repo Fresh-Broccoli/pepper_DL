@@ -4,6 +4,7 @@ import cv2
 import csv
 import numpy as np
 import pandas as pd
+import torch.nn as nn
 from utils.torch_utils import select_device
 from models.experimental import attempt_load
 from utils.general import check_img_size, non_max_suppression, scale_coords
@@ -18,6 +19,12 @@ class YoloManager():
             weights_dir = os.path.join(os.path.dirname(__file__), "weights", 'yoloposes_640_lite.pt')
         # Load model
         self.model = attempt_load(weights_dir, map_location=self.device)  # load model
+
+        # Fix Upsample error
+        for m in self.model.modules():
+            if isinstance(m, nn.Upsample):
+                m.recompute_scale_factor = None
+
         self.stride = int(self.model.stride.max())  # model stride
         self.names = self.model.module.names if hasattr(self.model, 'module') else self.model.names  # get class names
         self.kpt_label = kpt_label

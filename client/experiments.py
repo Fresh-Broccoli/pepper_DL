@@ -9,23 +9,23 @@ import argparse
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "models", "ocsort"))
 from trackers.ocsort.ocsort import OCSortManager
 
-def initiate_oc(experimental=False, verbose = True, device="cuda"):
-    return Client(model="ocsort", image_size=[640, 640], device=device, verbose=verbose, hand_raise_frames_thresh=3, experimental=experimental,)
+def initiate_oc(experimental=False, verbose = True, device="cuda", hand_raise_frames_thresh=3):
+    return Client(model="ocsort", image_size=[640, 640], device=device, verbose=verbose, hand_raise_frames_thresh=hand_raise_frames_thresh, experimental=experimental,)
 
-def initiate_bot(experimental=False, verbose=True, device="cuda"):
+def initiate_bot(experimental=False, verbose=True, device="cuda", hand_raise_frames_thresh=3):
     # BoTSORT default params
     args = bot_sort_make_parser().parse_args()
     args.ablation = False
     args.mot20 = not args.fuse_score
 
     return Client(model="botsort", image_size=[640, 640], device=device, verbose=verbose, experimental=experimental, args=args,
-               hand_raise_frames_thresh=3)
+               hand_raise_frames_thresh=hand_raise_frames_thresh)
 
-def initiate_byte(experimental=False, verbose=True, device="cuda"):
+def initiate_byte(experimental=False, verbose=True, device="cuda", hand_raise_frames_thresh=3):
     args = byte_track_make_parser().parse_args()
 
     return Client(model="bytetrack", device=device, verbose=verbose, experimental=experimental, args=args,
-               hand_raise_frames_thresh=3)
+               hand_raise_frames_thresh=hand_raise_frames_thresh)
 
 
 def oc_exp(draw = True, trial="distance", distance="1m", attempt_no=1, verbose=False, clear_img=False, clear_log=False):
@@ -94,9 +94,9 @@ def byte_exp(draw = True, trial="distance", distance="1m", attempt_no=1, verbose
     print("Time from detection to end condition:", data["behaviour_time"])
     print("FPS:", data["frames"] /data["time"])
 
-def ocfollow(verbose = True, device="cuda"):
-    c = initiate_oc(verbose = verbose, device=device)
-    #c = Client(image_size=[640, 640], device="cpu", max_age=60, verbose=True)
+def ocfollow(verbose = True, device="cuda", hand_raise_frames_thresh=3):
+    # Initiate client
+    c = initiate_oc(verbose = verbose, device=device, hand_raise_frames_thresh=hand_raise_frames_thresh)
     # Main follow behaviour:
     c.follow_behaviour()
     # Must call
@@ -259,7 +259,7 @@ def experiment_args():
         help="Determines whether we should draw and save bounding boxes of all frames during this particular experiment")
 
     # Etc
-    parser.add_argument(
+    pars0er.add_argument(
         "--verbose",
         default=False,
         type=bool,
@@ -284,5 +284,5 @@ if __name__ == "__main__":
     #m(**args)
 
     # Run deep learning behaviour for end-user
-    ocfollow(device="cpu")
+    ocfollow(device="cuda", hand_raise_frames_thresh=0, verbose=False)
     #oc_exp

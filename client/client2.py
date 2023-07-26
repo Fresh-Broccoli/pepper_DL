@@ -3,6 +3,7 @@ import numpy as np
 import os
 import cv2
 import time
+import traceback
 import requests
 import io
 import base64
@@ -39,7 +40,14 @@ models = {
 
 class Client:
 
-    def __init__(self, model="ocsort", address='http://localhost:5000', verbose=False, experimental=False, walk_speed_modifier=0.9,**kwargs):
+    def __init__(self,
+                 model="ocsort",
+                 address='http://localhost:5000',
+                 verbose=False,
+                 experimental=False,
+                 spin_speed = 0.1,
+                 walk_speed_modifier=0.9,
+                 **kwargs):
         self.address = address
         self.robot_actions = {
             "walkToward": self.walkToward,
@@ -58,6 +66,7 @@ class Client:
         print(f"Loading {model}...")
         self.dl_model = models[model](**kwargs)
         print(model, " loaded successfully!")
+        self.spin_speed = spin_speed
         self.walk_speed_modifier = walk_speed_modifier
         self.experimental = experimental
         if experimental:
@@ -92,13 +101,47 @@ class Client:
         self.dl_model.draw(prediction, np.ascontiguousarray(img), show=show, save_dir=save_dir)
 
     def follow_behaviour(self):
+        """
+        self.stop()
+        try:
+            while True:
+                self.rotate_head_abs(verbose=False)
+                pred, img = self.predict(img=None, draw=False)
+                print(pred)
+                preds = len(pred)
+                if preds == 0:
+                    self.spin(speed=self.spin_speed, verbose=True)
+                else:
+                    #self.spin(speed=self.spin_speed/(2**preds))
+                    self.spin(speed=self.spin_speed/2, verbose=True)
+                ctarget_id = self.dl_model.target_id
+
+                if ctarget_id == 0:
+                    if ctarget_id != self.dl_model.target_id:
+                        self.stop()
+                        self.say("Target detected", verbose=True)
+
+                else:
+                    if ctarget_id != self.dl_model.target_id:
+                        self.stop()
+                        self.say("Target Lost", verbose=True)
+                # print("Length of pred: ", len(pred))
+                self.center_target(pred, img.shape, )
+                self.last_box = pred
+        except Exception as e:
+            traceback.print_exc()
+            self.shutdown()
+
+        """
         self.stop()
         try:
             while True:
                 self.rotate_head_abs(verbose=False)
                 ctarget_id = self.dl_model.target_id
-                if self.dl_model.target_id != self.dl_model.max_target_id:
-                    self.spin(speed=0.1)
+
+                #if self.dl_model.target_id != self.dl_model.max_target_id:
+                #    self.spin(speed=self.spin_speed)
+
                 pred, img = self.predict(img=None, draw=False)
                 #print("Prediction:", pred)
                 if ctarget_id == 0:
@@ -114,7 +157,7 @@ class Client:
                 self.center_target(pred, img.shape, )
                 self.last_box = pred
         except Exception as e:
-            print(e)
+            traceback.print_exc()
             self.shutdown()
 
     # Only use if experimental is True
@@ -241,7 +284,7 @@ class Client:
                 self.terminate = True
                 self.say("Trial Success")
             else:
-                self.say("Hello, I'm Pepper, do you require my assistance?")
+                self.say("Hello, I'm Pepper, please fill out our quick survey by scanning the QR code on the sign!")
             self.dl_model.reset_trackers()
             """
             if ratio > move_back_threshold:
