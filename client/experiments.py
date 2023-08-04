@@ -9,8 +9,8 @@ import argparse
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "models", "ocsort"))
 from trackers.ocsort.ocsort import OCSortManager
 
-def initiate_oc(experimental=False, verbose = True, device="cuda", hand_raise_thresh=3):
-    return Client(model="ocsort", image_size=[640, 640], device=device, verbose=verbose, hand_raise_frames_thresh=hand_raise_thresh, experimental=experimental,)
+def initiate_oc(experimental=False, verbose = True, device="cuda", hand_raise_thresh=3, **kwargs):
+    return Client(model="ocsort", image_size=[640, 640], device=device, verbose=verbose, hand_raise_frames_thresh=hand_raise_thresh, experimental=experimental, **kwargs)
 
 def initiate_bot(experimental=False, verbose=True, device="cuda", hand_raise_thresh=3):
     # BoTSORT default params
@@ -94,8 +94,8 @@ def byte_exp(draw = True, trial="distance", distance="1m", attempt_no=1, verbose
     print("Time from detection to end condition:", data["behaviour_time"])
     print("FPS:", data["frames"] /data["time"])
 
-def ocfollow(verbose = True, device="cuda", hand_raise_thresh=3, draw=False, show=False):
-    c = initiate_oc(verbose = verbose, device=device, hand_raise_thresh=hand_raise_thresh)
+def ocfollow(verbose = True, device="cuda", hand_raise_thresh=3, draw=False, show=False, **kwargs):
+    c = initiate_oc(verbose = verbose, device=device, hand_raise_thresh=hand_raise_thresh, **kwargs)
     #c = Client(image_size=[640, 640], device="cpu", max_age=60, verbose=True)
     # Main follow behaviour:
     c.follow_behaviour(draw=draw, show=show)
@@ -292,7 +292,7 @@ if __name__ == "__main__":
     #ocfollow(device="cuda")
     
     # Run with GPU while showing footage
-    ocfollow(device="cuda", draw=True, hand_raise_thresh=1, show=True)
+    ocfollow(device="cuda", draw=True, hand_raise_thresh=1, show=True, walk_speed_modifier=1.1)
 
     
     # FPS Test

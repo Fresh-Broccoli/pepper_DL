@@ -83,14 +83,14 @@ class Client:
             img = self.get_image()
         # Shape of pred: number of tracked targets x 5
         # where 5 represents: (x1, y1, x2, y2, id)
-        pred = self.dl_model.smart_update(img)
+        pred, kpts = self.dl_model.smart_update(img)
 
         if draw:
-            self.draw(pred, img, save_dir="images" if save_dir is None else save_dir, show=show)
+            self.draw(pred, img, save_dir="images" if save_dir is None else save_dir, show=show, kpts=kpts)
         return pred, img
 
-    def draw(self, prediction, img, show=None, save_dir=None, save=False):
-        self.dl_model.draw(prediction, np.ascontiguousarray(img), show=show, save_dir=save_dir, save=save)
+    def draw(self, prediction, img, show=None, save_dir=None, save=False, kpts=None):
+        self.dl_model.draw(prediction, np.ascontiguousarray(img), show=show, save_dir=save_dir, kpts=kpts, draw_kpts=kpts is not None)
 
     def follow_behaviour(self, draw=False, show=False, spin_speed=0.1):
         self.stop()
@@ -98,8 +98,8 @@ class Client:
             while True:
                 self.rotate_head_abs(verbose=False)
                 ctarget_id = self.dl_model.target_id
-                if self.dl_model.target_id != self.dl_model.max_target_id:
-                    self.spin(speed=spin_speed)
+                #if self.dl_model.target_id != self.dl_model.max_target_id:
+                #    self.spin(speed=spin_speed)
                 pred, img = self.predict(img=None, draw=draw, show=show)
                 #print("Prediction:", pred)
                 if ctarget_id == 0:
