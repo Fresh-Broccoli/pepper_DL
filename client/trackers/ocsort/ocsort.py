@@ -242,7 +242,7 @@ class OCSort(object):
         inds_high = scores < self.det_thresh
         inds_second = np.logical_and(inds_low, inds_high)  # self.det_thresh > score > 0.1, for second matching
         dets_second = dets[inds_second]  # detections for second matching
-        kpts_second = kpts[inds_second]
+        kpts_second = kpts[inds_second] if len(inds_second) > 0 else []
         remain_inds = scores > self.det_thresh
         dets = dets[remain_inds.tolist()]
         kpts = kpts[remain_inds.tolist()]
@@ -500,16 +500,16 @@ class OCSortManager(OCSort):
         if pred is None:
             pred = self.detector_predict(frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
         bounding_boxes, kpts = self.detector.extract_bounding_box_and_keypoint(pred,reshape_kpt=False)
-        scores = bounding_boxes[:, 4]
-        bounding_boxes = bounding_boxes[:, :-1]
-        cates = np.ones(bounding_boxes.shape[0])
+        #scores = bounding_boxes[:, 4]
+        #bounding_boxes = bounding_boxes[:, :-1]
+        #cates = np.ones(bounding_boxes.shape[0])
         #nkpts = kpts.reshape(pred.shape[0], 17, 3)
         if len(bounding_boxes) == 0:
-            bounding_boxes = np.zeros([0, 4])
-            cates = np.ones(0)
-            scores = np.zeros(0)
-        #track = super().update(np.asarray(bounding_boxes))
-        track = super().update_public(dets=bounding_boxes, cates=cates, scores=scores, kpts=kpts)
+            bounding_boxes = np.zeros([0, 5])
+            #cates = np.ones(0)
+            #scores = np.zeros(0)
+        track = super().update(bounding_boxes, kpts)
+        #track = super().update_public(dets=bounding_boxes, cates=cates, scores=scores, kpts=kpts)
         if target_only:
             target_indices = track[:,-1]==self.target_id
             track = track[target_indices]
@@ -557,16 +557,16 @@ class OCSortManager(OCSort):
                 #print("Tracked track: ", track)
                 #self.hand_raise_frames = 0
             else:
-                #track = super().update(np.empty((0, 5)), kpts=kpts)
-                track = super().update_public(dets=np.zeros([0,4]),cates=np.ones(0), scores=np.zeros(0), kpts=kpts)
+                track = super().update(np.empty((0, 5)), kpts=kpts)
+                #track = super().update_public(dets=np.zeros([0,4]),cates=np.ones(0), scores=np.zeros(0), kpts=kpts)
 
             #track = self.update(frame, pred=pred)
 
         else:
             # Hand raise frames must be consecutive
             self.hand_raise_frames = 0
-            #track = super().update(np.empty((0, 5)), kpts=kpts)  # Should I run tracking even though no target has been detected?
-            track = super().update_public(dets=np.zeros([0,4]),cates=np.ones(0), scores=np.zeros(0), kpts=kpts)
+            track = super().update(np.empty((0, 5)), kpts=kpts)  # Should I run tracking even though no target has been detected?
+            #track = super().update_public(dets=np.zeros([0,4]),cates=np.ones(0), scores=np.zeros(0), kpts=kpts)
 
         if len(track) > 0:
             print("track:", track)
@@ -609,7 +609,7 @@ class OCSortManager(OCSort):
     def draw(self, prediction, img, show=None, save_dir=None, save=False, draw_kpts=False, kpts=None):
         for det_index, (*xyxy, id) in enumerate(reversed(prediction[:, :5])):
             plot_one_box(xyxy, img, label=(f'id: {str(int(id))}'), color=colors(int(id), True), line_thickness=2,
-                         kpt_label=draw_kpts, steps=3, orig_shape=img.shape[:2], kpts=prediction[det_index, 7:])
+                         kpt_label=draw_kpts, steps=3, orig_shape=img.shape[:2], kpts=kpts[det_index])
         if save:
             if save_dir is not None:
                 self.save_frame_count += 1

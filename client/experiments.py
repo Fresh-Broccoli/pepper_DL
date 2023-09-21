@@ -294,7 +294,8 @@ if __name__ == "__main__":
     # Run with GPU while showing footage
     ocfollow(device="cuda", draw=True, hand_raise_thresh=1, show=True, walk_speed_modifier=1.1)
 
-    
+    #ocfollow(device="cuda", draw=False, hand_raise_thresh=1, show=False, walk_speed_modifier=1.1)
+
     # FPS Test
     #client = initiate_oc()
     #get_image_pred_test(client, image_no=60)
