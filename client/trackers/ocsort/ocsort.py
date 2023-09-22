@@ -251,6 +251,7 @@ class OCSort(object):
         trks = np.zeros((len(self.trackers), 5))
         to_del = []
         ret = []
+        tracked_kpts = []
         for t, trk in enumerate(trks):
             pos = self.trackers[t].predict()[0]
             trk[:] = [pos[0], pos[1], pos[2], pos[3], 0]
@@ -347,14 +348,15 @@ class OCSort(object):
             if (trk.time_since_update < 1) and (trk.hit_streak >= self.min_hits or self.frame_count <= self.min_hits):
                 # +1 as MOT benchmark requires positive
                 ret.append(np.concatenate((d, [trk.id + 1],)).reshape(1, -1))
+                tracked_kpts.append(trk.kpts.reshape(1, -1))
             i -= 1
             # remove dead tracklet
             if (trk.time_since_update > self.max_age):
                 self.trackers.pop(i)
         if (len(ret) > 0):
-            return np.concatenate(ret)
+            return np.concatenate(ret), np.concatenate(tracked_kpts)
 
-        return np.empty((0, 5))
+        return np.empty((0, 5)), np.array(tracked_kpts)
 
     def update_public(self, dets, cates, scores, kpts):
         self.frame_count += 1
@@ -508,10 +510,16 @@ class OCSortManager(OCSort):
             bounding_boxes = np.zeros([0, 5])
             #cates = np.ones(0)
             #scores = np.zeros(0)
-        track = super().update(bounding_boxes, kpts)
+        track, kpts = super().update(bounding_boxes, kpts)
         #track = super().update_public(dets=bounding_boxes, cates=cates, scores=scores, kpts=kpts)
         if target_only:
             target_indices = track[:,-1]==self.target_id
+            #print("target_indices:", target_indices)
+            #print("track:", track)
+            #print("kpts:", kpts)
+            #print("target_indices.shape:", target_indices.shape)
+            #print("track.shape:", track.shape)
+            #print("kpts.shape:", kpts.shape)
             track = track[target_indices]
             kpts = kpts[target_indices]
 
@@ -557,7 +565,7 @@ class OCSortManager(OCSort):
                 #print("Tracked track: ", track)
                 #self.hand_raise_frames = 0
             else:
-                track = super().update(np.empty((0, 5)), kpts=kpts)
+                track, kpts = super().update(np.empty((0, 5)), kpts=kpts)
                 #track = super().update_public(dets=np.zeros([0,4]),cates=np.ones(0), scores=np.zeros(0), kpts=kpts)
 
             #track = self.update(frame, pred=pred)
@@ -565,7 +573,7 @@ class OCSortManager(OCSort):
         else:
             # Hand raise frames must be consecutive
             self.hand_raise_frames = 0
-            track = super().update(np.empty((0, 5)), kpts=kpts)  # Should I run tracking even though no target has been detected?
+            track, kpts = super().update(np.empty((0, 5)), kpts=kpts)  # Should I run tracking even though no target has been detected?
             #track = super().update_public(dets=np.zeros([0,4]),cates=np.ones(0), scores=np.zeros(0), kpts=kpts)
 
         if len(track) > 0:
