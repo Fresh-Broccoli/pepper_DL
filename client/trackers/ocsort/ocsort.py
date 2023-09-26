@@ -240,9 +240,9 @@ class OCSort(object):
         dets = np.concatenate((bboxes, np.expand_dims(scores, axis=-1)), axis=1)
         inds_low = scores > 0.1
         inds_high = scores < self.det_thresh
-        inds_second = np.logical_and(inds_low, inds_high)  # self.det_thresh > score > 0.1, for second matching
+        inds_second = np.logical_and(inds_low, inds_high)# self.det_thresh > score > 0.1, for second matching
         dets_second = dets[inds_second]  # detections for second matching
-        kpts_second = kpts[inds_second] if len(inds_second) > 0 else []
+        kpts_second = kpts[inds_second.bool()] if len(inds_second) > 0 else []
         remain_inds = scores > self.det_thresh
         dets = dets[remain_inds.tolist()]
         kpts = kpts[remain_inds.tolist()]
@@ -527,7 +527,7 @@ class OCSortManager(OCSort):
 
         #return track[track[:,-1]==self.target_id], kpts if target_only else track
 
-    def filtered_update(self, frame, augment=False, classes=None, agnostic_nms=False, kpt_conf_thresh=0.5):
+    def filtered_update(self, frame, pred = None, augment=False, classes=None, agnostic_nms=False, kpt_conf_thresh=0.5):
         """ Before running self.update, checks to see if anyone's raising their hand
         Params:
             frame: array
@@ -541,7 +541,8 @@ class OCSortManager(OCSort):
             we will track the target with the highest overall confidence
             Otherwise, None
         """
-        pred = self.detector_predict(frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
+        if pred is None:
+            pred = self.detector_predict(frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms)
         #bounding_boxes, points = self.detector.extract_bounding_box_and_keypoint(pred,)
         kpts = self.detector.extract_keypoint_data(pred, reshape=False)
         points = kpts.reshape(pred.shape[0], 17,3)
@@ -577,7 +578,7 @@ class OCSortManager(OCSort):
             #track = super().update_public(dets=np.zeros([0,4]),cates=np.ones(0), scores=np.zeros(0), kpts=kpts)
 
         if len(track) > 0:
-            print("track:", track)
+            #print("track:", track)
             if self.target_id != int(track[0,-1]):
                 self.target_id = int(track[0,-1])
                 if self.target_id > self.max_target_id:
@@ -588,8 +589,7 @@ class OCSortManager(OCSort):
     def smart_update(self, frame, pred = None, augment=False, classes=None, agnostic_nms=False, kpt_conf_thresh=0.5):
         #Made to be called by the client, automatically determines whether to call filtered_update or update
         if self.target_id <= 0: # When there's no tracked target
-
-            out, kpts = self.filtered_update(frame=frame, augment=augment, classes=classes, agnostic_nms=agnostic_nms, kpt_conf_thresh=kpt_conf_thresh)
+            out, kpts = self.filtered_update(frame=frame, pred=pred, augment=augment, classes=classes, agnostic_nms=agnostic_nms, kpt_conf_thresh=kpt_conf_thresh)
             #print("m", m)
         else: # When there's a tracked target
             out, kpts = self.update(frame=frame, pred=pred, augment=augment, classes=classes, agnostic_nms=agnostic_nms, target_only=True)

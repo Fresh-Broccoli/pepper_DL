@@ -40,7 +40,7 @@ models = {
 
 class Client:
 
-    def __init__(self, model="ocsort", address='http://localhost:5000', verbose=False, experimental=False, walk_speed_modifier=0.9,**kwargs):
+    def __init__(self, model="ocsort", address='http://localhost:5000', verbose=False, experimental=False, walk_speed_modifier=0.9, visualise_detector = True, **kwargs):
         self.address = address
         self.robot_actions = {
             "walkToward": self.walkToward,
@@ -60,6 +60,8 @@ class Client:
         self.dl_model = models[model](**kwargs)
         print(model, " loaded successfully!")
         self.walk_speed_modifier = walk_speed_modifier
+        self.tracking = False
+        self.visualise_detector = visualise_detector
         self.experimental = experimental
         if experimental:
             self.start_time = 0
@@ -83,10 +85,15 @@ class Client:
             img = self.get_image()
         # Shape of pred: number of tracked targets x 5
         # where 5 represents: (x1, y1, x2, y2, id)
-        pred, kpts = self.dl_model.smart_update(img)
+        detector_output = self.dl_model.detector_predict(img)
+        pred, kpts = self.dl_model.smart_update(img, detector_output)
 
         if draw:
-            self.draw(pred, img, save_dir="images" if save_dir is None else save_dir, show=show, kpts=kpts)
+            if not self.tracking and self.visualise_detector:
+                self.dl_model.detector.draw(detector_output, np.ascontiguousarray(img), show=show)
+            else:
+                self.draw(pred, img, save_dir="images" if save_dir is None else save_dir, show=show, kpts=kpts)
+
         return pred, img
 
     def draw(self, prediction, img, show=None, save_dir=None, save=False, kpts=None):
@@ -105,11 +112,13 @@ class Client:
                 if ctarget_id == 0:
                     if ctarget_id != self.dl_model.target_id :
                         self.stop()
+                        self.tracking = True
                         self.say("Target detected")
 
                 else:
                     if ctarget_id != self.dl_model.target_id:
                         self.stop()
+                        self.tracking = False
                         self.say("Target Lost")
                 #print("Length of pred: ", len(pred))
                 self.center_target(pred, img.shape, )

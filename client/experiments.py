@@ -292,9 +292,16 @@ if __name__ == "__main__":
     #ocfollow(device="cuda")
     
     # Run with GPU while showing footage
-    ocfollow(device="cuda", draw=True, hand_raise_thresh=1, show=True, walk_speed_modifier=1.1)
+    #ocfollow(device="cuda", draw=True, hand_raise_thresh=1, show=True, walk_speed_modifier=1.1)
 
+    # Run with GPU while not showing footage
     #ocfollow(device="cuda", draw=False, hand_raise_thresh=1, show=False, walk_speed_modifier=1.1)
+
+    # Show what YOLO-Pose is seeing
+    ocfollow(device="cuda", draw=True, hand_raise_thresh=1, show=True, walk_speed_modifier=1.1, visualise_detector=True)
+
+    # Don't show what YOLO-Pose is seeing
+    #ocfollow(device="cuda", draw=True, hand_raise_thresh=1, show=True, walk_speed_modifier=1.1, visualise_detector=False)
 
     # FPS Test
     #client = initiate_oc()

@@ -104,9 +104,9 @@ class YoloManager():
         # for det_index, (*xyxy, conf, cls) in enumerate(reversed(prediction[:,:6])):
         for det_index, (*xyxy, conf, cls) in enumerate(prediction[:,:6]):
             plot_one_box(xyxy, img, label=(f'{self.names[int(cls)]} {conf:.2f}'), color=colors(int(cls),True), line_thickness=2, kpt_label=self.kpt_label, kpts=prediction[det_index, 6:], steps=3, orig_shape=img.shape[:2])
-        if show:
+        if show is not None:
             cv2.imshow("Image", img)
-            cv2.waitKey(0)
+            cv2.waitKey(1)
 
 
     def draw_and_save(self, in_dir, out_dir=None, rescale=None, conf_thres=0.25, iou_thres=0.45, save_as="jpg"):
